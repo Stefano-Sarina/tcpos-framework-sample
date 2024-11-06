@@ -3,5 +3,7 @@
 public class Program
 {
     public static void Main(string[] args)
-    { }
+    {
+        var webApplicationBuilder = WebApplication.CreateBuilder(args);
+    }
 }

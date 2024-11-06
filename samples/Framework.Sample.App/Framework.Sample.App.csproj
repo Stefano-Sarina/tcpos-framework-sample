@@ -7,4 +7,12 @@
     <OutputType>Exe</OutputType>
     <StartupObject>Framework.Sample.App.Program</StartupObject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
 </Project>
