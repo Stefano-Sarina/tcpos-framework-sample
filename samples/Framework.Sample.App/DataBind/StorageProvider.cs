@@ -7,12 +7,17 @@ namespace Framework.Sample.App.DataBind;
 public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDisposable, IAsyncDisposable
 {
     private IDbContextTransaction? _transaction;
+    bool _transactionInProgress = false;
 
     public async ValueTask DisposeAsync()
     {
         if (_transaction != null)
         {
-            await RollbackTransaction();
+            if (_transactionInProgress)
+            {
+                await RollbackTransaction();
+            }
+
             await _transaction.DisposeAsync();
         }
     }
@@ -24,23 +29,30 @@ public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDis
             return;
         }
 
-        _transaction.Rollback();
+        if(_transactionInProgress)
+        {
+            _transaction.Rollback();
+        }
+
         _transaction.Dispose();
     }
 
     public async Task BeginTransaction()
     {
         _transaction = await dbContext.Database.BeginTransactionAsync();
+        _transactionInProgress = true;
     }
 
     public async Task CommitTransaction()
     {
         await (_transaction != null ? _transaction.CommitAsync() : Task.CompletedTask);
+        _transactionInProgress = false;
     }
 
     public async Task RollbackTransaction()
     {
         await (_transaction != null ? _transaction.RollbackAsync() : Task.CompletedTask);
+        _transactionInProgress = false;
     }
 
     public T GetStorage<T>()

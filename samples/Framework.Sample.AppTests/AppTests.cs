@@ -1,5 +1,7 @@
 ﻿using Framework.Sample.App;
+using Framework.Sample.App.Payloads;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Xunit;
@@ -33,7 +35,13 @@ public class AppTests : IDisposable, IAsyncDisposable
     [Fact]
     public async Task BatchCreateShouldWork()
     {
-        var httpResponseMessage = await _httpClient.PostAsync("/api/1.0/Batch/1/20000", null);
-        httpResponseMessage.EnsureSuccessStatusCode();
+        var batchId= await _httpClient.HttpPostAsync<object,string>("/api/1.0/Batch/1/200000", new object(),System.Net.HttpStatusCode.Created);
+        await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/Insert", new CustomerIn()
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        }, System.Net.HttpStatusCode.Created);
+        await _httpClient.HttpPutAsync<object, string>($"/api/1.0/Batch/{batchId}", new object(), System.Net.HttpStatusCode.OK);
+        var arr=await _httpClient.HttpGetAsync<CustomerOut[]>($"/api/1.0/Customer", new QueryString(),System.Net.HttpStatusCode.OK);
     }
 }
