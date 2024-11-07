@@ -7,7 +7,7 @@ public class OrderDetailIn<T>
 {
     [Required]
     [UniqueKeyField("Unk_OrderId_ProductId")]
-    public int OrderId
+    public T OrderId
     {
         get;
         set;

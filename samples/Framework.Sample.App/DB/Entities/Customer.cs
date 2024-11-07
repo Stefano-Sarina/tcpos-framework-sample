@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
+using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
