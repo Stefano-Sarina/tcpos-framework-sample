@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
-public class Customer
+public class Customer : IDEntity
 {
     [PrimaryKeyField]
     public int Id

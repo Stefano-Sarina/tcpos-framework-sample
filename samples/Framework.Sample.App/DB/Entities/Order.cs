@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
-public class Order
+public class Order : IDEntity
 {
     [PrimaryKeyField]
     public int Id
