@@ -15,7 +15,7 @@ public static class HttpRequestExtensions
     public static string GetStringFromRoute(this HttpRequest httpRequest, string key)
     {
         string httpRequestRouteValue;
-        Safety.Check(string.IsNullOrWhiteSpace(httpRequestRouteValue = "" + httpRequest.RouteValues[key]), new HttpException(HttpStatusCode.BadRequest, $"Invalid route value {key}"));
+        Safety.Check(!string.IsNullOrWhiteSpace(httpRequestRouteValue = "" + httpRequest.RouteValues[key]), new HttpException(HttpStatusCode.BadRequest, $"Invalid route value {key}"));
         return httpRequestRouteValue;
     }
 
