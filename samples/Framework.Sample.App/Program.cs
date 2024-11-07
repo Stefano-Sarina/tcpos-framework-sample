@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
+using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.AspNetCore.DataBind.Payloads;
 
 namespace Framework.Sample.App;
@@ -39,6 +40,9 @@ public class Program
                        .ToList()
                        .ForEach(x => services.AddAutoMapper(x));
 
+
+        services.AddSingleton<IEdmModelBuilder, DataEntityEdmModelBuilder>();
+
         services.AddDbContext<DB.SampleDbContext>(o => {
             o.UseSqlServer("Server=localhost;Database=demo-app;User Id=sa;Password=saPwd12345Aa!;");
             o.EnableSensitiveDataLogging();
@@ -52,22 +56,18 @@ public class Program
             c.AddStorageProvider<StorageProvider>();
             c.AddRouteConfigurationData<RouteConfigurationData>();
 
-            c.AddDataPullOuts(configuration =>
-              {
-                  configuration.DefaultPageSize = 50;
-              })
+            c.AddDataPullOuts()
               //Customer
-             .AddDataPullOutItem<DataPullOutItem<Customer, CustomerOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut>>()
               //Order
-             .AddDataPullOutItem<DataPullOutItem<Order, OrderOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Order, OrderOut<int>>>()
               //OrderDetail
-             .AddDataPullOutItem<DataPullOutItem<OrderDetail, OrderDetailOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<OrderDetail, OrderDetailOut<int>>>()
               //Product
-             .AddDataPullOutItem<DataPullOutItem<Product, ProductOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Product, ProductOut>>()
                 ;
 
-            c.AddBatches<InMemoryBatchStorage>(configuration =>
-                                               { })
+            c.AddBatches<InMemoryBatchStorage>()
               //Customer
              .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn>>()
              .AddBatchItem<DbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()

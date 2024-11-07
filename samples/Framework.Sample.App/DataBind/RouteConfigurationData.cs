@@ -68,12 +68,12 @@ public class RouteConfigurationData : IRouteConfigurationData
     public IRouteData<EntityVersion> DataPullOutGetCount
     {
         get;
-    } = new RouteData<EntityVersion>("DataPullOutGet", "/api/{ver}/{entity}/{key}/count", FEntityVersion);
+    } = new RouteData<EntityVersion>("DataPullOutGetCount", "/api/{ver}/{entity}/{key}/count", FEntityVersion);
 
     public IRouteData<EntityVersion> DataPullOutGetSchema
     {
         get;
-    } = new RouteData<EntityVersion>("DataPullOutGet", "/api/{ver}/{entity}/schema", FEntityVersion);
+    } = new RouteData<EntityVersion>("DataPullOutGetSchema", "/api/{ver}/{entity}/schema", FEntityVersion);
 
     public IRouteData<string> BatchRun
     {
@@ -83,7 +83,7 @@ public class RouteConfigurationData : IRouteConfigurationData
     public IRouteData<BatchEntityVersion> BatchInsert
     {
         get;
-    } = new RouteData<BatchEntityVersion>("BatchRemove", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{Operations.Insert}", httpRequest => new BatchEntityVersion(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), Array.Empty<RequestAdditionalData>()));
+    } = new RouteData<BatchEntityVersion>("BatchInsert", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{Operations.Insert}", httpRequest => new BatchEntityVersion(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), Array.Empty<RequestAdditionalData>()));
 
     public IRouteData<BatchEntityVersionWithKey> BatchRemove
     {
@@ -118,15 +118,15 @@ public class RouteConfigurationData : IRouteConfigurationData
     public IRouteData<EntityVersion> BatchRemoveSchema
     {
         get;
-    } = new RouteData<EntityVersion>("BatchInsertSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Remove}/schema", FEntityVersion);
+    } = new RouteData<EntityVersion>("BatchRemoveSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Remove}/schema", FEntityVersion);
 
     public IRouteData<EntityVersion> BatchUpdateSchema
     {
         get;
-    } = new RouteData<EntityVersion>("BatchInsertSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Update}/schema", FEntityVersion);
+    } = new RouteData<EntityVersion>("BatchUpdateSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Update}/schema", FEntityVersion);
 
     public IRouteData<EntityVersion> BatchReplaceSchema
     {
         get;
-    } = new RouteData<EntityVersion>("BatchInsertSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Replace}/schema", FEntityVersion);
+    } = new RouteData<EntityVersion>("BatchReplaceSchema", $"/api/{{ver}}/batch/add/{{entity}}/{Operations.Replace}/schema", FEntityVersion);
 }
