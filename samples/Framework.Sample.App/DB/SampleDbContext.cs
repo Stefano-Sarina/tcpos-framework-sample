@@ -4,7 +4,7 @@ using TCPOS.EntityFramework;
 
 namespace Framework.Sample.App.DB;
 
-public class DbContext(DbContextOptions options) : DbContextBase(options)
+public class SampleDbContext(DbContextOptions options) : DbContextBase(options)
 {
     public DbSet<Product> Products
     {

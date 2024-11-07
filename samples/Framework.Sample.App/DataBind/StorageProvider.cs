@@ -4,7 +4,7 @@ using TCPOS.AspNetCore.DataBind.Interfaces;
 
 namespace Framework.Sample.App.DataBind;
 
-public class StorageProvider(DbContext dbContext) : IStorageProvider, IDisposable, IAsyncDisposable
+public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDisposable, IAsyncDisposable
 {
     private IDbContextTransaction? _transaction;
 

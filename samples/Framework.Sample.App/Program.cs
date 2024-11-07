@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Framework.Sample.App.DataBind;
+using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.Payloads;
+using Microsoft.EntityFrameworkCore;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
@@ -11,15 +13,41 @@ namespace Framework.Sample.App;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
-        var webApplicationBuilder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
+        ConfigureServices(builder.Services);
+
+        await using var application = builder.Build();
+
+        ConfigureApplication(application);
+
+        await application.RunAsync();
+    }
+
+    private static void ConfigureApplication(WebApplication webApplication)
+    {
+        webApplication.UseSwagger();
+        webApplication.UseSwaggerUI();
+        webApplication.UseDataBind(bc => { }, dc => { });
+    }
+
+    private static void ConfigureServices(IServiceCollection services)
+    {
         typeof(Program).Assembly.GetTypes().Where(x => x is { IsClass: true, IsAbstract: false } && x.IsSubclassOf(typeof(Profile)))
                        .ToList()
-                       .ForEach(x => webApplicationBuilder.Services.AddAutoMapper(x));
+                       .ForEach(x => services.AddAutoMapper(x));
 
-        webApplicationBuilder.Services.AddDataBind(c =>
+        services.AddDbContext<DB.SampleDbContext>(o => {
+            o.UseSqlServer("Server=localhost;Database=demo-app;User Id=sa;Password=saPwd12345Aa!;");
+            o.EnableSensitiveDataLogging();
+        });
+
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+
+        services.AddDataBind(c =>
         {
             c.AddStorageProvider<StorageProvider>();
             c.AddRouteConfigurationData<RouteConfigurationData>();
