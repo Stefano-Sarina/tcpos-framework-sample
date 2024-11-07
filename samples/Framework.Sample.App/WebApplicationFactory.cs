@@ -24,13 +24,13 @@ public static class WebApplicationFactory
     private const string Admin = "Admin";
     private const string User = "User";
 
-    public static async Task<Microsoft.AspNetCore.Builder.WebApplication> Create(string[] args, WebApplicationFactoryOptions webApplicationFactoryOptions=null)
+    public static async Task<WebApplication> Create(string[] args, WebApplicationFactoryOptions webApplicationFactoryOptions = null)
     {
-        var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
         builder.Configuration.AddJsonFile("appsettings.json", false, true);
 
-        if (webApplicationFactoryOptions?.UseTestServer??false)
+        if (webApplicationFactoryOptions?.UseTestServer ?? false)
         {
             builder.WebHost.UseTestServer();
         }
@@ -60,7 +60,7 @@ public static class WebApplicationFactory
         return application;
     }
 
-    private static void ConfigureApplication(Microsoft.AspNetCore.Builder.WebApplication webApplication)
+    private static void ConfigureApplication(WebApplication webApplication)
     {
         webApplication.UseAuthentication();
 
