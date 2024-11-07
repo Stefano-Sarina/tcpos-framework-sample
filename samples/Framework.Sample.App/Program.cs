@@ -8,6 +8,7 @@ using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
+using TCPOS.AspNetCore.DataBind.Implementations.Routes;
 using TCPOS.AspNetCore.DataBind.Payloads;
 
 namespace Framework.Sample.App;
@@ -77,7 +78,7 @@ public class Program
         services.AddDataBind(c =>
         {
             c.AddStorageProvider<StorageProvider>();
-            c.AddRouteConfigurationData<RouteConfigurationData>();
+            c.AddRouteConfigurationData<RouteConfigurationDataByRouteValues>();
 
             c.AddDataPullOuts()
               //Customer
