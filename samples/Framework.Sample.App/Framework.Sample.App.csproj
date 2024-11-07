@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind.OData\TCPOS.AspNetCore.DataBind.OData.csproj" />
     <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind\TCPOS.AspNetCore.DataBind.csproj" />
     <ProjectReference Include="..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj" />
   </ItemGroup>

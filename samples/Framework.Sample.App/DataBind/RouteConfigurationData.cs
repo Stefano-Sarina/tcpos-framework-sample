@@ -1,32 +1,19 @@
-﻿using System.Globalization;
-using System.Net;
-using TCPOS.AspNetCore.DataBind.Batch.Enums;
-using TCPOS.AspNetCore.DataBind.Exceptions;
-using TCPOS.AspNetCore.DataBind.Interfaces;
+﻿using TCPOS.AspNetCore.DataBind.Batch.Enums;
 using TCPOS.AspNetCore.DataBind.Interfaces.Routes;
 using TCPOS.AspNetCore.DataBind.RouteData;
-using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.DataBind;
 
 public class RouteConfigurationData : IRouteConfigurationData
 {
-    private static readonly Func<HttpRequest, EntityVersion> FEntityVersion = httpRequest =>
-    {
-        string name;
-        Safety.Check(string.IsNullOrWhiteSpace(name = "" + httpRequest.RouteValues["entity"]), new HttpException(HttpStatusCode.BadRequest, "Invalid route value entity"));
-        var version = Version.TryParse("" + httpRequest.RouteValues["ver"], out var v) ? v : throw new HttpException(HttpStatusCode.BadRequest, "Invalid route value version");
-        return new EntityVersion(name, version, Array.Empty<RequestAdditionalData>());
-    };
+    private static readonly Func<HttpRequest, EntityVersion> FEntityVersion = httpRequest => new EntityVersion(httpRequest.GetStringFromRoute("entity"),
+                                                                                                               httpRequest.GetVersionFromRoute("ver"),
+                                                                                                               Array.Empty<RequestAdditionalData>());
 
-    private static readonly Func<HttpRequest, EntityVersionWithKey> FEntityVersionWithKey = httpRequest =>
-    {
-        string httpRequestRouteValue;
-        Safety.Check(string.IsNullOrWhiteSpace(httpRequestRouteValue = "" + httpRequest.RouteValues["entity"]), new HttpException(HttpStatusCode.BadRequest, "Invalid route value entity"));
-        var version = Version.TryParse("" + httpRequest.RouteValues["ver"], out var v) ? v : throw new HttpException(HttpStatusCode.BadRequest, "Invalid route value version");
-        var requestRouteValue = int.TryParse("" + httpRequest.RouteValues["key"], CultureInfo.InvariantCulture, out var k) ? k : throw new HttpException(HttpStatusCode.BadRequest, "Invalid route value key");
-        return new EntityVersionWithKey(httpRequestRouteValue, version, requestRouteValue, Array.Empty<RequestAdditionalData>());
-    };
+    private static readonly Func<HttpRequest, EntityVersionWithKey> FEntityVersionWithKey = httpRequest => new EntityVersionWithKey(httpRequest.GetStringFromRoute("entity"),
+                                                                                                                                    httpRequest.GetVersionFromRoute("ver"),
+                                                                                                                                    httpRequest.GetIntFromRoute("key"),
+                                                                                                                                    Array.Empty<RequestAdditionalData>());
 
     public IRouteData<EntityVersionWithKey> ErpRemove
     {
@@ -91,47 +78,37 @@ public class RouteConfigurationData : IRouteConfigurationData
     public IRouteData<string> BatchRun
     {
         get;
-    } = new RouteData<string>("BatchRun", "/api/1.0/batch/{key}", httpRequest =>
-    {
-        string key;
-        Safety.Check(string.IsNullOrWhiteSpace(key = "" + httpRequest.RouteValues["key"]), new HttpException(HttpStatusCode.BadRequest, "Invalid route value key"));
-        return key;
-    });
+    } = new RouteData<string>("BatchRun", "/api/1.0/batch/{key}", httpRequest => httpRequest.GetStringFromRoute("key"));
 
     public IRouteData<BatchEntityVersion> BatchInsert
     {
         get;
-    }
+    } = new RouteData<BatchEntityVersion>("BatchRemove", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{Operations.Insert}", httpRequest => new BatchEntityVersion(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), Array.Empty<RequestAdditionalData>()));
 
     public IRouteData<BatchEntityVersionWithKey> BatchRemove
     {
         get;
-    }
+    } = new RouteData<BatchEntityVersionWithKey>("BatchRemove", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{{key}}/{Operations.Remove}", httpRequest => new BatchEntityVersionWithKey(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), httpRequest.GetStringFromRoute("key"), Array.Empty<RequestAdditionalData>()));
 
     public IRouteData<BatchEntityVersionWithKey> BatchUpdate
     {
         get;
-    }
+    } = new RouteData<BatchEntityVersionWithKey>("BatchUpdate", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{{key}}/{Operations.Update}", httpRequest => new BatchEntityVersionWithKey(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), httpRequest.GetStringFromRoute("key"), Array.Empty<RequestAdditionalData>()));
 
     public IRouteData<BatchEntityVersionWithKey> BatchReplace
     {
         get;
-    }
+    } = new RouteData<BatchEntityVersionWithKey>("BatchReplace", $"/api/{{ver}}/batch/{{batchId}}/{{commandId}}/{{entity}}/{{key}}/{Operations.Replace}", httpRequest => new BatchEntityVersionWithKey(httpRequest.GetStringFromRoute("batchId"), httpRequest.GetIntFromRoute("commandId"), httpRequest.GetStringFromRoute("commandId"), httpRequest.GetVersionFromRoute("ver"), httpRequest.GetStringFromRoute("key"), Array.Empty<RequestAdditionalData>()));
 
     public IRouteData<string> BatchGet
     {
         get;
-    } = new RouteData<string>("BatchGet", "/api/1.0/batch/{key}", httpRequest =>
-    {
-        string key;
-        Safety.Check(string.IsNullOrWhiteSpace(key = "" + httpRequest.RouteValues["key"]), new HttpException(HttpStatusCode.BadRequest, "Invalid route value key"));
-        return key;
-    });
+    } = new RouteData<string>("BatchGet", "/api/1.0/batch/{key}", httpRequest => httpRequest.GetStringFromRoute("key"));
 
     public IRouteData<BatchCreateData> BatchCreate
     {
         get;
-    }
+    } = new RouteData<BatchCreateData>("BatchCreate", "/api/1.0/batch/{NumCommands}/{TtlMilliseconds}", httpRequest => new BatchCreateData(httpRequest.GetIntFromRoute("NumCommands"), httpRequest.GetIntFromRoute("TtlMilliseconds")));
 
     public IRouteData<EntityVersion> BatchInsertSchema
     {
