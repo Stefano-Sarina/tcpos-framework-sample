@@ -18,11 +18,22 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Configuration.AddJsonFile("appsettings.json", false, true);
+
         ConfigureServices(builder.Services);
 
         await using var application = builder.Build();
 
         ConfigureApplication(application);
+
+        var cfg = application.Configuration.Get<Configuration.Configuration>();
+
+        if (cfg?.Debug?.CreateDatabase??false)
+        {
+            using var scope = application.Services.CreateScope();
+            await scope.ServiceProvider.GetRequiredService<SampleDbContext>().Database.EnsureDeletedAsync();
+            await scope.ServiceProvider.GetRequiredService<SampleDbContext>().Database.EnsureCreatedAsync();
+        }
 
         await application.RunAsync();
     }
@@ -31,7 +42,9 @@ public class Program
     {
         webApplication.UseSwagger();
         webApplication.UseSwaggerUI();
-        webApplication.UseDataBind(bc => { }, dc => { });
+        webApplication.UseDataBind(bc =>
+                                   { }, dc =>
+                                   { });
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -40,12 +53,22 @@ public class Program
                        .ToList()
                        .ForEach(x => services.AddAutoMapper(x));
 
-
         services.AddSingleton<IEdmModelBuilder, DataEntityEdmModelBuilder>();
 
-        services.AddDbContext<DB.SampleDbContext>(o => {
-            o.UseSqlServer("Server=localhost;Database=demo-app;User Id=sa;Password=saPwd12345Aa!;");
-            o.EnableSensitiveDataLogging();
+        services.AddDbContext<SampleDbContext>((s, o) =>
+        {
+            var cfg = s.GetRequiredService<IConfiguration>().Get<Configuration.Configuration>();
+            switch (cfg?.DatabaseConnection?.DatabaseType)
+            {
+                case Configuration.DatabaseTypes.SqlServer:
+                    o.UseSqlServer(cfg?.DatabaseConnection.ConnectionString);
+                    break;
+                case Configuration.DatabaseTypes.Sqlite:
+                    o.UseSqlite(cfg?.DatabaseConnection.ConnectionString);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         });
 
         services.AddEndpointsApiExplorer();

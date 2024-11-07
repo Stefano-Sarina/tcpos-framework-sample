@@ -63,7 +63,7 @@ public class RouteConfigurationData : IRouteConfigurationData
     public IRouteData<EntityVersion> DataPullOutGet
     {
         get;
-    } = new RouteData<EntityVersion>("DataPullOutGet", "/api/{ver}/{entity}/{key}", FEntityVersion);
+    } = new RouteData<EntityVersion>("DataPullOutGet", "/api/{ver}/{entity}", FEntityVersion);
 
     public IRouteData<EntityVersion> DataPullOutGetCount
     {
