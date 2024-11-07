@@ -19,20 +19,18 @@ using TCPOS.AspNetCore.DataBind.Payloads;
 
 namespace Framework.Sample.App;
 
-public record WebApplicationOptions(bool UseTestServer);
-
 public static class WebApplicationFactory
 {
     private const string Admin = "Admin";
     private const string User = "User";
 
-    public static async Task<Microsoft.AspNetCore.Builder.WebApplication> Create(string[] args, WebApplicationOptions webApplicationOptions=null)
+    public static async Task<Microsoft.AspNetCore.Builder.WebApplication> Create(string[] args, WebApplicationFactoryOptions webApplicationFactoryOptions=null)
     {
         var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
         builder.Configuration.AddJsonFile("appsettings.json", false, true);
 
-        if (webApplicationOptions?.UseTestServer??false)
+        if (webApplicationFactoryOptions?.UseTestServer??false)
         {
             builder.WebHost.UseTestServer();
         }
