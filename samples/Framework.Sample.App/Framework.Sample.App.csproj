@@ -9,15 +9,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind.Implementations\TCPOS.AspNetCore.DataBind.Implementations.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind.OData\TCPOS.AspNetCore.DataBind.Implementations.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind\TCPOS.AspNetCore.DataBind.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind.Implementations\TCPOS.AspNetCore.DataBind.Implementations.csproj" />
+    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind\TCPOS.AspNetCore.DataBind.csproj" />
+    <ProjectReference Include="..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>
