@@ -91,28 +91,40 @@ public class AppTests : IDisposable, IAsyncDisposable
         {
             await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{customer.Id}", System.Net.HttpStatusCode.OK);
         }
+        var products= await _httpClient.ODataHttpGetAsync<ProductOut>($"/api/1.0/Product", System.Net.HttpStatusCode.OK);
+        foreach (var productOut in products)
+        {
+            await _httpClient.HttpDeleteAsync($"/api/1.0/Product/{productOut.Id}", System.Net.HttpStatusCode.OK);
+        }
+
         var customerIn = new CustomerIn()
         {
             FirstName = "Dario",
             LastName = "Rossi"
         };
-        await _httpClient.RunBatch(1, 20000, async batchId =>
+        var productIn = new ProductIn()
         {
-            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Insert}", customerIn, System.Net.HttpStatusCode.Created);
-        });
-
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>($"/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, System.Net.HttpStatusCode.OK);
-        customers.Should().HaveCount(1);
-
+            Name= "Product 1",
+            Price= 10.0m
+        };
         var orderIn = new OrderIn<ValueReference>()
         {
-            CustomerId = ValueReference.CreateValue(customers.First().Id),
-            Notes = "Test",
-            OrderDate = DateOnly.FromDateTime( DateTime.Now)
+            CustomerId = ValueReference.CreateReference(0),
+            Notes = null,
+            OrderDate = DateOnly.FromDateTime(DateTime.Now)
         };
-        await _httpClient.RunBatch(1, 20000, async batchId =>
+        var orderDetailIn = new OrderDetailIn<ValueReference>()
         {
-            await _httpClient.HttpPostAsync<OrderIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/1/Order/{Operations.Insert}", orderIn, System.Net.HttpStatusCode.Created);
+            OrderId = ValueReference.CreateReference(20),
+            ProductId= ValueReference.CreateReference(10),
+            Quantity = 5
+        };
+        await _httpClient.RunBatch(4, 20000, async batchId =>
+        {
+            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/0/Customer/{Operations.Insert}", customerIn, System.Net.HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/20/Order/{Operations.Insert}", orderIn, System.Net.HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/10/Product/{Operations.Insert}", productIn, System.Net.HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/30/OrderDetail/{Operations.Insert}", orderDetailIn, System.Net.HttpStatusCode.Created);
         });
     }
 
