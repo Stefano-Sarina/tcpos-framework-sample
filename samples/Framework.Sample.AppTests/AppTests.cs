@@ -40,7 +40,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
         };
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
-            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{customers.First().Id}/{Operations.Replace}", customerIn, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{customers.First().Id}", customerIn, HttpStatusCode.Created);
         });
 
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
@@ -48,7 +48,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
 
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
-            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{customers.First().Id}/{Operations.Remove}", customerIn, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{customers.First().Id}", customerIn, HttpStatusCode.Created);
         });
 
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
@@ -66,7 +66,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
         await _httpClient.RunBatch(2, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/10/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
-            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/20/Customer/{ValueReference.CreateReference(10).ToRouteValue()}/{Operations.Remove}", customerIn, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Remove}/{ValueReference.CreateReference(10).ToRouteValue()}", customerIn, HttpStatusCode.Created);
         });
     }
 
