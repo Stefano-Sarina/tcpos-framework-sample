@@ -15,7 +15,7 @@ using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.AspNetCore.DataBind.Implementations.Routes;
-using TCPOS.AspNetCore.DataBind.Payloads;
+using TCPOS.Data.Batches.Payload;
 
 namespace Framework.Sample.App;
 

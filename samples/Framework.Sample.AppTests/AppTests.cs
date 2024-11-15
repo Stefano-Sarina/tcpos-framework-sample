@@ -2,9 +2,9 @@
 using FluentAssertions;
 using Framework.Sample.App.Payloads;
 using Framework.Sample.AppTests.Helpers;
-using TCPOS.AspNetCore.DataBind.Batch.Enums;
-using TCPOS.AspNetCore.DataBind.Payloads;
 using TCPOS.Common.Linq.Extensions;
+using TCPOS.Data.Batches.Enums;
+using TCPOS.Data.Batches.Payload;
 using Xunit;
 
 namespace Framework.Sample.AppTests;
