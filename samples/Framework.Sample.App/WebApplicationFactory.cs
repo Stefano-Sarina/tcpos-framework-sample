@@ -14,7 +14,6 @@ using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
-using TCPOS.AspNetCore.DataBind.Implementations.Routes;
 using TCPOS.Data.Batches.Payload;
 
 namespace Framework.Sample.App;
@@ -115,9 +114,6 @@ public static class WebApplicationFactory
 
         services.AddDataBind(c =>
         {
-            c.AddStorageProvider<StorageProvider>();
-            c.AddRouteConfigurationData<RouteConfigurationDataByRouteValues>();
-
             c.AddDataPullOuts()
               //Customer
              .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut>>()
@@ -129,7 +125,7 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<Product, ProductOut>>()
                 ;
 
-            c.AddBatches<InMemoryBatchStorage>()
+            c.AddBatches<InMemoryBatchStorage, StorageProvider>()
               //Customer
              .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn>>()
              .AddBatchItem<DbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()
