@@ -114,7 +114,7 @@ public static class WebApplicationFactory
 
         services.AddDataBind(c =>
         {
-            c.AddDataPullOuts()
+            c.AddDataPullOut()
               //Customer
              .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut>>()
               //Order
