@@ -1,4 +1,6 @@
-﻿namespace Framework.Sample.App;
+﻿using Framework.Sample.App.WebApplication;
+
+namespace Framework.Sample.App;
 
 public static class Program
 {

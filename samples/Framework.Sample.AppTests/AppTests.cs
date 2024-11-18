@@ -14,7 +14,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     [Fact]
     public async Task SimpleBatchShouldWork()
     {
-        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK)) ;
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {
@@ -74,7 +74,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     [Fact]
     public async Task ComplexBatchShouldWork()
     {
-        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK));
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {
@@ -88,7 +88,6 @@ public partial class AppTests : IDisposable, IAsyncDisposable
             await _httpClient.HttpDeleteAsync($"/api/1.0/Product/{product.Id}", HttpStatusCode.OK);
         }
 
-
         var productIn1 = new ProductIn
         {
             Name = "Product 1",
@@ -98,7 +97,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
         {
             await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/10/Product/{Operations.Insert}", productIn1, HttpStatusCode.Created);
         });
-        var productOut = (await _httpClient.ODataHttpGetAsync<ProductOut>("/api/1.0/Product", r=>r.Name==productIn1.Name , HttpStatusCode.OK)).First();
+        var productOut = (await _httpClient.ODataHttpGetAsync<ProductOut>("/api/1.0/Product", r => r.Name == productIn1.Name, HttpStatusCode.OK)).First();
 
         var customerIn = new CustomerIn
         {
@@ -135,7 +134,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
         };
         await _httpClient.RunBatch(6, 20000, async batchId =>
         {
-            await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/10/Product/{Operations.Replace}/"+productOut.Id, productIn1, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/10/Product/{Operations.Replace}/" + productOut.Id, productIn1, HttpStatusCode.Created);
 
             await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
 

@@ -1,4 +1,5 @@
 ﻿using Framework.Sample.App;
+using Framework.Sample.App.WebApplication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;

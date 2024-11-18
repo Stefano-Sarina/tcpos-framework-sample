@@ -17,16 +17,16 @@ using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Data.Batches.Payload;
 
-namespace Framework.Sample.App;
+namespace Framework.Sample.App.WebApplication;
 
 public static class WebApplicationFactory
 {
     private const string Admin = "Admin";
     private const string User = "User";
 
-    public static async Task<WebApplication> Create(string[] args, WebApplicationFactoryOptions webApplicationFactoryOptions = null)
+    public static async Task<Microsoft.AspNetCore.Builder.WebApplication> Create(string[] args, WebApplicationFactoryOptions webApplicationFactoryOptions = null)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder(args);
 
         builder.Configuration.AddJsonFile("appsettings.json", false, true);
 
@@ -60,27 +60,33 @@ public static class WebApplicationFactory
         return application;
     }
 
-    private static void ConfigureApplication(WebApplication webApplication)
+    private static void ConfigureApplication(Microsoft.AspNetCore.Builder.WebApplication webApplication)
     {
         webApplication.UseAuthentication();
 
         webApplication.UseSwagger();
         webApplication.UseSwaggerUI();
-        webApplication.UseDataBind(bc =>
+        webApplication.UseDataBind(batchRouteMapper =>
         {
-            bc.MapBatchCreate(HttpVerbs.Post, "/api/1.0/Batch/{batchId}/{numCommands}/{ttlMilliseconds}", Delegates.BatchCreate);
-            bc.MapBatchGet(HttpVerbs.Get, "/api/1.0/Batch/{batchId}/{batchId}", Delegates.BatchGet);
-            bc.MapBatchRun(HttpVerbs.Put, "/api/1.0/Batch/{batchId}/{batchId}", Delegates.BatchRun);
+            batchRouteMapper.MapBatchCreate( "/api/1.0/Batch/{numCommands}/{ttlMilliseconds}", Delegates.BatchCreate);
+            batchRouteMapper.MapBatchGet("/api/1.0/Batch/{batchId}", Delegates.BatchGet);
+            batchRouteMapper.MapBatchRun("/api/1.0/Batch/{batchId}/Run", Delegates.BatchRun);
 
-            bc.MapBatchAddInsert(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/insert", Delegates.BatchAddInsert);
-            bc.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}", Delegates.BatchAddRemove);
-            bc.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}", Delegates.BatchAddReplace);
-            bc.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}", Delegates.BatchAddUpdate);
+            batchRouteMapper.MapBatchAddInsert(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/insert", Delegates.BatchAddInsert);
+            batchRouteMapper.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}", Delegates.BatchAddRemove);
+            batchRouteMapper.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}", Delegates.BatchAddReplace);
+            batchRouteMapper.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}", Delegates.BatchAddUpdate);
 
-            bc.MapErpInsert(HttpVerbs.Post, "/api/{version}/{name}/", Delegates.ErpInsert);
-            bc.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}", Delegates.ErpRemove);
-            bc.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}", Delegates.ErpReplace);
-            bc.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}", Delegates.ErpUpdate);
+            batchRouteMapper.MapErpInsert(HttpVerbs.Post, "/api/{version}/{name}/", Delegates.ErpInsert);
+            batchRouteMapper.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}", Delegates.ErpRemove);
+            batchRouteMapper.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}", Delegates.ErpReplace);
+            batchRouteMapper.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}", Delegates.ErpUpdate);
+        }, dataPullOutRouteMapper =>
+        {
+            dataPullOutRouteMapper.MapDataPullOut(HttpVerbs.Get, "/api/{version}/{name}", Delegates.DataPullOut);
+            dataPullOutRouteMapper.MapDataPullOutWithKey(HttpVerbs.Get, "/api/{version}/{name}/{key}", Delegates.DataPullOutWithKey);
+            dataPullOutRouteMapper.MapDataPullOutCount(HttpVerbs.Get, "/api/{version}/{name}/count", Delegates.DataPullOutCount);
+            dataPullOutRouteMapper.MapDataPullSchema(HttpVerbs.Get, "/api/{version}/{name}/schema", Delegates.DataPullSchema);
         });
         webApplication.MapPost("/api/login", async (HttpContext httpContext, [FromQuery] bool isAdmin) =>
         {
