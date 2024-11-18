@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using TCPOS.AspNetCore.DataBind.Configuration;
+using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
@@ -65,7 +66,22 @@ public static class WebApplicationFactory
 
         webApplication.UseSwagger();
         webApplication.UseSwaggerUI();
-        webApplication.UseDataBind();
+        webApplication.UseDataBind(bc =>
+        {
+            bc.MapBatchCreate(HttpVerbs.Post, "/api/1.0/Batch/{batchId}/{numCommands}/{ttlMilliseconds}", Delegates.BatchCreate);
+            bc.MapBatchGet(HttpVerbs.Get, "/api/1.0/Batch/{batchId}/{batchId}", Delegates.BatchGet);
+            bc.MapBatchRun(HttpVerbs.Put, "/api/1.0/Batch/{batchId}/{batchId}", Delegates.BatchRun);
+
+            bc.MapBatchAddInsert(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/insert", Delegates.BatchAddInsert);
+            bc.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}", Delegates.BatchAddRemove);
+            bc.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}", Delegates.BatchAddReplace);
+            bc.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}", Delegates.BatchAddUpdate);
+
+            bc.MapErpInsert(HttpVerbs.Post, "/api/{version}/{name}/", Delegates.ErpInsert);
+            bc.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}", Delegates.ErpRemove);
+            bc.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}", Delegates.ErpReplace);
+            bc.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}", Delegates.ErpUpdate);
+        });
         webApplication.MapPost("/api/login", async (HttpContext httpContext, [FromQuery] bool isAdmin) =>
         {
             var claims = new List<Claim>
