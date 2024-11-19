@@ -10,8 +10,65 @@ using Xunit;
 
 namespace Framework.Sample.AppTests;
 
-public partial class AppTests 
+public partial class AppTests
 {
+    [Fact]
+    public async Task BatchShouldWork()
+    {
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
+
+        foreach (var customer in customers.ToEnumerableOrEmpty())
+        {
+            await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{customer.Id}", HttpStatusCode.OK);
+        }
+
+        var customerIn = new CustomerIn
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        };
+
+        await _httpClient.RunBatch(1, 20000, async batchId =>
+        {
+            await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
+        });
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+        var id = customers.First().Id;
+
+        var payload = new Operation<CustomerIn>
+        {
+            op = "replace",
+            path = "/FirstName",
+            value = "Mario"
+        };
+        await _httpClient.RunBatch(1, 20000, async batchId =>
+        {
+            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}", new[] { payload }, HttpStatusCode.Created);
+        });
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        customerIn = new CustomerIn
+        {
+            FirstName = "Angelo",
+            LastName = "Bianchi"
+        };
+        await _httpClient.RunBatch(1, 20000, async batchId =>
+        {
+            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{id}", customerIn, HttpStatusCode.Created);
+        });
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        await _httpClient.RunBatch(1, 20000, async batchId =>
+        {
+            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{id}", customerIn, HttpStatusCode.Created);
+        });
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
+    }
+
     [Fact]
     public async Task ErpShouldWork()
     {
@@ -28,7 +85,7 @@ public partial class AppTests
             LastName = "Rossi"
         };
         var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName==customerIn.FirstName && v.LastName==customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         var payload = new Operation<CustomerIn>
@@ -37,8 +94,8 @@ public partial class AppTests
             path = "/FirstName",
             value = "Mario"
         };
-        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}",new[] { payload }, HttpStatusCode.OK);
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK); 
+        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}", new[] { payload }, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         customerIn = new CustomerIn
@@ -58,7 +115,7 @@ public partial class AppTests
     [Fact]
     public async Task SimpleBatchShouldWork()
     {
-        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK)) ;
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {
@@ -118,7 +175,7 @@ public partial class AppTests
     [Fact]
     public async Task ComplexBatchShouldWork()
     {
-        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK));
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {

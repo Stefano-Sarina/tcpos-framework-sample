@@ -53,6 +53,12 @@ internal static class HttpClientExtensions
         var readAsStringAsync = await response.Content.ReadAsStringAsync();
         return readAsStringAsync.DeSerialize<To>();
     }
+    internal static async Task HttpPostAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
+    {
+        using var postContent = payload.ToStringContent();
+        using var response = await httpClient.PostAsync(endPoint, postContent);
+        response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [POST:{endPoint}]");
+    }
 
     internal static async Task<To?> HttpPutAsync<Ti, To>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
     {
