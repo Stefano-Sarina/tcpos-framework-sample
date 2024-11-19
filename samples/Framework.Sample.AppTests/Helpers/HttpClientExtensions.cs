@@ -69,12 +69,26 @@ internal static class HttpClientExtensions
         return str.DeSerialize<To>();
     }
 
+    internal static async Task HttpPutAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
+    {
+        using var postContent = payload.ToStringContent();
+        using var response = await httpClient.PutAsync(endPoint, postContent);
+        response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [PUT:{endPoint}]");
+    }
+
     internal static async Task<To?> HttpPatchAsync<Ti, To>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
     {
         using var postContent = payload.ToStringContent();
         using var response = await httpClient.PatchAsync(endPoint, postContent);
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [PATCH:{endPoint}]");
         return (await response.Content.ReadAsStringAsync()).DeSerialize<To>();
+    }
+
+    internal static async Task HttpPatchAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
+    {
+        using var postContent = payload.ToStringContent();
+        using var response = await httpClient.PatchAsync(endPoint, postContent);
+        response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [PATCH:{endPoint}]");
     }
 
     public static StringContent ToStringContent(this object o)
