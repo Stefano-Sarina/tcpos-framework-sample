@@ -1,12 +1,11 @@
 ﻿using Framework.Sample.App;
-using Framework.Sample.App.WebApplication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 
 namespace Framework.Sample.AppTests;
 
-public partial class AppTests
+public partial class AppTests : IDisposable, IAsyncDisposable
 {
     private readonly HttpClient _httpClient;
     private readonly WebApplication _webApplication;

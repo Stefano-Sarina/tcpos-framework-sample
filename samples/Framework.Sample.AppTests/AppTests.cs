@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Framework.Sample.App.Payloads;
 using Framework.Sample.AppTests.Helpers;
+using Microsoft.AspNetCore.JsonPatch.Operations;
 using TCPOS.Common.Linq.Extensions;
 using TCPOS.Data.Batches.Enums;
 using TCPOS.Data.Batches.Payload;
@@ -9,12 +10,55 @@ using Xunit;
 
 namespace Framework.Sample.AppTests;
 
-public partial class AppTests : IDisposable, IAsyncDisposable
+public partial class AppTests 
 {
+    [Fact]
+    public async Task ErpShouldWork()
+    {
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
+
+        foreach (var customer in customers.ToEnumerableOrEmpty())
+        {
+            await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{customer.Id}", HttpStatusCode.OK);
+        }
+
+        var customerIn = new CustomerIn
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        };
+        var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName==customerIn.FirstName && v.LastName==customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        var payload = new Operation<CustomerIn>
+        {
+            op = "replace",
+            path = "/FirstName",
+            value = "Mario"
+        };
+        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}",new[] { payload }, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK); 
+        customers.Should().HaveCount(1);
+
+        customerIn = new CustomerIn
+        {
+            FirstName = "Angelo",
+            LastName = "Bianchi"
+        };
+        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}", customerIn, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{id}", HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
+    }
+
     [Fact]
     public async Task SimpleBatchShouldWork()
     {
-        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
+        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK)) ;
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {
@@ -74,7 +118,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     [Fact]
     public async Task ComplexBatchShouldWork()
     {
-        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
+        var customers = (await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK));
 
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {

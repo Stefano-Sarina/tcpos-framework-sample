@@ -82,9 +82,9 @@ public static class Delegates
     {
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpInsertRunner.Run(name, versionVer, payload, []);
+        var result=await erpInsertRunner.Run(name, versionVer, payload, []);
 
-        return await Task.FromResult(Results.Created());
+        return Results.Created($"/api/{version:2}/{name}/{result.Value<int>()}", result.Value<int>());
     }
 
     public static async Task<IResult> ErpRemove([FromServices] ErpRemoveRunner erpRemoveRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
@@ -94,7 +94,7 @@ public static class Delegates
 
         await erpRemoveRunner.Run(name, versionVer, keyNum, payload, []);
 
-        return await Task.FromResult(Results.Created());
+        return await Task.FromResult(Results.Ok());
     }
 
     public static async Task<IResult> ErpReplace([FromServices] ErpReplaceRunner erpReplaceRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
@@ -104,7 +104,7 @@ public static class Delegates
 
         await erpReplaceRunner.Run(name, versionVer, keyNum, payload, []);
 
-        return await Task.FromResult(Results.Created());
+        return await Task.FromResult(Results.Ok());
     }
 
     public static async Task<IResult> ErpUpdate([FromServices] ErpUpdateRunner erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
@@ -114,7 +114,7 @@ public static class Delegates
 
         await erpUpdateRunner.Run(name, versionVer, keyNum, payload, []);
 
-        return await Task.FromResult(Results.Created());
+        return await Task.FromResult(Results.Ok());
     }
 
     public static async Task<IResult> DataPullOut(HttpContext httpContext, [FromServices] DataPullOutController erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
