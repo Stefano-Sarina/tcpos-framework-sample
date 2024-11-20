@@ -6,6 +6,7 @@ using TCPOS.AspNetCore.DataBind.DataPullOut.Delegates;
 using TCPOS.AspNetCore.DataBind.Exceptions;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Data.Batches.Engine.Runners;
+using TCPOS.Data.Batches.Payload;
 
 namespace Framework.Sample.App.WebApplication;
 
@@ -47,32 +48,32 @@ public static class Delegates
         return await Task.FromResult(Results.Created());
     }
 
-    public static async Task<IResult> BatchAddRemove([FromServices] BatchAddRemoveRunner batchAddRemoveRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
+    public static async Task<IResult> BatchAddRemove([FromServices] BatchAddRemoveRunner batchAddRemoveRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, []);
+        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Created());
     }
 
-    public static async Task<IResult> BatchAddReplace([FromServices] BatchAddReplaceRunner batchAddReplaceRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
+    public static async Task<IResult> BatchAddReplace([FromServices] BatchAddReplaceRunner batchAddReplaceRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddReplaceRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, []);
+        await batchAddReplaceRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Created());
     }
 
-    public static async Task<IResult> BatchAddUpdate([FromServices] BatchAddUpdateRunner batchAddUpdateRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
+    public static async Task<IResult> BatchAddUpdate([FromServices] BatchAddUpdateRunner batchAddUpdateRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddUpdateRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, []);
+        await batchAddUpdateRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Created());
     }
@@ -86,32 +87,32 @@ public static class Delegates
         return Results.Created($"/api/{version:2}/{name}/{result.Value<int>()}", result.Value<int>());
     }
 
-    public static async Task<IResult> ErpRemove([FromServices] ErpRemoveRunner erpRemoveRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key)
+    public static async Task<IResult> ErpRemove([FromServices] ErpRemoveRunner erpRemoveRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpRemoveRunner.Run(name, versionVer, keyNum, JsonDocument.Parse("0"), []);
+        await erpRemoveRunner.Run(name, versionVer, keyNum, JsonDocument.Parse("0"), [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Ok());
     }
 
-    public static async Task<IResult> ErpReplace([FromServices] ErpReplaceRunner erpReplaceRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
+    public static async Task<IResult> ErpReplace([FromServices] ErpReplaceRunner erpReplaceRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpReplaceRunner.Run(name, versionVer, keyNum, payload, []);
+        await erpReplaceRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Ok());
     }
 
-    public static async Task<IResult> ErpUpdate([FromServices] ErpUpdateRunner erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload)
+    public static async Task<IResult> ErpUpdate([FromServices] ErpUpdateRunner erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, []);
+        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode??"")]);
 
         return await Task.FromResult(Results.Ok());
     }

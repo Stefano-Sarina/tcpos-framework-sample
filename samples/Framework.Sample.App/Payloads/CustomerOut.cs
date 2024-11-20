@@ -1,4 +1,6 @@
-﻿namespace Framework.Sample.App.Payloads;
+﻿using TCPOS.Data.Batches.Abstracts.Concurrency;
+
+namespace Framework.Sample.App.Payloads;
 
 public class CustomerOut : CustomerIn
 {
@@ -6,5 +8,9 @@ public class CustomerOut : CustomerIn
     {
         get;
         set;
+    }
+    public string ConcurrencyCode
+    {
+        get;set;
     }
 }

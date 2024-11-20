@@ -7,4 +7,8 @@ public class OrderOut<T> : OrderIn<T>
         get;
         set;
     }
+    public string ConcurrencyCode
+    {
+        get; set;
+    }
 }

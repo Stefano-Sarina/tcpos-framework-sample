@@ -13,6 +13,38 @@ namespace Framework.Sample.AppTests;
 public partial class AppTests
 {
     [Fact]
+    public async Task ConcurrencyShouldWork()
+    {
+        var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
+
+        foreach (var customer in customers.ToEnumerableOrEmpty())
+        {
+            await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{customer.Id}", HttpStatusCode.OK);
+        }
+        var customerIn = new CustomerIn
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        };
+        var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+        var concurrencyCode=customers.First().ConcurrencyCode;
+
+        customerIn = new CustomerIn
+        {
+            FirstName = "Angelo",
+            LastName = "Bianchi"
+        };
+        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}/wrong-code", customerIn, HttpStatusCode.BadRequest);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
+
+        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}/{WebUtility.UrlEncode(concurrencyCode)}", customerIn, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+    }
+    [Fact]
     public async Task BatchShouldWork()
     {
         var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);

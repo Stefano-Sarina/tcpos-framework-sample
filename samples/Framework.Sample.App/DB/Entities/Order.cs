@@ -2,25 +2,29 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
+using TCPOS.Data.Batches.Abstracts.Concurrency;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
-public class Order : IDEntity
+public class Order : Entity
 {
+    [ConcurrencyItem]
     [PrimaryKeyField]
-    public int Id
+    public override int Id
     {
         get;
         set;
     }
 
+    [ConcurrencyItem]
     public DateOnly OrderDate
     {
         get;
         set;
     }
 
+    [ConcurrencyItem]
     [StringLength(int.MaxValue)]
     public string? Notes
     {
@@ -28,6 +32,7 @@ public class Order : IDEntity
         set;
     }
 
+    [ConcurrencyItem]
     [ForeignKey(nameof(Customer))]
     public int CustomerId
     {

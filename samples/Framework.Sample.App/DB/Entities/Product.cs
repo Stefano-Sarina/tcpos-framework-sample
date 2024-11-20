@@ -1,19 +1,22 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
+using TCPOS.Data.Batches.Abstracts.Concurrency;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
-public class Product : IDEntity
+public class Product : Entity
 {
+    [ConcurrencyItem]
     [PrimaryKeyField]
-    public int Id
+    public override int Id
     {
         get;
         set;
     }
 
+    [ConcurrencyItem]
     [UniqueKeyField]
     [StringLength(40, MinimumLength = 1)]
     public string Name
@@ -22,6 +25,7 @@ public class Product : IDEntity
         set;
     }
 
+    [ConcurrencyItem]
     public decimal Price
     {
         get;

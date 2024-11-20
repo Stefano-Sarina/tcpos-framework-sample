@@ -7,4 +7,8 @@ public class ProductOut : ProductIn
         get;
         set;
     }
+    public string ConcurrencyCode
+    {
+        get; set;
+    }
 }

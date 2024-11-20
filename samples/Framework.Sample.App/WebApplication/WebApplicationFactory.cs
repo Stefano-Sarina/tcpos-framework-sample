@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
+using TCPOS.AspNetCore.DataBind.Implementations.Batches.Concurrency;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Data.Batches.Payload;
@@ -62,6 +63,8 @@ public static class WebApplicationFactory
 
     private static void ConfigureApplication(Microsoft.AspNetCore.Builder.WebApplication webApplication)
     {
+        webApplication.UseMiddleware<ExceptionMiddleware>();
+
         webApplication.UseAuthentication();
 
         webApplication.UseSwagger();
@@ -73,14 +76,14 @@ public static class WebApplicationFactory
             batchRouteMapper.MapBatchRun("/api/1.0/Batch/{batchId}/Run", Delegates.BatchRun);
 
             batchRouteMapper.MapBatchAddInsert(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/insert", Delegates.BatchAddInsert);
-            batchRouteMapper.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}", Delegates.BatchAddRemove);
-            batchRouteMapper.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}", Delegates.BatchAddReplace);
-            batchRouteMapper.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}", Delegates.BatchAddUpdate);
+            batchRouteMapper.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}/{concurrencyCode?}", Delegates.BatchAddRemove);
+            batchRouteMapper.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}/{concurrencyCode?}", Delegates.BatchAddReplace);
+            batchRouteMapper.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}/{concurrencyCode?}", Delegates.BatchAddUpdate);
 
             batchRouteMapper.MapErpInsert(HttpVerbs.Post, "/api/{version}/{name}/", Delegates.ErpInsert);
-            batchRouteMapper.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}", Delegates.ErpRemove);
-            batchRouteMapper.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}", Delegates.ErpReplace);
-            batchRouteMapper.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}", Delegates.ErpUpdate);
+            batchRouteMapper.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpRemove);
+            batchRouteMapper.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpReplace);
+            batchRouteMapper.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpUpdate);
         }, dataPullOutRouteMapper =>
         {
             dataPullOutRouteMapper.MapDataPullOut(HttpVerbs.Get, "/api/{version}/{name}", Delegates.DataPullOut);
@@ -150,24 +153,24 @@ public static class WebApplicationFactory
             c.AddBatches<InMemoryBatchStorage, StorageProvider>()
               //Customer
              .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<DbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<DbContextTypedPatchBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<DbContextTypedDeleteBatchCommand<Customer>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Customer, CustomerIn, CustomerIn>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Customer>>()
               //Order
              .AddBatchItem<DbContextTypedPostBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedPutBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedPatchBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedDeleteBatchCommand<Order>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Order>>()
               //OrderDetail
              .AddBatchItem<DbContextTypedPostBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedPutBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedPatchBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<DbContextTypedDeleteBatchCommand<OrderDetail>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<OrderDetail>>()
               //Product
              .AddBatchItem<DbContextTypedPostBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<DbContextTypedPutBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<DbContextTypedPatchBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<DbContextTypedDeleteBatchCommand<Product>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Product, ProductIn, ProductIn>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Product, ProductIn, ProductIn>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Product>>()
                 ;
         });
     }
