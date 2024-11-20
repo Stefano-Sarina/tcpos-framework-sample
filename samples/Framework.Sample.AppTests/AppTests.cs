@@ -15,34 +15,126 @@ public partial class AppTests
     [Fact]
     public async Task ConcurrencyShouldWork()
     {
+        // Get all customers
         var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", HttpStatusCode.OK);
 
+        // Delete all customers
         foreach (var customer in customers.ToEnumerableOrEmpty())
         {
             await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{customer.Id}", HttpStatusCode.OK);
         }
+
+        // Create a new customer
         var customerIn = new CustomerIn
         {
             FirstName = "Dario",
             LastName = "Rossi"
         };
         var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
+
+        // Verify the customer was created
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
-        var concurrencyCode=customers.First().ConcurrencyCode;
+        var concurrencyCode = customers.First().ConcurrencyCode;
 
+        // Attempt to update the customer with a wrong concurrency code
         customerIn = new CustomerIn
         {
             FirstName = "Angelo",
             LastName = "Bianchi"
         };
-        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}/wrong-code", customerIn, HttpStatusCode.BadRequest);
+        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}/wrong-code", customerIn, HttpStatusCode.Conflict);
+
+        // Verify the update failed
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
+        // Update the customer with the correct concurrency code
         await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}/{WebUtility.UrlEncode(concurrencyCode)}", customerIn, HttpStatusCode.OK);
+
+        // Verify the update succeeded
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
+
+        // Update the customer without concurrency code
+        customerIn = new CustomerIn
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        };
+        await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}", customerIn, HttpStatusCode.OK);
+
+        // Verify the update succeeded
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+        concurrencyCode = customers.First().ConcurrencyCode;
+
+        // Attempt to patch the customer with a wrong concurrency code
+        var payload = new Operation<CustomerIn>
+        {
+            op = "replace",
+            path = "/FirstName",
+            value = "Mario"
+        };
+        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}/wrong-code", new[] { payload }, HttpStatusCode.Conflict);
+
+        // Verify the patch failed
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
+
+        // Patch the customer with the correct concurrency code
+        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}/{WebUtility.UrlEncode(concurrencyCode)}", new[] { payload }, HttpStatusCode.OK);
+
+        // Verify the patch succeeded
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        // Patch the customer without concurrency code
+        payload = new Operation<CustomerIn>
+        {
+            op = "replace",
+            path = "/FirstName",
+            value = "Dario"
+        };
+        await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}", new[] { payload }, HttpStatusCode.OK);
+
+        // Verify the patch succeeded
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+        concurrencyCode = customers.First().ConcurrencyCode;
+
+        // Attempt to delete the customer with a wrong concurrency code
+        await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{id}/wrong-code", HttpStatusCode.Conflict);
+
+        // Verify the delete failed
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        // Delete the customer with the correct concurrency code
+        await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{id}/{WebUtility.UrlEncode(concurrencyCode)}", HttpStatusCode.OK);
+
+        // Verify the delete succeeded
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
+
+        // Create a new customer again
+        customerIn = new CustomerIn
+        {
+            FirstName = "Dario",
+            LastName = "Rossi"
+        };
+        id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
+
+        // Verify the customer was created
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(1);
+
+        // Delete the customer without concurrency code
+        await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{id}", HttpStatusCode.OK);
+
+        // Verify the customer was deleted
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers.Should().HaveCount(0);
     }
     [Fact]
     public async Task BatchShouldWork()
