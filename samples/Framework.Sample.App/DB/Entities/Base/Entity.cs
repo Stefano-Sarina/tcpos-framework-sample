@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Infrastructure;
 using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
+using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.DB.Entities;
 
