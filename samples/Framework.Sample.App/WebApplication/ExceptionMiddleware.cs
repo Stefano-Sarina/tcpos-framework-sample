@@ -36,6 +36,9 @@ internal class ExceptionMiddleware(RequestDelegate next)
                 case BatchExceptionCode.PayloadValidationError:
                     await Results.BadRequest(e.Message).ExecuteAsync(context);
                     break;
+                case BatchExceptionCode.InvalidVisibility:
+                    await Results.BadRequest(e.Message).ExecuteAsync(context);
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
