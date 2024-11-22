@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using TCPOS.AspNetCore.DataBind.Configuration;
+using TCPOS.AspNetCore.DataBind.Exceptions;
 using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches.Concurrency;
