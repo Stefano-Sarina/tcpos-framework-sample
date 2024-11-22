@@ -48,12 +48,12 @@ public static class Delegates
         return await Task.FromResult(Results.Created());
     }
 
-    public static async Task<IResult> BatchAddRemove([FromServices] BatchAddRemoveRunner batchAddRemoveRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
+    public static async Task<IResult> BatchAddRemove([FromServices] BatchAddRemoveRunner batchAddRemoveRunner, [FromRoute] string batchId, [FromRoute] string commandId, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromRoute] string? concurrencyCode)
     {
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, JsonDocument.Parse("0"), [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Created());
     }
@@ -112,7 +112,7 @@ public static class Delegates
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode??"")]);
+        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Ok());
     }

@@ -11,11 +11,11 @@ namespace Framework.Sample.AppTests.Helpers;
 
 internal static class HttpClientExtensions
 {
-    public static async Task RunBatch(this HttpClient httpClient, int numCommands, int ttl, Func<string, Task> commands)
+    public static async Task RunBatch(this HttpClient httpClient, int numCommands, int ttl, Func<string, Task> commands, HttpStatusCode expectedRunStatusCode)
     {
         var batchId = await httpClient.HttpPostAsync<object, string>($"/api/1.0/Batch/{numCommands}/{ttl}", new object(), HttpStatusCode.Created);
         await commands(batchId!);
-        await httpClient.HttpPutAsync<object, string>($"/api/1.0/Batch/{batchId}/Run", new object(), HttpStatusCode.OK);
+        await httpClient.HttpPutAsync<object, string>($"/api/1.0/Batch/{batchId}/Run", new object(), expectedRunStatusCode);
     }
 
     internal static async Task<T[]?> ODataHttpGetAsync<T>(this HttpClient httpClient, string endPoint, HttpStatusCode expectedStatusCode)
@@ -53,9 +53,17 @@ internal static class HttpClientExtensions
         var readAsStringAsync = await response.Content.ReadAsStringAsync();
         return readAsStringAsync.DeSerialize<To>();
     }
+
     internal static async Task HttpPostAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
     {
         using var postContent = payload.ToStringContent();
+        using var response = await httpClient.PostAsync(endPoint, postContent);
+        response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [POST:{endPoint}]");
+    }
+
+    internal static async Task HttpPostAsync(this HttpClient httpClient, string endPoint, HttpStatusCode expectedStatusCode)
+    {
+        using var postContent = ((string)null).ToStringContent();
         using var response = await httpClient.PostAsync(endPoint, postContent);
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [POST:{endPoint}]");
     }

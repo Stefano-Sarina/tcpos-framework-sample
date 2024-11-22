@@ -1,6 +1,9 @@
-﻿namespace Framework.Sample.App.Payloads;
+﻿using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
+using TCPOS.Data.Batches.Interfaces;
 
-public class ProductOut : ProductIn
+namespace Framework.Sample.App.Payloads;
+
+public class ProductOut : ProductIn, IDEntity, IConcurrencyEntity
 {
     public int Id
     {
