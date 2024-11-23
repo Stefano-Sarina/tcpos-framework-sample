@@ -254,16 +254,6 @@ public partial class AppTests
         customers.Should().HaveCount(0);
     }
 
-    private async Task RemoveAll<T>(string entityName)
-        where T:IDEntity
-    {
-        var entities = await _httpClient.ODataHttpGetAsync<T>($"/api/1.0/{entityName}", HttpStatusCode.OK);
-        foreach (var entity in entities.ToEnumerableOrEmpty())
-        {
-            await _httpClient.HttpDeleteAsync($"/api/1.0/{entityName}/{entity.Id}", HttpStatusCode.OK);
-        }
-    }
-
     [Fact]
     public async Task BatchShouldWork()
     {
