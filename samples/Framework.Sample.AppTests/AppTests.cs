@@ -16,8 +16,10 @@ public partial class AppTests
     [Fact]
     public async Task BatchConcurrencyShouldWork()
     {
+        // Remove all existing customers
         await RemoveAll<CustomerOut>("Customer");
 
+        // Create a new customer
         var customerIn = new CustomerIn
         {
             FirstName = "Dario",
@@ -25,10 +27,12 @@ public partial class AppTests
         };
         var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
 
+        // Verify the customer was created
         var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         var concurrencyCode = customers.First().ConcurrencyCode;
 
+        // Attempt to update the customer with a wrong concurrency code
         customerIn = new CustomerIn
         {
             FirstName = "Angelo",
@@ -39,17 +43,21 @@ public partial class AppTests
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{id}/wrong-code", customerIn, HttpStatusCode.Created);
         }, HttpStatusCode.Conflict);
 
+        // Verify the customer was not updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
+        // Update the customer with the correct concurrency code
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{id}/{WebUtility.UrlEncode(concurrencyCode)}", customerIn, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer was updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Revert the customer to the original state
         customerIn = new CustomerIn
         {
             FirstName = "Dario",
@@ -60,10 +68,12 @@ public partial class AppTests
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{id}", customerIn, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer was reverted
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         concurrencyCode = customers.First().ConcurrencyCode;
 
+        // Attempt to update the customer's first name with a wrong concurrency code
         var payload = new Operation<CustomerIn>
         {
             op = "replace",
@@ -75,17 +85,21 @@ public partial class AppTests
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}/wrong-code", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.Conflict);
 
+        // Verify the customer's first name was not updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
+        // Update the customer's first name with the correct concurrency code
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}/{WebUtility.UrlEncode(concurrencyCode)}", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer's first name was updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Revert the customer's first name to the original state
         payload = new Operation<CustomerIn>
         {
             op = "replace",
@@ -97,26 +111,32 @@ public partial class AppTests
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer's first name was reverted
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         concurrencyCode = customers.First().ConcurrencyCode;
 
+        // Attempt to remove the customer with a wrong concurrency code
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{id}/wrong-code", HttpStatusCode.Created);
         }, HttpStatusCode.Conflict);
 
+        // Verify the customer was not removed
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Remove the customer with the correct concurrency code
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{id}/{WebUtility.UrlEncode(concurrencyCode)}", HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer was removed
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
+        // Create the customer again
         customerIn = new CustomerIn
         {
             FirstName = "Dario",
@@ -124,14 +144,17 @@ public partial class AppTests
         };
         id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
 
+        // Verify the customer was created
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Remove the customer
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{id}", HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
+        // Verify the customer was removed
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
     }
@@ -257,51 +280,69 @@ public partial class AppTests
     [Fact]
     public async Task BatchShouldWork()
     {
+        // Remove all existing customers
         await RemoveAll<CustomerOut>("Customer");
 
+        // Create a new customer
         var customerIn = new CustomerIn
         {
             FirstName = "Dario",
             LastName = "Rossi"
         };
 
+        // Insert the new customer in a batch operation
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
+
+        // Verify the customer was inserted
         var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         var id = customers.First().Id;
 
+        // Prepare a payload to update the customer's first name
         var payload = new Operation<CustomerIn>
         {
             op = "replace",
             path = "/FirstName",
             value = "Mario"
         };
+
+        // Update the customer's first name in a batch operation
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
+
+        // Verify the customer's first name was updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Create another customer
         customerIn = new CustomerIn
         {
             FirstName = "Angelo",
             LastName = "Bianchi"
         };
+
+        // Replace the existing customer with the new customer in a batch operation
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Replace}/{id}", customerIn, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
+
+        // Verify the customer was replaced
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Remove the customer in a batch operation
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Remove}/{id}", HttpStatusCode.Created);
         }, HttpStatusCode.OK);
+
+        // Verify the customer was removed
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
     }
@@ -309,17 +350,22 @@ public partial class AppTests
     [Fact]
     public async Task ErpShouldWork()
     {
+        // Remove all existing customers
         await RemoveAll<CustomerOut>("Customer");
 
+        // Create a new customer
         var customerIn = new CustomerIn
         {
             FirstName = "Dario",
             LastName = "Rossi"
         };
         var id = await _httpClient.HttpPostAsync<CustomerIn, int>("/api/1.0/Customer/", customerIn, HttpStatusCode.Created);
+
+        // Verify the customer was created
         var customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Update the customer's first name
         var payload = new Operation<CustomerIn>
         {
             op = "replace",
@@ -327,19 +373,27 @@ public partial class AppTests
             value = "Mario"
         };
         await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}", new[] { payload }, HttpStatusCode.OK);
+
+        // Verify the customer's first name was updated
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Replace the customer with a new one
         customerIn = new CustomerIn
         {
             FirstName = "Angelo",
             LastName = "Bianchi"
         };
         await _httpClient.HttpPutAsync($"/api/1.0/Customer/{id}", customerIn, HttpStatusCode.OK);
+
+        // Verify the customer was replaced
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
+        // Delete the customer
         await _httpClient.HttpDeleteAsync($"/api/1.0/Customer/{id}", HttpStatusCode.OK);
+
+        // Verify the customer was deleted
         customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == customerIn.FirstName && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
     }
