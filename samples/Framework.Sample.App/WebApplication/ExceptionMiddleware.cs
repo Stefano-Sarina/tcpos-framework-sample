@@ -42,7 +42,6 @@ public class ExceptionMiddleware(RequestDelegate next)
                     }).ExecuteAsync(context);
                     break;
                 case BatchExceptionCode.PayloadValidationError:
-                case BatchExceptionCode.InvalidVisibility:
                     await Results.BadRequest(new HttpExceptionExplanation
                     {
                         Message = e.Message,
