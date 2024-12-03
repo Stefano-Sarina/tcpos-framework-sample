@@ -3,7 +3,7 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class OrderOut<T> : OrderIn<T>, IDEntity, IConcurrencyEntity
+public class OrderOut<T> : OrderIn<T>, IIDEntity, IConcurrencyEntity
 {
     public int Id
     {

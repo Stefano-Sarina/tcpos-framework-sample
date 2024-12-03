@@ -4,7 +4,7 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class CustomerOut : CustomerIn, IDEntity,IConcurrencyEntity
+public class CustomerOut : CustomerIn, IIDEntity,IConcurrencyEntity
 {
     public int Id
     {

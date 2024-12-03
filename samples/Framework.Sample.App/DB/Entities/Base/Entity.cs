@@ -4,7 +4,7 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.DB.Entities.Base;
 
-public abstract class Entity : IDEntity, IConcurrencyEntity
+public abstract class Entity : IIDEntity, IConcurrencyEntity
 {
     public abstract int Id
     {

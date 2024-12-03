@@ -34,7 +34,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     }
 
     private async Task RemoveAll<T>(string entityName)
-        where T:IDEntity
+        where T:IIDEntity
     {
         var entities = await _httpClient.ODataHttpGetAsync<T>($"/api/1.0/{entityName}", HttpStatusCode.OK);
         foreach (var entity in entities.ToEnumerableOrEmpty())
