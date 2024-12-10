@@ -5,13 +5,15 @@ namespace Framework.Sample.App.Payloads;
 
 public class OrderDetailOut<T> : OrderDetailIn<T>, IIDEntity, IConcurrencyEntity
 {
-    public int Id
+    public string ConcurrencyCode
     {
         get;
         set;
     }
-    public string ConcurrencyCode
+
+    public int Id
     {
-        get; set;
+        get;
+        set;
     }
 }

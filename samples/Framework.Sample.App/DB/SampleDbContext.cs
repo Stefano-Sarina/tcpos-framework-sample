@@ -17,12 +17,50 @@ public class SampleDbContext(DbContextOptions options) : DbContextBase(options)
         get;
         set;
     }
+
     public DbSet<Order> Orders
     {
         get;
         set;
     }
+
     public DbSet<OrderDetail> OrderDetails
+    {
+        get;
+        set;
+    }
+
+    public DbSet<User> Users
+    {
+        get;
+        set;
+    }
+
+    public DbSet<Group> Groups
+    {
+        get;
+        set;
+    }
+
+    public DbSet<UserGroup> UserGroups
+    {
+        get;
+        set;
+    }
+
+    public DbSet<Permission> Permissions
+    {
+        get;
+        set;
+    }
+
+    public DbSet<UserPermission> UserPermissions
+    {
+        get;
+        set;
+    }
+
+    public DbSet<GroupPermission> GroupPermissions
     {
         get;
         set;
