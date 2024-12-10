@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Net.Http.Headers;
+using Azure;
 using Framework.Sample.App.WebApplication;
 using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.Builder;
@@ -16,10 +18,12 @@ public partial class AppTests : IDisposable, IAsyncDisposable
 
     public AppTests()
     {
-        _webApplication = WebApplicationFactory.Create(Array.Empty<string>(), new WebApplicationFactoryOptions(true,true)).Result;
+        _webApplication = WebApplicationFactory.Create(Array.Empty<string>(), new WebApplicationFactoryOptions(true, true)).Result;
         _webApplication.Start();
         _httpClient = _webApplication.GetTestClient();
-        _httpClient. PostAsync("/api/login?isAdmin=true",null).Wait();
+        var responseMessage = _httpClient.PostAsync("/api/login?isAdmin=true", null).Result;
+        var cookie = responseMessage.Headers.SingleOrDefault(header => header.Key == "Set-Cookie").Value.ToEnumerableOrEmpty().First();
+        _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
     }
 
     public async ValueTask DisposeAsync()
@@ -35,9 +39,10 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     }
 
     private async Task RemoveAll<T>(string entityName)
-        where T:IIDEntity
+        where T : IIDEntity
     {
         var entities = await _httpClient.ODataHttpGetAsync<T>($"/api/1.0/{entityName}", HttpStatusCode.OK);
+
         foreach (var entity in entities.ToEnumerableOrEmpty())
         {
             await _httpClient.HttpDeleteAsync($"/api/1.0/{entityName}/{entity.Id}", HttpStatusCode.OK);
