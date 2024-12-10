@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Security.Claims;
 using AutoMapper;
+using Framework.Sample.App.Authorization.DataPullOuts;
 using Framework.Sample.App.Authorization.Extensions;
 using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.Configuration;
@@ -212,7 +213,9 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
              //UserPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
-                ;
+             //OperatorPermissions
+             .AddDataPullOutItem<OperatorPermissionsDataPullOut>()
+             ;
 
             c.AddBatches<InMemoryBatchStorage, StorageProvider>()
               //Customer

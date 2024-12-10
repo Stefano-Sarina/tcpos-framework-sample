@@ -53,7 +53,7 @@ public static class Delegates
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Created());
     }
@@ -63,7 +63,7 @@ public static class Delegates
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddReplaceRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await batchAddReplaceRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Created());
     }
@@ -73,7 +73,7 @@ public static class Delegates
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddUpdateRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await batchAddUpdateRunner.Run(batchId, commandIdNum, name, versionVer, key, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Created());
     }
@@ -92,7 +92,7 @@ public static class Delegates
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpRemoveRunner.Run(name, versionVer, keyNum, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await erpRemoveRunner.Run(name, versionVer, keyNum, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
@@ -102,7 +102,7 @@ public static class Delegates
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpReplaceRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await erpReplaceRunner.Run(name, versionVer, keyNum, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
@@ -112,7 +112,7 @@ public static class Delegates
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
@@ -145,4 +145,6 @@ public static class Delegates
 
         return await erpUpdateRunner.GetSchema(name, versionVer);
     }
+    private static AdditionalData[] GetAdditionalData(string? concurrencycode)
+        => !string.IsNullOrEmpty(concurrencycode) ? [new AdditionalData("ConcurrencyCode", Uri.UnescapeDataString(concurrencycode))] : [];
 }
