@@ -14,13 +14,12 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\tcpos-authorization\src\TCPOS.Authorization\TCPOS.Authorization.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind.Implementations\TCPOS.AspNetCore.DataBind.Implementations.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.AspNetCore.DataBind\TCPOS.AspNetCore.DataBind.csproj" />
-    <ProjectReference Include="..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj" />
+    <PackageReference Include="TCPOS.AspNetCore.DataBind" Version="0.1.0" />
+    <PackageReference Include="TCPOS.AspNetCore.DataBind.Implementations" Version="0.1.0" />
+    <PackageReference Include="TCPOS.Authorization" Version="0.1.0" />
+    <PackageReference Include="TCPOS.Common" Version="0.1.0" />
+    <PackageReference Include="TCPOS.Data.Batches" Version="0.1.0" />
+    <PackageReference Include="TCPOS.EntityFramework" Version="0.1.0" />
   </ItemGroup>
 
   <ItemGroup>

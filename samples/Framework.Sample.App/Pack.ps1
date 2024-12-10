@@ -9,6 +9,7 @@
 & dotnet pack $PSScriptRoot\..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj -o $PSScriptRoot/Packages --include-symbols
 & dotnet pack $PSScriptRoot\..\..\src\TCPOS.Common\TCPOS.Common.csproj -o $PSScriptRoot/Packages --include-symbols
 & dotnet pack $PSScriptRoot\..\..\src\TCPOS.Common.CommandLine\TCPOS.Common.CommandLine.csproj -o $PSScriptRoot/Packages --include-symbols
+& dotnet pack $PSScriptRoot\..\..\src\TCPOS.Data.Batches\TCPOS.Data.Batches.csproj -o $PSScriptRoot/Packages --include-symbols
 & dotnet pack $PSScriptRoot\..\..\..\tcpos-authorization\src\TCPOS.Authorization\TCPOS.Authorization.csproj -o $PSScriptRoot/Packages --include-symbols
 
 # Remove-Item $PSScriptRoot/Publish/*.pdb -Force -Recurse
