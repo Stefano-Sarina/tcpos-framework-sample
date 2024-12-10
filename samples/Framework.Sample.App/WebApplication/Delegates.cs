@@ -53,7 +53,7 @@ public static class Delegates
         Safety.Check(int.TryParse(commandId, out var commandIdNum), new HttpException(HttpStatusCode.BadRequest, "Invalid CommandId"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key,  [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
+        await batchAddRemoveRunner.Run(batchId, commandIdNum, name, versionVer, key, [new AdditionalData("concurrencyCode", concurrencyCode ?? "")]);
 
         return await Task.FromResult(Results.Created());
     }

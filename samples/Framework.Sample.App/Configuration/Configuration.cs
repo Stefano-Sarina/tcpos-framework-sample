@@ -6,11 +6,11 @@ public class Configuration
     {
         get;
         set;
-    }=new Debug();
+    } = new();
 
     public DatabaseConnection DatabaseConnection
     {
         get;
         set;
-    }=new DatabaseConnection();
+    } = new();
 }

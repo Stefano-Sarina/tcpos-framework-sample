@@ -7,6 +7,7 @@ public class Debug
         get;
         set;
     }
+
     public bool FillDemoData
     {
         get;

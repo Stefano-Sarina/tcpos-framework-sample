@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.AspNetCore.DataBind.I
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Sample.AppTests", "..\Framework.Sample.AppTests\Framework.Sample.AppTests.csproj", "{CEBE6392-2496-4C48-903D-306138E19AB0}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.Data.Batches", "..\..\src\TCPOS.Data.Batches\TCPOS.Data.Batches.csproj", "{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

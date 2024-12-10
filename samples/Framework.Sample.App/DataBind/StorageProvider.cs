@@ -7,7 +7,7 @@ namespace Framework.Sample.App.DataBind;
 public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDisposable, IAsyncDisposable
 {
     private IDbContextTransaction? _transaction;
-    bool _transactionInProgress = false;
+    private bool _transactionInProgress;
 
     public async ValueTask DisposeAsync()
     {
@@ -29,7 +29,7 @@ public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDis
             return;
         }
 
-        if(_transactionInProgress)
+        if (_transactionInProgress)
         {
             _transaction.Rollback();
         }

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Framework.Sample.App.DB.Entities.Base;
-using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
 using TCPOS.EntityFramework.Attributes;
 
