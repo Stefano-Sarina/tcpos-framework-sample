@@ -5,19 +5,7 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Sample.App", "Framework.Sample.App.csproj", "{EDCCEB2F-4065-4923-BF25-E55783F14F47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.AspNetCore.DataBind", "..\..\src\TCPOS.AspNetCore.DataBind\TCPOS.AspNetCore.DataBind.csproj", "{6D440C31-ACB3-419F-A582-723210C82683}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.EntityFramework", "..\..\src\TCPOS.EntityFramework\TCPOS.EntityFramework.csproj", "{459CEB96-318C-4D46-BD1B-DC9FBD43D5E7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.Authorization", "..\..\..\tcpos-authorization\src\TCPOS.Authorization\TCPOS.Authorization.csproj", "{6BCB5D6D-3C74-405B-B3D4-FE3B0934A8D3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.Common", "..\..\src\TCPOS.Common\TCPOS.Common.csproj", "{4357B9E6-95AB-4EDE-8FB0-04F5E94DC950}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.AspNetCore.DataBind.Implementations", "..\..\src\TCPOS.AspNetCore.DataBind.Implementations\TCPOS.AspNetCore.DataBind.Implementations.csproj", "{C1245BA0-DA88-4467-8FB5-24A85AE616FC}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Framework.Sample.AppTests", "..\Framework.Sample.AppTests\Framework.Sample.AppTests.csproj", "{CEBE6392-2496-4C48-903D-306138E19AB0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPOS.Data.Batches", "..\..\src\TCPOS.Data.Batches\TCPOS.Data.Batches.csproj", "{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,34 +17,10 @@ Global
 		{EDCCEB2F-4065-4923-BF25-E55783F14F47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDCCEB2F-4065-4923-BF25-E55783F14F47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDCCEB2F-4065-4923-BF25-E55783F14F47}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6D440C31-ACB3-419F-A582-723210C82683}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6D440C31-ACB3-419F-A582-723210C82683}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6D440C31-ACB3-419F-A582-723210C82683}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6D440C31-ACB3-419F-A582-723210C82683}.Release|Any CPU.Build.0 = Release|Any CPU
-		{459CEB96-318C-4D46-BD1B-DC9FBD43D5E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{459CEB96-318C-4D46-BD1B-DC9FBD43D5E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{459CEB96-318C-4D46-BD1B-DC9FBD43D5E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{459CEB96-318C-4D46-BD1B-DC9FBD43D5E7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6BCB5D6D-3C74-405B-B3D4-FE3B0934A8D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6BCB5D6D-3C74-405B-B3D4-FE3B0934A8D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6BCB5D6D-3C74-405B-B3D4-FE3B0934A8D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6BCB5D6D-3C74-405B-B3D4-FE3B0934A8D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4357B9E6-95AB-4EDE-8FB0-04F5E94DC950}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4357B9E6-95AB-4EDE-8FB0-04F5E94DC950}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4357B9E6-95AB-4EDE-8FB0-04F5E94DC950}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4357B9E6-95AB-4EDE-8FB0-04F5E94DC950}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C1245BA0-DA88-4467-8FB5-24A85AE616FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C1245BA0-DA88-4467-8FB5-24A85AE616FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C1245BA0-DA88-4467-8FB5-24A85AE616FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C1245BA0-DA88-4467-8FB5-24A85AE616FC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CEBE6392-2496-4C48-903D-306138E19AB0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FC8ACBC-F9C0-44A0-A8F0-AF7B67590A53}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
