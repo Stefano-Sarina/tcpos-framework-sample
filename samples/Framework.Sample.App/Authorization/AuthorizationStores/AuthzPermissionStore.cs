@@ -19,25 +19,27 @@ internal class AuthzPermissionStore(SampleDbContext dbContext) : IAuthzPermissio
         {
             return null;
         }
-
-        var regex = new Regex("(.*)-(.*)$");
-        var match = regex.Match(keyCode);
-
-        if (!match.Success)
-        {
-            return null;
-        }
-
-        PermissionTypes permissionType;
-
-        if (!Enum.TryParse(match.Groups[2].Value, true, out permissionType))
-        {
-            return null;
-        }
-
-        return (await dbContext.Permissions
-                               .FirstOrDefaultAsync(x => x.PermissionName == match.Groups[1].Value && x.PermissionType == permissionType))?
+        
+        return (await dbContext.Permissions.FirstOrDefaultAsync(x => x.PermissionName == keyCode))?
            .ToAuthorizationData();
+
+        //var regex = new Regex("(.*)-(.*)$");
+        //var match = regex.Match(keyCode);
+
+        //if (!match.Success)
+        //{
+        //    return null;
+        //}
+
+        //PermissionTypes permissionType;
+
+        //if (!Enum.TryParse(match.Groups[2].Value, true, out permissionType))
+        //{
+        //    return null;
+        //}
+
+        //return (await dbContext.Permissions.FirstOrDefaultAsync(x => x.PermissionName == match.Groups[1].Value && x.PermissionType == permissionType))?
+        //   .ToAuthorizationData();
     }
 
     public async Task<IEnumerable<AuthzPermission>> GetPermissionsAsync(CancellationToken cancellationToken)

@@ -29,7 +29,7 @@ internal class AuthorizationManagerBaseErp<TAuthzReq>(
 
         Safety.Check(!string.IsNullOrEmpty(name), "Missing 'name' route value");
 
-        var permission = $"{name}-{context.Request.Method}-{PermissionTypes.Api}".ToLower();
+        var permission = $"{name}-{PermissionTypes.Api}-{context.Request.Method}".ToLower();
 
         return permission;
     }

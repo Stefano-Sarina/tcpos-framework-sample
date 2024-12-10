@@ -1,7 +1,6 @@
 ﻿using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using TCPOS.Authorization.FeedDatabase.Engine;
 using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
 using TCPOS.Common.Diagnostics;
@@ -25,7 +24,10 @@ internal class FeedDatabasePersister : IFeedDatabasePersister
             using var _dbContext = scope.ServiceProvider.GetRequiredService<SampleDbContext>();
 
             var permissions = await _dbContext.Permissions.ToListAsync();
-            var missingPermissions = feedDbItems.Where(x => !permissions.Any(y => x.Permission.EqualTo(y))).ToList();
+            var permissionNames = permissions.Select(x => x.PermissionName);
+
+            var existingPermissions = feedDbItems.Where(x => permissionNames.Contains(x.Permission.Name()));
+            var missingPermissions = feedDbItems.Except(existingPermissions).ToList();
 
             if (!missingPermissions.Any())
             {
@@ -34,13 +36,14 @@ internal class FeedDatabasePersister : IFeedDatabasePersister
 
             // remove duplicated permissions: multiple endpoint could refer same permissions
             missingPermissions = missingPermissions.DistinctBy(x => new { x.Permission.KeyCode}).ToList();
-
-            await _dbContext.Permissions.AddRangeAsync(missingPermissions.DistinctBy(p => p.Permission.KeyCode).Select(
+            var missingDbPermissions = missingPermissions.Select(
                 p => new Permission()
                 {
-                    PermissionName = $"{p.Permission.Entity}-{p.Permission.SubType}",
+                    PermissionName = p.Permission.Name(),
                     PermissionType = DB.Enums.PermissionTypes.Api,
-                }));
+                });
+
+            await _dbContext.Permissions.AddRangeAsync(missingDbPermissions);
 
 #if DEBUG
             UserPermission[] userPermissions = _dbContext.Permissions.Local
@@ -75,9 +78,27 @@ internal class FeedDatabasePersister : IFeedDatabasePersister
     }
 }
 
+
+//public class PermissionItemsEqualityComparer : IEqualityComparer<FeedDatabaseItem>
+//{
+//    public bool Equals(FeedDatabaseItem? x, FeedDatabaseItem? y)
+//    {
+//        throw new NotImplementedException();
+//    }
+
+//    public int GetHashCode([DisallowNull] FeedDatabaseItem obj)
+//    {
+//        throw new NotImplementedException();
+//    }
+//}
+
 public static class FeedDbExtension
 {
- 
+    public static string Name(this FeedDatabaseItem.FeedPermission p)
+    {
+        return $"{p.Entity}-{p.Type}-{p.SubType}";
+    }
+
     public static bool EqualTo(this FeedDatabaseItem.FeedPermission feedPermission, Permission permission)
     {
         Safety.Check(permission != null, () => new ArgumentNullException(nameof(permission)));

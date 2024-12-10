@@ -22,6 +22,6 @@ internal class AuthorizationManagerBatch(
         Safety.Check(context != null, new ArgumentNullException(nameof(context)));
         Safety.Check(requirement != null, new ArgumentNullException(nameof(requirement)));
 
-        return $"batch-{context.Request.Method}-{PermissionTypes.Api}".ToLower();
+        return $"batch-{PermissionTypes.Api}-{context.Request.Method}".ToLower();
     }
 }
