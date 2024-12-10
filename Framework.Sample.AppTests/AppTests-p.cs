@@ -16,9 +16,10 @@ public partial class AppTests : IDisposable, IAsyncDisposable
 
     public AppTests()
     {
-        _webApplication = WebApplicationFactory.Create(Array.Empty<string>(), new WebApplicationFactoryOptions(true)).Result;
+        _webApplication = WebApplicationFactory.Create(Array.Empty<string>(), new WebApplicationFactoryOptions(true,true)).Result;
         _webApplication.Start();
         _httpClient = _webApplication.GetTestClient();
+        _httpClient. PostAsync("/api/login?isAdmin=true",null).Wait();
     }
 
     public async ValueTask DisposeAsync()

@@ -1,3 +1,3 @@
 ﻿namespace Framework.Sample.App.WebApplication;
 
-public record WebApplicationFactoryOptions(bool UseTestServer);
+public record WebApplicationFactoryOptions(bool UseTestServer, bool DisableAuthorization);
