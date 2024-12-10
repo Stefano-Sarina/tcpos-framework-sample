@@ -11,7 +11,7 @@ public class CustomerOut : CustomerIn, IIDEntity,IConcurrencyEntity
         set;
     }
 
-    public int Id
+    public string ConcurrencyCode
     {
         get;
         set;

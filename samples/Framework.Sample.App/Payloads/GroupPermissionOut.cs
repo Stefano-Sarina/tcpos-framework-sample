@@ -3,7 +3,7 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class GroupPermissionOut<T> : GroupPermissionIn<T>, IDEntity, IConcurrencyEntity
+public class GroupPermissionOut<T> : GroupPermissionIn<T>, IIDEntity, IConcurrencyEntity
 {
     public int Id
     {

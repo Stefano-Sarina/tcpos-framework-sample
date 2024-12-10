@@ -3,7 +3,7 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class UserGroupOut<T> : UserGroupIn<T>, IDEntity, IConcurrencyEntity
+public class UserGroupOut<T> : UserGroupIn<T>, IIDEntity, IConcurrencyEntity
 {
     public int Id
     {
