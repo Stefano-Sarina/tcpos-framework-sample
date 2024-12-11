@@ -15,34 +15,35 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
             List<Permission> existingPermissions = await sampleDbContext.Permissions.ToListAsync();
             List<PermissionDependency> existingDependencies = await sampleDbContext.PermissionsDependencies.ToListAsync();
 
-            AddApiPermissionsToNodes(nodes, existingPermissions, formsEndpoints.ApplicationName);
+            AddApiPermissionsToRootNodes(nodes, existingPermissions, formsEndpoints.ApplicationName);
             await AddPermissionsAsync(nodes, existingPermissions, formsEndpoints.ApplicationName);
+            // AddPermissionsDependenciesAsync must be after AddPermissionsAsync because we are using the dbcontext.Permissions.Local collection
             await AddPermissionsDependenciesAsync(nodes, existingDependencies, formsEndpoints.ApplicationName);
+            RemoveUnusedPemissions(nodes, existingPermissions, formsEndpoints.ApplicationName);
+            RemoveUnusedPemissionsDependencies(nodes, existingDependencies, formsEndpoints.ApplicationName);
             await sampleDbContext.SaveChangesAsync();
-
-            // remove unsued ??
         }
 
-        private void AddApiPermissionsToNodes(IEnumerable<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
+        private void AddApiPermissionsToRootNodes(IEnumerable<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
         {
             foreach (PermissionNode node in nodes.Where(x => x.Item.PermissionItemEndpoint != null))
             {
-                DB.Entities.Permission? existingPermission = existingPermissions.FirstOrDefault(p => p.PermissionType == DB.Enums.PermissionTypes.Api
+                Permission? existingPermission = existingPermissions.FirstOrDefault(p => p.PermissionType == DB.Enums.PermissionTypes.Api
                     && p.PermissionName.Equals(node.Item.ApiPermissionName, StringComparison.InvariantCultureIgnoreCase));
 
-                Safety.Check(existingPermission != null, $"{node.Item.PermissionItemEndpoint.Verb} {node.Item.PermissionItemEndpoint.Url} permission not found");
+                Safety.Check(existingPermission != null, $"{node.Item.PermissionItemEndpoint!.Verb} {node.Item.PermissionItemEndpoint!.Url} permission not found");
 
                 node.Item.PermissionItemParents = node.Item.PermissionItemParents == null ?
                                                       [existingPermission.PermissionName] :
                                                       [.. node.Item.PermissionItemParents, existingPermission.PermissionName];
 
-                AddApiPermissionsToNodes(node.ParentNodes.ToEnumerableOrEmpty(), existingPermissions, applicationName);
+                AddApiPermissionsToRootNodes(node.ParentNodes.ToEnumerableOrEmpty(), existingPermissions, applicationName);
             }
         }
 
         private async Task AddPermissionsAsync(List<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
         {
-            IEnumerable<Permission> permissionsToAdd = nodes.Where(n => n.Item.PermissionItemEndpoint == null 
+            IEnumerable<Permission> permissionsToAdd = nodes.Where(n => n.Item.PermissionItemEndpoint == null
                 && !existingPermissions.Any(p => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)))
                 .Select(n => new Permission()
                 {
@@ -78,6 +79,44 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
             }
 
             await sampleDbContext.PermissionsDependencies.AddRangeAsync(dependencies);
+        }
+
+        private void RemoveUnusedPemissions(List<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
+        {
+            IEnumerable<Permission> permissionsToRemove = existingPermissions.Where(p => p.PermissionType == DB.Enums.PermissionTypes.UI &&
+                !nodes.Any(n => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)));
+
+            sampleDbContext.Permissions.RemoveRange(permissionsToRemove);
+        }
+
+        private void RemoveUnusedPemissionsDependencies(List<PermissionNode> nodes, List<PermissionDependency> existingDependencies, string applicationName)
+        {
+            List<PermissionDependency> nodesDependencies = [];
+            foreach (PermissionNode node in nodes)
+            {
+                foreach (PermissionNode parentNode in node.ParentNodes.ToEnumerableOrEmpty())
+                {
+                    Permission? parentPermission = sampleDbContext.Permissions.Local
+                        .FirstOrDefault(p => p.PermissionName.Equals(parentNode.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase));
+                    Permission? childPermission = sampleDbContext.Permissions.Local
+                        .FirstOrDefault(p => p.PermissionName.Equals(node.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase));
+
+                    if (parentPermission != null && childPermission != null)
+                    {
+                        nodesDependencies.Add(new PermissionDependency()
+                        {
+                            ChildPermissionId = childPermission.Id,
+                            ParentPermissionId = parentPermission.Id
+                        });
+                    }
+                }
+            }
+
+            // delete all dependencies that exists in existing and not in nodes
+            IEnumerable<PermissionDependency> dependenciesToRemove = existingDependencies
+                .Where(ed => !nodesDependencies.Any(nd => nd.ParentPermissionId == ed.ParentPermissionId && nd.ChildPermissionId == ed.ChildPermissionId));
+
+           sampleDbContext.PermissionsDependencies.RemoveRange(dependenciesToRemove);
         }
     }
 }
