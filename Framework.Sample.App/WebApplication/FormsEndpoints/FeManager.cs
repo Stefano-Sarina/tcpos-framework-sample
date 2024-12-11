@@ -1,5 +1,6 @@
 ﻿using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
+using Framework.Sample.App.Payloads;
 using Microsoft.EntityFrameworkCore;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Common.Linq.Extensions;
@@ -12,6 +13,13 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
         {
             List<PermissionNode> nodes = PermissionNode.GetNodes(formsEndpoints);
 
+            AdWebEntityVersion adWebEntityVersion = await GetAdWebEntityVersion(formsEndpoints.ApplicationName);
+            bool isAppVersionNewer = new Version(formsEndpoints.Version) > new Version(adWebEntityVersion.Version);
+            if (!isAppVersionNewer)
+            {
+                return;
+            }
+
             List<Permission> existingPermissions = await sampleDbContext.Permissions.ToListAsync();
             List<PermissionDependency> existingDependencies = await sampleDbContext.PermissionsDependencies.ToListAsync();
 
@@ -21,7 +29,29 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
             await AddPermissionsDependenciesAsync(nodes, existingDependencies, formsEndpoints.ApplicationName);
             RemoveUnusedPemissions(nodes, existingPermissions, formsEndpoints.ApplicationName);
             RemoveUnusedPemissionsDependencies(nodes, existingDependencies, formsEndpoints.ApplicationName);
+
+            adWebEntityVersion.Version = formsEndpoints.Version;
+
             await sampleDbContext.SaveChangesAsync();
+        }
+
+        private async Task<AdWebEntityVersion> GetAdWebEntityVersion(string applicationName)
+        {
+            AdWebEntityVersion? dbAdWebEntityVersion = await sampleDbContext.AdWebEntityVersions
+                                .FirstOrDefaultAsync(x => x.EntityName == applicationName);
+
+            if (dbAdWebEntityVersion == null)
+            {
+                dbAdWebEntityVersion = new AdWebEntityVersion()
+                {
+                    EntityName = applicationName,
+                    Version = new Version(0, 0).ToString(),
+                };
+
+                await sampleDbContext.AdWebEntityVersions.AddAsync(dbAdWebEntityVersion);
+            }
+
+            return dbAdWebEntityVersion;
         }
 
         private void AddApiPermissionsToRootNodes(IEnumerable<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)

@@ -216,7 +216,8 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
               //OperatorPermissions
              .AddDataPullOutItem<OperatorPermissionsDataPullOut>()
-                ;
+             //AdWebVersionEntity
+             .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
 
             c.AddBatches<InMemoryBatchStorage, StorageProvider>()
               //Customer
