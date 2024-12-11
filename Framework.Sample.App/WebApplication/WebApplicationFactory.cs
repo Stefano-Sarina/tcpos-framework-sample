@@ -173,6 +173,9 @@ public static class WebApplicationFactory
                 case DatabaseTypes.SqlServer:
                     o.UseSqlServer(cfg?.DatabaseConnection.ConnectionString);
                     break;
+                case DatabaseTypes.Postgres:
+                    o.UseNpgsql(cfg?.DatabaseConnection.ConnectionString);
+                    break;
                 case DatabaseTypes.Sqlite:
                     o.UseSqlite(cfg?.DatabaseConnection.ConnectionString);
                     break;
