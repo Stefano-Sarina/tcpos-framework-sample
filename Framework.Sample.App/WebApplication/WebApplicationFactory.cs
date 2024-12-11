@@ -8,6 +8,7 @@ using Framework.Sample.App.DataBind;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.Payloads;
+using Framework.Sample.App.WebApplication.FormsEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -151,6 +152,9 @@ public static class WebApplicationFactory
             return Results.Created();
         });
 
+        webApplication.MapPost("/api/formsendpoints", FormsEndpointsDelegates.SaveFormEndpoints)
+           .RequireTcposAuthorization<AuthorizationRequirementFormsEndpoints>();
+
         webApplication.UseAuthorization();
     }
 
@@ -264,10 +268,10 @@ public static class WebApplicationFactory
              .AddBatchItem<DbContextTypedPostBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission>>()
-                ;
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission>>();
         });
 
+        services.AddScoped<FeManager>();
         services.AddTcposAuthorization(webApplicationFactoryOptions);
     }
 }
