@@ -12,10 +12,10 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
         internal FePermissionItem Item { get; set; }
         internal PermissionNode[]? ParentNodes { get; set; }
 
-        internal string Name => 
+        internal string GetKeyCode(string applicationName) => 
             (Item.PermissionItemEndpoint == null
-                        ? Item.GetPermissionName(PermissionTypes.UI)
-                        : $"{Item.Entity}-{Item.Code}-{PermissionTypes.UI}-{Item.PermissionItemEndpoint.Verb.ToString().ToLower()}")
+                        ? $"{Item.Entity}-{applicationName}-{Permission.Name}"
+                        : Item.ApiPermissionName)
                .ToLowerInvariant();
 
         internal PermissionNode(FePermission permission, FePermissionItem item)
