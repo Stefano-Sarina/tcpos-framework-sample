@@ -8,12 +8,14 @@ using Framework.Sample.App.DataBind;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.Payloads;
+using Framework.Sample.App.Utils;
 using Framework.Sample.App.WebApplication.FormsEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
@@ -166,6 +168,11 @@ public static class WebApplicationFactory
                        .ToList()
                        .ForEach(x => services.AddAutoMapper(x));
 
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new StringToEnumConverter<VerbEnum>());
+        });
+
         services.AddSingleton<IEdmModelBuilder, DataEntityEdmModelBuilder>();
 
         services.AddDbContext<SampleDbContext>((s, o) =>
@@ -184,7 +191,7 @@ public static class WebApplicationFactory
                     o.UseSqlite(cfg?.DatabaseConnection.ConnectionString);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"'{cfg?.DatabaseConnection?.DatabaseType}' is not a supported database type");
             }
         });
 
