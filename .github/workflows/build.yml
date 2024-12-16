@@ -39,7 +39,18 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: 'Resolve Project Dependencies Using Dotnet'
+    - name: 'Dotnet Build'
       shell: pwsh # For Linux, use bash
       run: |
         dotnet build Framework.Sample.App.sln --configuration Release --output ./output
+
+    - name: 'Create Test Settings'
+      shell: pwsh # For Linux, use bash
+      run: |
+        echo "{ \"Debug\": { \"CreateDatabase\": true, \"FillDemoData\": true }, \"DatabaseConnection\": { \"DatabaseType\": \"SqLite\", \"ConnectionString\": \"Data Source=.\\SampleApp.db;\" }}" > Framework.Sample.AppTests\bin\Debug\net8.0\appsettings.json
+
+    - name: 'Dotnet Test'
+      shell: pwsh # For Linux, use bash
+      run: |
+        dotnet Test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj
+  
