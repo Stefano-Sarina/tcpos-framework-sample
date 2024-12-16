@@ -36,6 +36,7 @@ public static class WebAppBuilderExtension
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerErpRemove>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerErpReplace>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerErpUpdate>();
+        serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerFormsEndpoints>();
 
         serviceCollection.AddScoped<ITcposPermissionClaimsTransformationBuilder, PermissionClaimsTransformationBuilder>();
 
@@ -62,6 +63,7 @@ public static class WebAppBuilderExtension
         serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpRemove>();
         serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpReplace>();
         serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpUpdate>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderFormsEndpoints>();
         serviceCollection.AddSingleton<IFeedDatabasePersister, FeedDatabasePersister>();
         serviceCollection.AddSingleton<IFeedDatabaseEngine, FeedDatabaseEngine>();
 

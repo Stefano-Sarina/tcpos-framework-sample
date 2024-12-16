@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Framework.Sample.App.DB.Entities.Base;
 using Framework.Sample.App.DB.Enums;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
@@ -30,4 +31,13 @@ public class Permission : Entity
         get;
         set;
     }
+
+    public virtual HashSet<PermissionDependency> ChildPermissionDependencies
+    {
+        get;
+    } = new HashSet<PermissionDependency>();
+    public virtual HashSet<PermissionDependency> ParentPermissionDependencies
+    {
+        get;
+    } = new HashSet<PermissionDependency>();
 }
