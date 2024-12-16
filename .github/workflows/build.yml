@@ -29,7 +29,7 @@ jobs:
     - name: 'Create Test Settings'
       shell: pwsh # For Linux, use bash
       run: |
-        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
+        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > Framework.Sample.AppTests\appsettings.json
 
     - name: 'Checkout'
       run: |
@@ -38,5 +38,5 @@ jobs:
     - name: 'Dotnet Test'
       shell: pwsh # For Linux, use bash
       run: |
-        dotnet test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj
+        dotnet test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj --configuration Release
   
