@@ -34,5 +34,5 @@ jobs:
     - name: 'Dotnet Test'
       shell: pwsh # For Linux, use bash
       run: |
-        dotnet Test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj
+        dotnet test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj
   
