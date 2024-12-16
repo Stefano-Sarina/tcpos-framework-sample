@@ -1,8 +1,12 @@
 name: Build Sample App
 
 on:
-  push:
-    branches: ["master", "dev/actions"]
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - 'master'
 
 env:
   DOTNET_VERSION: '8.0.x'
