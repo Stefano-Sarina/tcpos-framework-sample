@@ -1,0 +1,42 @@
+name: Build Sample App
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+    branches:
+      - 'master'
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest # For Linux, use ubuntu-latest
+    environment: dev
+    steps:
+
+    - name: 'Checkout'
+      uses: actions/checkout@v4
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: 'Dotnet Build'
+      shell: pwsh # For Linux, use bash
+      run: |
+        dotnet build Framework.Sample.App.sln --configuration Release
+
+    - name: 'Create Test Settings'
+      shell: pwsh # For Linux, use bash
+      run: |
+        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > .\Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
+
+    - name: 'Dotnet Test'
+      shell: pwsh # For Linux, use bash
+      run: |
+        dotnet test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj --configuration Release
+  
