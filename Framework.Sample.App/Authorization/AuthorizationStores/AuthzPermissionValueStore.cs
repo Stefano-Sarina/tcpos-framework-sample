@@ -7,7 +7,7 @@ using TCPOS.Authorization.Abstracts.AuthorizationStores;
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 
 internal class AuthzPermissionValueStore(SampleDbContext dbContext)
-    : IAuthzPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue>
+    : IAuthorizationPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>
 {
     public void Dispose()
     { }
@@ -20,14 +20,14 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         var authzValues = await dbContext.UserPermissions
-                                         .Where(x => x.UserId == user.Id)
+                                         .Where(x => x.UserId == (int)user.Id)
                                          .ToListAsync();
 
         return authzValues.Select(x => x.ToAuthorizationData())
                           .OfType<AuthzPermissionValue>();
     }
 
-    public async Task<AuthzPermissionValue?> GetPermissionValuesAsync(AuthzUser? user, AuthzPermission permission, CancellationToken cancellationToken)
+    public async Task<AuthzPermissionValue?> GetPermissionValueAsync(AuthzUser? user, AuthzPermission permission, CancellationToken cancellationToken)
     {
         if (user == null || permission == null)
         {
@@ -35,7 +35,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         return (await dbContext.UserPermissions
-                               .FirstOrDefaultAsync(x => x.UserId == user.Id && x.PermissionId == (int)permission.Id)
+                               .FirstOrDefaultAsync(x => x.UserId == (int)user.Id && x.PermissionId == (int)permission.Id)
                )?.ToAuthorizationData();
     }
 
@@ -47,14 +47,14 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         var authzValues = await dbContext.GroupPermissions
-                                         .Where(x => x.GroupId == group.Id)
+                                         .Where(x => x.GroupId == (int)group.Id)
                                          .ToListAsync();
 
         return authzValues.Select(x => x.ToAuthorizationData())
                           .OfType<AuthzPermissionValue>();
     }
 
-    public async Task<AuthzPermissionValue?> GetPermissionValuesAsync(AuthzGroup? group, AuthzPermission permission, CancellationToken cancellationToken)
+    public async Task<AuthzPermissionValue?> GetPermissionValueAsync(AuthzGroup? group, AuthzPermission permission, CancellationToken cancellationToken)
     {
         if (group == null || permission == null)
         {
@@ -62,7 +62,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         return (await dbContext.GroupPermissions
-                               .FirstOrDefaultAsync(x => x.GroupId == group.Id && x.PermissionId == (int)permission.Id)
+                               .FirstOrDefaultAsync(x => x.GroupId == (int)group.Id && x.PermissionId == (int)permission.Id)
                )?.ToAuthorizationData();
     }
 }

@@ -6,7 +6,7 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.Implementations;
 
-internal class PermissionClaimsTransformationBuilder(IAuthzUserStore<AuthzUser> userStore) : ITcposPermissionClaimsTransformationBuilder
+internal class PermissionClaimsTransformationBuilder(IAuthorizationUserStore<AuthzUser, int> userStore) : ITcposPermissionClaimsTransformationBuilder
 {
     public async Task<ClaimsPrincipal> TransformAsync(IHttpContextAccessor context, ClaimsPrincipal principal, CancellationToken cancellationToken)
     {

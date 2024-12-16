@@ -2,7 +2,7 @@
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
 
-public class AuthzPermission : ITAuthzEntityId
+public class AuthzPermission : ITAuthorizationEntityId<int>
 {
     public string Entity
     {
@@ -10,7 +10,7 @@ public class AuthzPermission : ITAuthzEntityId
         set;
     }
 
-    public object Id
+    public int Id
     {
         get;
         set;

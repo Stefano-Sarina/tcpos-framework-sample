@@ -8,7 +8,7 @@ using TCPOS.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 
-internal class AuthzPermissionStore(SampleDbContext dbContext) : IAuthzPermissionStore<AuthzPermission>
+internal class AuthzPermissionStore(SampleDbContext dbContext) : IAuthorizationPermissionStore<AuthzPermission, int>
 {
     public void Dispose()
     { }

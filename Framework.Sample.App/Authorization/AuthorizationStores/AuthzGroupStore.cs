@@ -6,7 +6,7 @@ using TCPOS.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 
-internal class AuthzGroupStore(SampleDbContext dbContext) : IAuthzGroupStore<AuthzUser, AuthzGroup>
+internal class AuthzGroupStore(SampleDbContext dbContext) : IAuthorizationGroupStore<AuthzUser, AuthzGroup, int>
 {
     public void Dispose()
     { }
@@ -19,7 +19,7 @@ internal class AuthzGroupStore(SampleDbContext dbContext) : IAuthzGroupStore<Aut
         }
 
         var mapUsrGrp = dbContext.UserGroups
-                                 .Where(x => x.UserId == user.Id);
+                                 .Where(x => x.UserId == (int)user.Id);
 
         var groups = await dbContext.Groups
                                     .Where(x => mapUsrGrp.Any(y => y.GroupId == x.Id))

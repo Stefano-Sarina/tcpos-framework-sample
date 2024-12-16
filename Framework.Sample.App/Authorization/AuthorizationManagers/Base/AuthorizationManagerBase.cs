@@ -1,4 +1,5 @@
 ﻿using Framework.Sample.App.Authorization.AuthorizationStores.Models;
+using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Authorization;
 using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
@@ -8,12 +9,11 @@ using TCPOS.Common.Diagnostics;
 namespace Framework.Sample.App.Authorization.AuthorizationManagers.Base;
 
 internal abstract class AuthorizationManagerBase<TAuthzReq>(
-    IAuthzContextStore<AuthorizationHandlerContext> ctxStore,
-    IAuthzUserStore<AuthzUser> userStore,
-    IAuthzPermissionStore<AuthzPermission> permissionStore,
-    IAuthzPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue> permissionValueStore,
-    IAuthzGroupStore<AuthzUser, AuthzGroup>? groupStore = null)
-    : TcposAuthorizationManager<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue>(ctxStore, userStore, permissionStore, permissionValueStore, groupStore)
+    IAuthorizationContextStore<AuthorizationHandlerContext> ctxStore,
+    IAuthorizationUserStore<AuthzUser, int> userStore,
+    IAuthorizationPermissionStore<AuthzPermission, int> permissionStore,
+    ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authorizationRepository)
+    : TcposAuthorizationManager<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>(ctxStore, userStore, permissionStore, authorizationRepository)
     where TAuthzReq : IAuthorizationRequirement
 {
     public override async Task<bool> CanHandleAsync(AuthorizationHandlerContext context, ITcposAuthorizationRequirement requirement)
