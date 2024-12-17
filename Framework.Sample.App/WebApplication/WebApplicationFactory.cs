@@ -8,11 +8,14 @@ using Framework.Sample.App.DataBind;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.Payloads;
+using Framework.Sample.App.Utils;
+using Framework.Sample.App.WebApplication.FormsEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
@@ -151,6 +154,9 @@ public static class WebApplicationFactory
             return Results.Created();
         });
 
+        webApplication.MapPost("/api/formsendpoints", FormsEndpointsDelegates.SaveFormEndpoints)
+           .RequireTcposAuthorization<AuthorizationRequirementFormsEndpoints>();
+
         webApplication.UseAuthorization();
     }
 
@@ -161,6 +167,11 @@ public static class WebApplicationFactory
         typeof(Program).Assembly.GetTypes().Where(x => x is { IsClass: true, IsAbstract: false } && x.IsSubclassOf(typeof(Profile)))
                        .ToList()
                        .ForEach(x => services.AddAutoMapper(x));
+
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new StringToEnumConverter<VerbEnum>());
+        });
 
         services.AddSingleton<IEdmModelBuilder, DataEntityEdmModelBuilder>();
 
@@ -173,11 +184,14 @@ public static class WebApplicationFactory
                 case DatabaseTypes.SqlServer:
                     o.UseSqlServer(cfg?.DatabaseConnection.ConnectionString);
                     break;
+                case DatabaseTypes.Postgres:
+                    o.UseNpgsql(cfg?.DatabaseConnection.ConnectionString);
+                    break;
                 case DatabaseTypes.Sqlite:
                     o.UseSqlite(cfg?.DatabaseConnection.ConnectionString);
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"'{cfg?.DatabaseConnection?.DatabaseType}' is not a supported database type");
             }
         });
 
@@ -209,7 +223,8 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
               //OperatorPermissions
              .AddDataPullOutItem<OperatorPermissionsDataPullOut>()
-                ;
+             //AdWebVersionEntity
+             .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
 
             c.AddBatches<InMemoryBatchStorage, StorageProvider>()
               //Customer
@@ -261,10 +276,10 @@ public static class WebApplicationFactory
              .AddBatchItem<DbContextTypedPostBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission>>()
-                ;
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission>>();
         });
 
+        services.AddScoped<FeManager>();
         services.AddTcposAuthorization(webApplicationFactoryOptions);
     }
 }

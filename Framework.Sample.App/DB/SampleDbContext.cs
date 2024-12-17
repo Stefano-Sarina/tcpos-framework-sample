@@ -65,4 +65,16 @@ public class SampleDbContext(DbContextOptions options) : DbContextBase(options)
         get;
         set;
     }
+
+    public DbSet<PermissionDependency> PermissionsDependencies
+    {
+        get;
+        set;
+    }
+
+    public DbSet<AdWebEntityVersion> AdWebEntityVersions
+    {
+        get;
+        set;
+    }
 }

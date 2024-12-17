@@ -7,23 +7,16 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDatabasePersister : IFeedDatabasePersister
+internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<FeedDatabasePersister> logger) : IFeedDatabasePersister
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public FeedDatabasePersister(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
-
     public async Task<bool> SaveAsync(IEnumerable<FeedDatabaseItem> feedDbItems, CancellationToken cancellationToken)
     {
         try
         {
-            using var scope = _serviceProvider.CreateScope();
-            using var _dbContext = scope.ServiceProvider.GetRequiredService<SampleDbContext>();
+            using var scope = serviceProvider.CreateScope();
+            using var dbContext = scope.ServiceProvider.GetRequiredService<SampleDbContext>();
 
-            var permissions = await _dbContext.Permissions.ToListAsync();
+            var permissions = await dbContext.Permissions.ToListAsync();
             var permissionNames = permissions.Select(x => x.PermissionName);
 
             var existingPermissions = feedDbItems.Where(x => permissionNames.Contains(x.Permission.Name()));
@@ -35,7 +28,7 @@ internal class FeedDatabasePersister : IFeedDatabasePersister
             }
 
             // remove duplicated permissions: multiple endpoint could refer same permissions
-            missingPermissions = missingPermissions.DistinctBy(x => new { x.Permission.KeyCode}).ToList();
+            missingPermissions = missingPermissions.DistinctBy(x => new { x.Permission.KeyCode }).ToList();
             var missingDbPermissions = missingPermissions.Select(
                 p => new Permission()
                 {
@@ -43,36 +36,26 @@ internal class FeedDatabasePersister : IFeedDatabasePersister
                     PermissionType = DB.Enums.PermissionTypes.Api,
                 });
 
-            await _dbContext.Permissions.AddRangeAsync(missingDbPermissions);
+            await dbContext.Permissions.AddRangeAsync(missingDbPermissions);
 
 #if DEBUG
-            UserPermission[] userPermissions = _dbContext.Permissions.Local
-                .SelectMany(p => _dbContext.Users,  (p,u)=>new UserPermission()
+            UserPermission[] userPermissions = dbContext.Permissions.Local
+                .SelectMany(p => dbContext.Users, (p, u) => new UserPermission()
                 {
                     Permission = p,
                     User = u,
                     PermissionValue = DB.Enums.PermissionValue.Allow
                 }).ToArray();
 
-            await _dbContext.UserPermissions.AddRangeAsync(userPermissions);
+            await dbContext.UserPermissions.AddRangeAsync(userPermissions);
 #endif
 
-
-            var transaction = _dbContext.Database.BeginTransaction();
-            try
-            {
-                var changes = await _dbContext.SaveChangesAsync();
-                transaction.Commit();
-                return await Task.FromResult(true);
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                throw;
-            }
+            await dbContext.SaveChangesAsync();
+            return true;
         }
         catch (Exception ex)
         {
+            logger.LogError(ex, "Feeding permissions error");
             throw;
         }
     }

@@ -63,12 +63,10 @@ public class ExceptionMiddleware(RequestDelegate next)
         catch (HttpException e)
         {
             await Results.Problem(e.GetFullDetails(), statusCode: (int)e.HttpStatusCode).ExecuteAsync(context);
-            ;
         }
         catch (Exception e)
         {
             await Results.Problem(e.GetFullDetails(), statusCode: StatusCodes.Status500InternalServerError).ExecuteAsync(context);
-            ;
         }
     }
 }

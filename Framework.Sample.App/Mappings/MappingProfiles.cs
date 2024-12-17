@@ -58,5 +58,10 @@ public class MappingProfiles : Profile
         CreateMap<UserPermission, UserPermissionIn<int>>(MemberList.None);
         CreateMap<UserPermission, UserPermissionOut<int>>(MemberList.None);
         CreateMap<UserPermission, UserPermission>(MemberList.None);
+        //AdWebVersionEntity
+        CreateMap<AdWebEntityVersionIn, AdWebEntityVersion>(MemberList.None);
+        CreateMap<AdWebEntityVersion, AdWebEntityVersionIn>(MemberList.None);
+        CreateMap<AdWebEntityVersion, AdWebEntityVersionOut>(MemberList.None);
+        CreateMap<AdWebEntityVersion, AdWebEntityVersion>(MemberList.None);
     }
 }
