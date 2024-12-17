@@ -24,11 +24,13 @@ public static class WebAppBuilderExtension
 
         serviceCollection.AddHttpContextAccessor();
 
-        serviceCollection.AddScoped<IAuthzContextStore<AuthorizationHandlerContext>, AuthzCtxStore>();
-        serviceCollection.AddScoped<IAuthzUserStore<AuthzUser>, AuthzUserStore>();
-        serviceCollection.AddScoped<IAuthzGroupStore<AuthzUser, AuthzGroup>, AuthzGroupStore>();
-        serviceCollection.AddScoped<IAuthzPermissionStore<AuthzPermission>, AuthzPermissionStore>();
-        serviceCollection.AddScoped<IAuthzPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue>, AuthzPermissionValueStore>();
+        serviceCollection.AddScoped<IAuthorizationContextStore<AuthorizationHandlerContext>, AuthzCtxStore>();
+        serviceCollection.AddScoped<IAuthorizationUserStore<AuthzUser, int>, AuthzUserStore>();
+        serviceCollection.AddScoped<IAuthorizationGroupStore<AuthzUser, AuthzGroup, int>, AuthzGroupStore>();
+        serviceCollection.AddScoped<IAuthorizationPermissionStore<AuthzPermission, int>, AuthzPermissionStore>();
+        serviceCollection.AddScoped<IAuthorizationPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>, AuthzPermissionValueStore>();
+        serviceCollection.AddScoped<ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>,
+            TcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>>();
 
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerBatch>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerDataPullOut>();

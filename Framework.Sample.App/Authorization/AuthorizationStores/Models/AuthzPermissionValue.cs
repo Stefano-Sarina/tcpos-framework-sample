@@ -1,17 +1,17 @@
 ﻿using TCPOS.Authorization.Abstracts.AuthorizationStores;
-using static TCPOS.Authorization.Abstracts.AuthorizationStores.ITPermissionValue;
+using TCPOS.Authorization.Domains;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
 
-public class AuthzPermissionValue : ITPermissionValue
+public class AuthzPermissionValue : ITPermissionValue<int>
 {
-    public ValueEnum Value
+    public PermissionValueEnum Value
     {
         get;
         set;
     }
 
-    public object PermissionId
+    public int PermissionId
     {
         get;
         set;

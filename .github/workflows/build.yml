@@ -5,8 +5,7 @@ on:
     types:
       - opened
       - reopened
-    branches:
-      - 'master'
+      - edited
 
 env:
   DOTNET_VERSION: '8.0.x'

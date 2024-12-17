@@ -2,15 +2,15 @@
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.Requirements;
 using Microsoft.AspNetCore.Authorization;
+using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationManagers;
 
 internal class AuthorizationManagerDataPullOut(
-    IAuthzContextStore<AuthorizationHandlerContext> ctxStore,
-    IAuthzUserStore<AuthzUser> userStore,
-    IAuthzPermissionStore<AuthzPermission> permissionStore,
-    IAuthzPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue> permissionValueStore,
-    IAuthzGroupStore<AuthzUser, AuthzGroup>? groupStore = null)
-    : AuthorizationManagerBaseErp<AuthorizationRequirementDataPullout>(ctxStore, userStore, permissionStore, permissionValueStore, groupStore)
+    IAuthorizationContextStore<AuthorizationHandlerContext> ctxStore,
+    IAuthorizationUserStore<AuthzUser, int> userStore,
+    IAuthorizationPermissionStore<AuthzPermission, int> permissionStore,
+    ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authorizationRepository)
+    : AuthorizationManagerBaseErp<AuthorizationRequirementDataPullout>(ctxStore, userStore, permissionStore, authorizationRepository)
 { }

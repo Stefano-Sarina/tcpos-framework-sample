@@ -8,12 +8,11 @@ using TCPOS.Common.Diagnostics;
 namespace Framework.Sample.App.Authorization.AuthorizationManagers.Base;
 
 internal class AuthorizationManagerBaseErp<TAuthzReq>(
-    IAuthzContextStore<AuthorizationHandlerContext> ctxStore,
-    IAuthzUserStore<AuthzUser> userStore,
-    IAuthzPermissionStore<AuthzPermission> permissionStore,
-    IAuthzPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue> permissionValueStore,
-    IAuthzGroupStore<AuthzUser, AuthzGroup>? groupStore = null)
-    : AuthorizationManagerBase<TAuthzReq>(ctxStore, userStore, permissionStore, permissionValueStore, groupStore)
+    IAuthorizationContextStore<AuthorizationHandlerContext> ctxStore,
+    IAuthorizationUserStore<AuthzUser, int> userStore,
+    IAuthorizationPermissionStore<AuthzPermission, int> permissionStore,
+    ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authorizationRepository)
+    : AuthorizationManagerBase<TAuthzReq>(ctxStore, userStore, permissionStore, authorizationRepository)
     where TAuthzReq : IAuthorizationRequirement
 {
     protected override string GetPermission(HttpContext context, ITcposAuthorizationRequirement requirement)

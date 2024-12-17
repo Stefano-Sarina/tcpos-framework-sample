@@ -5,7 +5,7 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 
-internal class AuthzCtxStore : IAuthzContextStore<AuthorizationHandlerContext>
+internal class AuthzCtxStore : IAuthorizationContextStore<AuthorizationHandlerContext>
 {
     public async Task<string> GetUserIdAsync(AuthorizationHandlerContext ctx, CancellationToken cancellationToken)
     {

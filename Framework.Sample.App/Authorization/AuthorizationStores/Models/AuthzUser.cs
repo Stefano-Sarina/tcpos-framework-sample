@@ -1,6 +1,8 @@
-﻿namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
+﻿using TCPOS.Authorization.Abstracts.AuthorizationStores;
 
-public class AuthzUser
+namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
+
+public class AuthzUser: ITAuthorizationEntityId<int>
 {
     public int Id
     {

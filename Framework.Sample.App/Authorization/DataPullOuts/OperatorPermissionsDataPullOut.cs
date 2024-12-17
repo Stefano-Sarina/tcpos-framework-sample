@@ -54,7 +54,7 @@ public class OperatorPermissionProfile : Profile
 }
 
 public class OperatorPermissionsDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, IStorageProvider storageProvider, IMapper mapper,
-    IAuthzUserStore<AuthzUser> authzUserStore) 
+    IAuthorizationUserStore<AuthzUser, int> authzUserStore) 
     : DbContextDataPullOutItem<OperatorPermission, OperatorPermissionOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     protected override IQueryable<OperatorPermission> Query()
@@ -77,6 +77,6 @@ select p.id, u.id userid, u.username username , p.id permissionid, p.permissionn
         var userCode = request.HttpContext.User.Identities.FirstOrDefault()?.Name ?? "";
         var userId = authzUserStore.GetUserAsync(userCode, cancellationTokenSource.Token)?.Result?.Id ?? 0;
 
-        return base.GetDataFilterEntity(queryable.Where(p => p.UserId == userId), request);
+        return base.GetDataFilterEntity(queryable.Where(p => p.UserId == (int)userId), request);
     }
 }

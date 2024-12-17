@@ -1,7 +1,7 @@
 ﻿using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Enums;
-using static TCPOS.Authorization.Abstracts.AuthorizationStores.ITPermissionValue;
+using TCPOS.Authorization.Domains;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Extensions;
 
@@ -22,10 +22,10 @@ public static class ToAuthorizationExtensions
                    new AuthzPermissionValue
                    {
                        PermissionId = item.PermissionId,
-                       Value = item.PermissionValue == PermissionValue.Allow ? ValueEnum.Allow :
-                               item.PermissionValue == PermissionValue.Deny ? ValueEnum.Deny :
-                               item.PermissionValue == PermissionValue.Inherit ? ValueEnum.Inherit :
-                               ValueEnum.None
+                       Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
+                               item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :
+                               item.PermissionValue == PermissionValue.Inherit ? PermissionValueEnum.Inherit :
+                               PermissionValueEnum.None
                    } : null;
     }
 
@@ -35,10 +35,10 @@ public static class ToAuthorizationExtensions
                    new AuthzPermissionValue
                    {
                        PermissionId = item.PermissionId,
-                       Value = item.PermissionValue == PermissionValue.Allow ? ValueEnum.Allow :
-                               item.PermissionValue == PermissionValue.Deny ? ValueEnum.Deny :
-                               item.PermissionValue == PermissionValue.Inherit ? ValueEnum.Inherit :
-                               ValueEnum.None
+                       Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
+                               item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :
+                               item.PermissionValue == PermissionValue.Inherit ? PermissionValueEnum.Inherit :
+                               PermissionValueEnum.None
                    } : null;
     }
 
