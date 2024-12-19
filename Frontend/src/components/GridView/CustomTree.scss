@@ -1,0 +1,46 @@
+$ANDGroupColor: var(--filter-and-group-color);
+$ORGroupColor: var(--filter-or-group-color);
+.tree-app {
+  height: 100%;
+}
+
+.tree-treeRoot {
+  height: 100%;
+  list-style-type: none;
+
+}
+
+.tree-treeRoot ul {
+  list-style-type: none;
+}
+
+.tree-draggingSource {
+  opacity: 0.3;
+}
+
+.tree-listItem {
+  &:after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: background-color .3s;
+    pointer-events: none;
+    opacity: .2;
+    border-radius: 4px;
+  }
+}
+
+.tree-dropTarget {
+  &[data-type=OR]:after{
+    background-color: $ORGroupColor;
+  }
+
+  &[data-type=AND]:after {
+    background-color: $ANDGroupColor;
+
+  }
+}

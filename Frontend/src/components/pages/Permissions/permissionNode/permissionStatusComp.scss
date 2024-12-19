@@ -1,0 +1,18 @@
+.permission-status-comp {
+  border: 1px solid var(--tc-palette-text-primary);
+
+  &.Allowed {
+    background-color: var(--tc-palette-success-lighter);
+    color: var(--tc-palette-success-main);
+    border-color: var(--tc-palette-success-main);
+  }
+  &.Denied {
+    background-color: var(--tc-palette-error-lighter);
+    color: var(--tc-palette-error-main);
+    border-color: var(--tc-palette-error-main);
+  }
+}
+
+.permission-status-comp-icon {
+  width: 16px !important;
+}

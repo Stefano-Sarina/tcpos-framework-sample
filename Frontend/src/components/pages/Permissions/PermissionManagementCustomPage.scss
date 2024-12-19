@@ -1,0 +1,162 @@
+/**
+*@todo this enlarge all dialogs in the system why?
+ */
+.permission-save-dialog {
+  height: calc(70% - 64px);
+}
+
+.permissionPage {
+  // overflow: clip;
+  .main-card {
+    overflow: auto;
+  }
+
+  .MuiTabs-root {
+    margin-top: 2rem;
+
+  }
+
+  .MuiAutocomplete-root {
+    margin-bottom: 1rem;
+  }
+  .wdtree-app {
+    > ul {
+      // overflow: visible;
+    }
+
+    li.level0 {
+      > .permission-node {
+        border-top-right-radius: var(--tc-border-radius);
+        border-top-left-radius: var(--tc-border-radius);
+        overflow: hidden;
+        position: sticky;
+        top: 60px;
+        z-index: 100;
+
+        > * {
+          font-weight: bold;
+          height: 100%;
+          position: relative;
+          min-height: 56px;
+
+          .wd-treenode-nodeTitleCont {
+            grid-template-columns: 1fr auto auto;
+            padding-left: 1rem;
+            padding-right: 0;
+          }
+
+
+          .wd-treenode-selection, .wd-treenode-expandIconWrapper, .permission-status-comp {
+            display: none;
+          }
+
+          background-color: var(--tc-palette-background-paper);
+
+          &:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--tc-palette-primary-main);
+            opacity: .2;
+            z-index: 0;
+          }
+        }
+      }
+    }
+
+    /**
+    it seems that the tree goes 3 level + 3
+     */
+    li.level1 {
+      border-bottom: 2px dashed var(--tc-palette-divider);
+
+      li {
+        position: relative;
+        @mixin border {
+          content: "";
+          display: block;
+          position: absolute;
+          /**
+          indent + expand icon + checkbox padding
+           */
+          left: calc(var(--indent) + #{24+9}px);
+          bottom: 0;
+          right: 0;
+          height: 1px;
+        }
+
+
+        &:not(:last-of-type):after {
+          @include border;
+          border-bottom: 1px solid var(--tc-palette-divider);
+        }
+      }
+    }
+  }
+
+  .tree-header{
+    font-weight: bold;
+  }
+}
+
+
+
+.permission-save-panel-root {
+  z-index: 1300;
+  top: auto;
+}
+
+.permission-main-card {
+  overflow: visible;
+}
+
+.permission-save-panel {
+
+  padding: .5rem 1rem;
+
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+
+
+  .button-bar {
+
+    .info {
+      margin: 0 1em;
+      display: flex;
+      align-items: center;
+
+      svg {
+        display: inline-block;
+        margin-right: .5em;
+      }
+
+      /* .clickable {
+         cursor: pointer;
+       }*/
+    }
+
+
+    .MuiTypography-root {
+      margin-left: auto;
+      margin-right: 0;
+
+      + button {
+        margin-left: 1em;
+      }
+    }
+
+    button {
+      margin-left: auto;
+      margin-right: 0;
+    }
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+
+  }
+}

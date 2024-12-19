@@ -1,0 +1,1 @@
+export type I18n =  'it-IT' | 'en-US' | 'de-DE'; // | 'ar';

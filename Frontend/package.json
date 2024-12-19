@@ -1,0 +1,166 @@
+{
+  "name": "@tcpos/backoffice-sample-app",
+  "version": "1.0.1",
+  "versionInfo": {
+    "description": "First demo version",
+    "commitId": "b7913fc95dec7ec8bb1d581bacf8b05f308e65cc",
+    "build": false
+  },
+  "description": "Sample backoffice application",
+  "_deprecated-scripts": {
+    "build-slim": "webpack --mode=development --env noExternal=true --config webpack/webpack.config.cjs"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "pre_dev": "node webpack/clean.cjs && npm run clean",
+    "build": "webpack --mode=production --config webpack/webpack.config.cjs",
+    "dev": "webpack serve --mode=development --env sources=all --config webpack/webpack.config.cjs --hot",
+    "serve": "node scripts/serve.mjs ./dist",
+    "merge-loca le": "node scripts/mergeLocale.cjs",
+    "extract-locale-from-json-config": "node scripts/extractLocalesFromJsonConfig.cjs",
+    "createItDeLangs": "node scripts/createItDeLangs.cjs",
+    "extract-locale": "formatjs extract  \"../[!plugin]*/src/**/!(*.d).ts*\" \"../../../../Shared/**!(types)/src/**/!(*.d).ts*\" --ignore=\"**/*.d.ts\" --out-file ../backoffice-lang/lang_temp/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --extract-source-location --format \"scripts/langFormat.cjs\" && formatjs compile-folder ../backoffice-lang//lang_temp ../backoffice-lang/lang&& node scripts/extractLocalesFromJsonConfig.cjs ",
+    "extract-interface-from-db": "node scripts/extractInterfaceFromTableDesign.cjs"
+  },
+  "_type": "module",
+  "main": "dist/index.html",
+  "author": "Zucchetti Group",
+  "license": "Copyright (c) Zucchetti Group 2024",
+  "publishConfig": {
+    "registry": "https://nexus.tcpos.com/repository/webcomponents-hosted/"
+  },
+  "dependencies": {
+    "@ant-design/icons": "~5.3.7",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mdi/js": "~7.2.96",
+    "@minoru/react-dnd-treeview": "~3.4.0",
+    "@mui/icons-material": "^5.14.0",
+    "@mui/lab": "^5.0.0-alpha.173",
+    "@mui/material": "5.15.0",
+    "@mui/system": "^5.14.0",
+    "@mui/x-date-pickers": "^6.20.2",
+    "@react-pdf/renderer": "^4.0.0",
+    "@tcpos/common-components": "^2.1.1",
+    "@tcpos/common-core": "^2.5.0",
+    "@tcpos/backoffice-components": "^4.3.0",
+    "@tcpos/backoffice-core": "^4.4.0",
+    "@tcpos/backoffice-lang": "^2.1.0",
+    "ag-grid-community": "~28.2.1",
+    "ag-grid-react": "~28.2.1",
+    "axios": "~1.7.7",
+    "chalk": "4",
+    "classnames": "~2.3.2",
+    "crypto-js": "^4.2.0",
+    "deepmerge": "~4.2.2",
+    "formik": "~2.2.9",
+    "framer-motion": "6.5.1",
+    "history": "^5.3.0",
+    "immer": "~9.0.16",
+    "lodash": "~4.17.21",
+    "md5-file": "~5.0.0",
+    "notistack": "~3.0.1",
+    "prop-types": "~15.8.1",
+    "react": "^18.2.0",
+    "react-device-detect": "~2.2.2",
+    "react-doc-viewer": "^0.1.14",
+    "react-dom": "~18.2.0",
+    "react-dropzone": "14.2.3",
+    "react-hook-form": "7.32",
+    "react-intl": "~6.4.4",
+    "react-pdf-html": "2.1.2",
+    "react-refresh": "~0.14.0",
+    "react-router": "~6.23.0",
+    "react-router-dom": "~6.23.0",
+    "react-to-print": "~2.15.1",
+    "react-transition-group": "~4.4.5",
+    "reflect-metadata": "~0.1.13",
+    "simplebar-react": "~2.4.3",
+    "underscore": "~1.13.6",
+    "yup": "~0.32.11"
+  },
+  "devDependencies": {
+    "@ant-design/colors": "~7.1.0",
+    "@formatjs/cli": "~6.0.4",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.9",
+    "@tcpos/common-module-federation-automapper": "^2.0.0",
+    "@types/lodash": "^4.14.202",
+    "@types/node": "~18.0.3",
+    "@types/prop-types": "~15.7.11",
+    "@types/react": "^18.3.14",
+    "@types/react-dom": "~18.2.6",
+    "@types/react-transition-group": "^4.4.10",
+    "@types/underscore": "^1.11.15",
+    "@types/webpack-env": "^1.17.0",
+    "copy-webpack-plugin": "^10.2.0",
+    "css-loader": "^6.10.0",
+    "emotion-ts-plugin": "~1.1.0",
+    "express": "^4.18.2",
+    "fork-ts-checker-webpack-plugin": "^9.0.2",
+    "html-webpack-deploy-plugin": "^3.0.0",
+    "html-webpack-plugin": "^5.5.3",
+    "http-proxy-middleware": "^2.0.6",
+    "mini-css-extract-plugin": "2.8.0",
+    "open": "^10.0.3",
+    "prop-types": "~15.8.1",
+    "react-refresh-typescript": "~2.0.9",
+    "resolve-url-loader": "~5.0.0",
+    "rimraf": "^5.0.5",
+    "sass": "~1.49.0",
+    "sass-loader": "~13.1.0",
+    "slash": "^3.0.0",
+    "style-loader": "~3.3.1",
+    "terser-webpack-plugin": "^5.3.1",
+    "ts-loader": "~9.5.1",
+    "ts-node": "~10.9.1",
+    "tsconfig-paths-webpack-plugin": "^4.1.0",
+    "typedoc": "~0.26.7",
+    "typedoc-plugin-markdown": "~4.2.9",
+    "typedoc-plugin-missing-exports": "~3.0.0",
+    "typescript": "^5.6.2",
+    "url": "^0.11.3",
+    "webpack": "^5.95.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^5.1.0",
+    "webpack-font-preload-plugin": "^1.5.0",
+    "webpack-manifest-plugin": "^5.0.0",
+    "webpack-merge": "^6.0.1"
+  },
+  "files": [
+    "dist/**/*"
+  ],
+  "nx": {
+    "targets": {
+      "pre_dev": {
+        "dependsOn": [
+        ]
+      },
+      "dev": {
+        "dependsOn": [
+          "pre_dev"
+        ]
+      },
+      "build": {
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "clean": {
+        "dependsOn": [
+          "^clean"
+        ]
+      },
+      "build-slim": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "{projectRoot}/dist"
+        ]
+      }
+    }
+  },
+  "overrides": {
+    "html-webpack-deploy-plugin": "^3.0.0"
+  }
+}

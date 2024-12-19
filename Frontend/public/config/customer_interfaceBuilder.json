@@ -1,0 +1,66 @@
+{
+  "objectName": "customer",
+  "toolbar": [],
+  "detailView": {
+    "titleField": "FullName",
+    "label": "Customer",
+    "entityName": "Customer",
+    "layoutGroups": [
+      {
+        "groupName": "main_definitions",
+        "label" : "Main definitions",
+        "sections": [
+          {
+            "sectionName": "MainDefinitions",
+            "label": "Main definitions",
+            "xs" : 12,
+            "lg" : 12,
+            "components": [
+              {
+                "componentName": "FirstName",
+                "componentType": "wdStringTextField",
+                "fieldName": "FirstName",
+                "label": "FirstName",
+                "xs" : 12,
+                "lg" : 12
+              },
+              {
+                "componentName": "LastName",
+                "componentType": "wdStringTextField",
+                "fieldName": "LastName",
+                "label": "LastName",
+                "xs" : 12,
+                "lg" : 12
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "defaultGridView": {
+    "label": "Customers",
+    "editInline": false,
+    "layout" : [
+      {
+        "columnName" : "Id",
+        "sourceName" : "Id",
+        "label" : "Id",
+        "width" : 200,
+        "visible": true,
+        "indexPosition": 1,
+        "type": "number"
+      },
+      {
+        "columnName" : "FullName",
+        "sourceName" : "FullName",
+        "label" : "FullName",
+        "width" : 200,
+        "visible": true,
+        "indexPosition": 2,
+        "type": "string"
+      }
+    ],
+    "quickOps": []
+  }
+}

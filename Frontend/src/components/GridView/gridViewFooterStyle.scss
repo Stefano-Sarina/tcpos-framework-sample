@@ -1,0 +1,50 @@
+.ag-theme-alpine .grid-footer-text {
+  color: var(--ag-data-color, var(--ag-foreground-color, #181d1f));
+}
+
+.ag-theme-alpine .grid-footer-text-dark {
+  color: var(--ag-data-color, var(--ag-foreground-color, #fff));
+}
+
+.grid-footer {
+  border: 1px solid;
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  border-color: var(--ag-border-color, #babfc7);
+  background-color: var(--ag-header-background-color, #f8f8f8);
+}
+
+.grid-footer-dark {
+  background-color: var(--ag-header-background-color, #222628);
+  border: 1px solid;
+  border-top: 0;
+  border-radius: 0 0 8px 8px;
+  border-color: var(--ag-border-color, #68686e);
+}
+
+/*
+.ag-theme-alpine .grid-current-page {
+  margin: 0;
+  line-height: 1.57;
+  font-weight: 400;
+  font-family: 'Public Sans',sans-serif;
+}
+*/
+
+
+.pageLink {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-width: 16px;
+
+  .grid-page {
+    color: inherit;
+    vertical-align: middle;
+    line-height: 1;
+  }
+}
+
+.MuiPaginationItem-root {
+  line-height: 1rem;
+}

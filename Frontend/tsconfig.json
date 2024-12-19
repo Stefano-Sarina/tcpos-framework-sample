@@ -1,0 +1,66 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "jsx": "react-jsx",
+    "target": "es6",
+    "module": "es2020",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "types": [
+      "node"
+    ],
+    "composite" : false,
+    "sourceMap": true,
+
+    "declaration" : false,
+    "useDefineForClassFields": true,
+    "rootDir" : "./src",
+    "noImplicitAny" : true,
+    "noImplicitThis" : true,
+    "strictNullChecks" : true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule" : true,
+
+    "outDir" : "dist",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop" : true,
+    "baseUrl": "./src",
+    "skipLibCheck" : true,
+    "paths" : {
+      "*" : [
+        "node_modules/*"
+      ]
+    }
+
+  },
+  "typedocOptions": {
+    "entryPoints": ["src", "../backoffice-core/src", "../backoffice-components/src"],
+    "entryPointStrategy": "expand",
+    "plugin": ["typedoc-plugin-markdown", "typedoc-plugin-missing-exports"],
+    "excludeExternals": true,
+    "out": "docs_tmp",
+    "navigation": {
+      "includeCategories": true,
+      "includeGroups": false,
+      "includeFolders": true
+    },
+    "categorizeByGroup": false,
+    "includeVersion": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "dist/**/*",
+    "**/.*/",
+    "**/node_modules/*",
+    "**/.cache",
+    "**/*.d.ts"
+  ]
+}

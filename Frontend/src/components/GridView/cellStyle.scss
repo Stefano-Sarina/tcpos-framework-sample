@@ -1,0 +1,49 @@
+.cell-style {
+  /*display: flex;
+  min-width: 0;
+  align-items: center;*/
+  vertical-align: center;
+}
+
+.cell-style-center-alignment {
+  /*justify-content: center;*/
+}
+
+.cell-style-right-alignment {
+  /*justify-content: flex-end;*/
+}
+
+.cell-style-left-alignment {
+  /*justify-content: flex-start;*/
+}
+
+.cell-style-quick-actions-menu, .cell-style-quick-actions-menu-hidden {
+  text-overflow: clip !important;
+}
+
+.cell-style-quick-actions-menu-hidden {
+  /*padding-left: 0 !important;*/
+  /*padding-right: 0 !important;*/
+}
+
+.cell-editing {
+  background-color: yellow;
+  border: 3px solid red;
+}
+
+.ag-cell-wrapper, .ag-cell-inline-editing{
+  display: flex;
+  min-height: 100%;
+}
+
+.ag-grid-read-mode .ag-cell-wrapper {
+  align-items: center;
+}
+
+.ag-grid-edit-mode .ag-cell-wrapper {
+  align-items: flex-start;
+}
+
+/*.edited-row {
+  background-color: white;
+}*/

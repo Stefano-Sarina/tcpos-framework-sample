@@ -1,0 +1,61 @@
+@use "sass:math";
+
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;600;700;800;900&display=swap");
+
+@import "snackbars";
+
+html, body, #root {
+  min-height: 100%;
+  border: 0;
+  padding: 0;
+  //border:10px solid red;
+}
+
+#root {
+  width: 100%;
+}
+
+.auth-wrapper {
+  overflow: hidden;
+
+}
+
+main {
+  //override mantis because height 0 in too bad
+  height: auto !important;
+
+  .Main-footer {
+    position: sticky;
+    bottom: 0;
+  }
+
+  min-height: 100vh;
+
+  .main-container-root {
+    overflow: visible;
+
+    .MuiGrid-container {
+      overflow: visible;
+
+    }
+  }
+
+  .mainCard > .MuiCardHeader-root {
+    position: sticky;
+    top: 60px;
+  }
+}
+
+// Snackbar styling override for RTL support
+[dir="ltr"] {
+  --snackbar-action-margin-left: auto;
+  --snackbar-action-margin-right: -8px;
+  --snackbar-action-padding-left: 16px;
+  --snackbar-action-padding-right: 0;
+}
+[dir="rtl"] {
+  --snackbar-action-margin-left: -8px;
+  --snackbar-action-margin-right: auto;
+  --snackbar-action-padding-right: 16px;
+  --snackbar-action-padding-left: 0;
+}

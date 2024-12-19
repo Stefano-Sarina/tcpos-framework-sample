@@ -1,0 +1,77 @@
+{
+  "loginConfiguration":
+  {
+    "simpleLogin": true,
+    "loginWithTcPos": false,
+    "loginWithMicrosoft": true,
+    "loginWithGoogle": false
+  },
+  "apiUrl": "/api/1.0",
+  "uiVersion": "1.0.4",
+  "defaultLang": "en-US",
+  "applicationName": "BackOfficeSample",
+  "menuGroups" : [
+    {
+      "id": "General",
+      "label": "General",
+      "entities": [
+        {
+          "entityId": "dashboard",
+          "label": "Home",
+          "icon": "home",
+          "url": "/home",
+          "active": false
+        }
+      ]
+    },
+    {
+      "id" : "Environment",
+      "label" : "Environment",
+      "entities" : [
+        {
+          "entityId" : "customer",
+          "label" : "Customers",
+          "icon" : "account-cash",
+          "active": true
+        },
+        {
+          "entityId" : "tax",
+          "label" : "Taxes",
+          "icon" : "account-cash",
+          "active": true
+        },
+        {
+          "entityId" : "product",
+          "label" : "Products",
+          "icon" : "shopping-search",
+          "active": true
+        },
+        {
+          "entityId" : "userGroup",
+          "label" : "User groups",
+          "icon" : "account-group",
+          "active": true
+        },
+        {
+          "entityId" : "prmPermission",
+          "label" : "Permissions",
+          "icon" : "security",
+          "url": "/prmPermissions",
+          "active": true
+        }      
+      ]
+    },
+    {
+      "id": "Orders",
+      "label": "Orders",
+      "entities": [
+        {
+          "entityId": "order",
+          "label": "Orders",
+          "icon": "book-edit-outline",
+          "active": true
+        }
+      ]
+    }
+  ]
+}

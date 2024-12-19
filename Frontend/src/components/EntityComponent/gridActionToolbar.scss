@@ -1,0 +1,57 @@
+.action-toolbar-grid-item {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent buttons from wrapping */
+  overflow-x: auto; /* Enable horizontal scrolling if overflow occurs */
+  position: relative;
+  margin-left: 8px;
+  margin-right: 8px;
+  borderRadius: 8px;
+  min-height: 0;
+  padding: 0;
+}
+
+.action-toolbar-grid-item::after {
+  content: '\25BC'; /* Unicode character for dropdown arrow (▼) */
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 0 8px; /* Adjust as needed */
+  background-color: white; /* Match your background color */
+}
+
+.ul-at {
+  padding:5px 40px 5px 5px;
+  overflow: hidden;
+  max-height:55px;
+  position:relative;
+}
+
+.li-at {
+  display:inline-block;
+  border-right: 1px solid black;
+  list-style: none;
+  position:relative;
+}
+
+.li-at:last-child::after {
+  content:"";
+  position:absolute;
+  left:102%;
+  width:100vw;
+  top:-10px;
+  bottom:-10px;
+  background:#fff;
+  z-index:2;
+}
+
+.click {
+  background:red;
+  position:relative;
+  width:40px;
+  height:40px;
+  margin-left:auto;
+  margin-top:-65px;
+  margin-right:5px;
+}

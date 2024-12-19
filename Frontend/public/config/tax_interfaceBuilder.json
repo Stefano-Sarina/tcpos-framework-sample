@@ -1,0 +1,75 @@
+{
+    "objectName": "tax",
+    "toolbar": [],
+    "detailView": {
+      "titleField": "Description",
+      "label": "Tax",
+      "entityName": "Taxes",
+      "layoutGroups": [
+        {
+          "groupName": "main_definitions",
+          "label" : "Main definitions",
+          "sections": [
+            {
+              "sectionName": "MainDefinitions",
+              "label": "Main definitions",
+              "xs" : 12,
+              "lg" : 12,
+              "components": [
+                {
+                  "componentName": "Code",
+                  "componentType": "wdStringTextField",
+                  "fieldName": "Code",
+                  "label": "Code",
+                  "xs" : 12,
+                  "lg" : 12
+                },
+                {
+                  "componentName": "Description",
+                  "componentType": "wdStringTextField",
+                  "fieldName": "Description",
+                  "label": "Description",
+                  "xs" : 12,
+                  "lg" : 12
+                },
+                {
+                  "componentName": "Tax",
+                  "componentType": "wdNumberTextField",
+                  "fieldName": "Tax",
+                  "label": "Tax",
+                  "decimalplaces": 2,
+                  "xs" : 12,
+                  "lg" : 12
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "defaultGridView": {
+      "label": "Taxes",
+      "editInline": false,
+      "layout" : [
+        {
+          "columnName" : "Id",
+          "sourceName" : "Id",
+          "label" : "Id",
+          "width" : 200,
+          "visible": true,
+          "indexPosition": 1,
+          "type": "number"
+        },
+        {
+          "columnName" : "Code",
+          "sourceName" : "Code",
+          "label" : "Code",
+          "width" : 200,
+          "visible": true,
+          "indexPosition": 2,
+          "type": "string"
+        }
+      ],
+      "quickOps": []
+    }
+  }

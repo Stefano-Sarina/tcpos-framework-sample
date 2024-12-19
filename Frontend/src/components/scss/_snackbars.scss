@@ -1,0 +1,30 @@
+
+
+@mixin colorVariant($colorBase){
+  background-color:var(#{$colorBase}-main);
+  color:var(#{$colorBase}-contrastText);
+  .MuiIconButton-root{
+    color:var(#{$colorBase}-contrastText);
+  }
+}
+
+.notistack-MuiContent-error{
+ @include colorVariant(--tc-palette-error)
+}
+.notistack-MuiContent-success{
+ @include colorVariant(--tc-palette-success)
+}
+.notistack-MuiContent-info{
+ @include colorVariant(--tc-palette-info)
+}
+.notistack-MuiContent-warning{
+ @include colorVariant(--tc-palette-warning)
+}
+
+// RTL styling override
+#notistack-snackbar + div {
+  margin-left: var(--snackbar-action-margin-left);
+  margin-right: var(--snackbar-action-margin-right);
+  padding-left: var(--snackbar-action-padding-left);
+  padding-right: var(--snackbar-action-padding-right);
+}

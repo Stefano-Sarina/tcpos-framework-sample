@@ -1,0 +1,284 @@
+{
+  "toolbar": [
+    {
+      "groupName": "_new",
+      "label": "New",
+      "visibleSettings": {
+        "gridView": true,
+        "editableGridView": true,
+        "editModeGridView": false,
+        "readModeDetailView": true,
+        "writeModeDetailView": true
+      },
+      "items": [
+        {
+          "name":"_new",
+          "visibleSettings": {
+            "gridView": true,
+            "editableGridView": true,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "requiresWritePermission": true,
+          "actionComponent": "_newObject"
+        }
+      ]
+    },
+    {
+      "groupName": "_edit",
+      "label": "Edit",
+      "visibleSettings": {
+        "gridView": false,
+        "editableGridView": true,
+        "editModeGridView": false,
+        "readModeDetailView": true,
+        "writeModeDetailView": true
+      },
+      "items": [
+        {
+          "name": "_edit",
+          "displayStyle": "ICON_ONLY",
+          "requiresWritePermission": true,
+          "actionComponent": "_editMode",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": false
+          }
+        },
+        {
+          "name": "_inLineEdit",
+          "displayStyle": "ICON_ONLY",
+          "requiresWritePermission": true,
+          "actionComponent": "_inLineEdit",
+          "visibleSettings": {
+            "gridView": true,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": false
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": false,
+            "readModeDetailView": false,
+            "writeModeDetailView": false
+          }
+        },
+        {
+          "name": "_gotoDetailView",
+          "displayStyle": "ICON_ONLY",
+          "requiresWritePermission": false,
+          "actionComponent": "_gotoDetailView",
+          "visibleSettings": {
+            "gridView": true,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": false,
+            "writeModeDetailView": false
+          },
+          "enabledSettings": {
+            "gridView": true,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": false,
+            "writeModeDetailView": false
+          }
+        },
+        {
+          "name": "_save",
+          "displayStyle": "ICON_ONLY",
+          "requiresWritePermission": true,
+          "actionComponent": "_saveObject",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_undoInLineEdit",
+          "displayStyle": "ICON_ONLY",
+          "requiresWritePermission": true,
+          "actionComponent": "_undoInLineEdit",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": false
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_labelRWMode",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "actionComponent": "rwModeLabel",
+          "requiresWritePermission": true
+        },
+        {
+          "name": "Separator1",
+          "actionComponent": "wdToolbarSeparator",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_undo",
+          "actionComponent": "_undo_redo",
+          "requiresWritePermission": true,
+          "params": {
+            "type": "Undo"
+          },
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_redo",
+          "actionComponent": "_undo_redo",
+          "requiresWritePermission": true,
+          "params": {
+            "type": "Redo"
+          },
+          "itemEnabled": {
+            "paramName": "enabled"
+          },
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": false,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "Separator2",
+          "actionComponent": "wdToolbarSeparator",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_RWMode",
+          "actionComponent": "_readWriteModeButton",
+          "requiresWritePermission": true,
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": false,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_delete",
+          "actionComponent": "_delete",
+          "requiresWritePermission": true,
+          "visibleSettings": {
+            "gridView": true,
+            "editableGridView": true,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          },
+          "enabledSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": true,
+            "readModeDetailView": true,
+            "writeModeDetailView": false
+          }
+        },
+        {
+          "name": "Separator3",
+          "actionComponent": "wdToolbarSeparator",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          }
+        },
+        {
+          "name": "_gridViewMode",
+          "requiresWritePermission": false,
+          "actionComponent": "_gridView",
+          "visibleSettings": {
+            "gridView": false,
+            "editableGridView": false,
+            "editModeGridView": false,
+            "readModeDetailView": true,
+            "writeModeDetailView": true
+          }
+        }
+      ]
+    }
+  ]
+}

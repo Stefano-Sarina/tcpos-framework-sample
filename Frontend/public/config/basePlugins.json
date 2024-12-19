@@ -1,0 +1,18 @@
+[
+  {
+    "pluginName": "customer",
+    "active": true
+  },
+  {
+    "pluginName": "operator",
+    "active": true
+  },
+  {
+    "pluginName": "operatorGroup",
+    "active": true
+  },
+  {
+    "pluginName": "costCenter",
+    "active": true
+  }
+]

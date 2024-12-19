@@ -1,0 +1,18 @@
+.main-component {
+
+}
+
+.mainCard > .main-component-readonly {
+background-image: repeating-linear-gradient(
+                  45deg,
+                  #FFFFFF00,
+                  #FFFFFF00 10px,
+                  #66666625 10px,
+                  #66666605 20px
+  ) ;
+}
+
+/* To avoid that some elements are focused while they are hidden by sticky elements */
+html, body {
+  scroll-padding-top: 13rem;
+}

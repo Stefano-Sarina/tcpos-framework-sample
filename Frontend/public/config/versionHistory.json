@@ -1,0 +1,454 @@
+[
+  {
+    "version": "1.0.1",
+    "description": "First demo version",
+    "build": false,
+    "date": "2024-12-11",
+    "commitId": "b7913fc95dec7ec8bb1d581bacf8b05f308e65cc"
+  },
+  {
+    "version": "1.0.0",
+    "description": "Invoice deletion, translations",
+    "build": true,
+    "date": "2024-10-05",
+    "commitId": "352ff0af486494651391dc498c405c3aecfab3df"
+  },
+  {
+    "version": "2.1.0",
+    "description": "Invoice deletion, translations",
+    "build": true,
+    "date": "2024-10-02",
+    "commitId": "352ff0af486494651391dc498c405c3aecfab3df"
+  },
+  {
+    "version": "2.0.0",
+    "description": "Application framework. Minor fixes",
+    "build": true,
+    "date": "2024-09-20",
+    "commitId": "6cf5256f5afc3b99274a5bc0ed20aa639825ea9f"
+  },
+  {
+    "version": "1.11.0",
+    "description": "Local lists settings: optionally hide id",
+    "build": true,
+    "date": "2024-09-16",
+    "commitId": "1bfb2de81dd3bf5d22e97c801c52e42ae229cb4d"
+  },
+  {
+    "version": "1.10.15",
+    "description": "Minor fixes. Translations added. Invoicing filters modified",
+    "build": true,
+    "date": "2024-09-04",
+    "commitId": "2d98071075e403f399af8d1b3a915fc41d87c91b"
+  },
+  {
+    "version": "1.10.13",
+    "description": "Invoicing",
+    "build": true,
+    "date": "2024-08-28",
+    "commitId": "b43f8eb886703b062f72820da9a906123347ce8c"
+  },
+  {
+    "version": "1.10.12",
+    "description": "Validation messages translated. Fix in grid view rerendering (that in some cases didn't allow changing settings). Added codes to page titles. Added first name to operatior lists.",
+    "build": true,
+    "date": "2024-08-23",
+    "commitId": "23c0b866561a5915c10fa2bee14226fa919511a7"
+  },
+  {
+    "version": "1.10.11",
+    "description": "Shop in Shop plugin",
+    "build": true,
+    "date": "2024-08-20",
+    "commitId": "4cb080263943e8458526f2bc70fdb1238962246d"
+  },
+  {
+    "version": "1.10.10",
+    "description": "Fixed permission tree building when there is a permission with id=1",
+    "build": true,
+    "date": "2024-08-14",
+    "commitId": "1a606ae37055a0994aa4a39c5a5abbd3f483f07b"
+  },
+  {
+    "version": "1.10.9",
+    "description": "Fixed permission selections; code shown in comboboxes",
+    "build": true,
+    "date": "2024-08-09",
+    "commitId": "c90f002d0145d985b2a47dc69c6c94b1a2361df6"
+  },
+  {
+    "version": "1.10.8",
+    "description": "Fixed option list in advanced filters. Permission tree creation fixes",
+    "build": true,
+    "date": "2024-08-08",
+    "commitId": "803eef4908f206c923ebd1032edfc96283e15422"
+  },
+  {
+    "version": "1.10.7",
+    "description": "Operator groups description in permission form",
+    "build": true,
+    "date": "2024-08-06",
+    "commitId": "601a2a17e8ed5bc911a10746b0729a2366c187f6"
+  },
+  {
+    "version": "1.10.5",
+    "description": "Dynamic operator load in operator groups form",
+    "build": true,
+    "date": "2024-08-05",
+    "commitId": "543fc68075042160aae10edba5157e96c7e2f2f5"
+  },
+  {
+    "version": "1.10.4",
+    "description": "Full operator load in permission form",
+    "build": true,
+    "date": "2024-08-05",
+    "commitId": "a303116de9b81a42f5a3a28746c01eee4667e895"
+  },
+  {
+    "version": "1.10.3",
+    "description": "Invoicing configuration fixes. Operator language change fixes; set cookie language",
+    "build": true,
+    "date": "2024-08-02",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.10.2",
+    "description": "Error details in snackbar. Authentication cookie removed at logout. Fixed bug on filters. Validation on Valid from / Valid to fields in customers and Operators pages. E2e tests updated. Menu focus fixed. Translations updated.",
+    "build": true,
+    "date": "2024-07-24",
+    "commitId": "5ca6af46ff0e9664851c24652e82bdd9415ac9f1"
+  },
+  {
+    "version": "1.9.0",
+    "description": "Permission management",
+    "build": true,
+    "date": "2024-07-19",
+    "commitId": "75ab4a1ba84ba67022ea57b9fcc5907abe1fd7f1"
+  },
+  {
+    "version": "1.8.0",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-06-10",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.7.0",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-06-03",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.6.1",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-05-13",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.6.0",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-05-06",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.5.11",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-05-06",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.11",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-04-29",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.10",
+    "description": "Shop detail api calls optimized. Bug fixes.",
+    "build": false,
+    "date": "2024-04-22",
+    "commitId": "6526a7a08a2ae743cf1fcdbba2f856f690af4ec1"
+  },
+  {
+    "version": "1.4.9",
+    "description": "Entity object update",
+    "build": false,
+    "date": "2024-04-10",
+    "commitId": "a99c79c51851f1b3b764b1db7f9513f7acfa12a8"
+  },
+  {
+    "version": "1.4.8",
+    "description": "References changed for polyrepo",
+    "build": false,
+    "date": "2024-03-20",
+    "commitId": "34ec57e06cb67c0a071abc94764e02108f7b27ec"
+  },
+  {
+    "version": "1.4.5+0",
+    "description": "Language driven by the URL",
+    "build": false,
+    "date": "2024-02-20",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.4+1",
+    "description": "Group, group categories, UOM sizes",
+    "build": false,
+    "date": "2024-02-19",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.4+0",
+    "description": "RTL support",
+    "build": false,
+    "date": "2024-02-19",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.3+4",
+    "description": "Advanced filter fixes",
+    "build": true,
+    "date": "2024-02-06",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.3+3",
+    "description": "Filter fixes and api url parametrization",
+    "build": true,
+    "date": "2024-01-22",
+    "commitId": "e90c47cd9f28ac18c243792469093032ab6c6463"
+  },
+  {
+    "version": "1.4.3+2",
+    "description": "Filter fixes",
+    "build": true,
+    "date": "2024-01-19",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.3+1",
+    "description": "Comments - Validation fixes",
+    "build": true,
+    "date": "2023-12-18",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.3+0",
+    "description": "Concurrency management - Till editor - Till templates - Tills - Measure units - Image editor",
+    "build": true,
+    "date": "2023-12-18",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2+5",
+    "description": "Concurrency",
+    "build": false,
+    "date": "2023-10-23",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2.5",
+    "description": "Grid view editing in line fixed",
+    "build": true,
+    "date": "2023-10-17",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2.4",
+    "description": "Some grid view filters bugs fixed",
+    "build": true,
+    "date": "2023-10-11",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2.3",
+    "description": "Demo version 10/2023",
+    "build": true,
+    "date": "2023-10-10",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2.2",
+    "description": "Concurrency management - First version",
+    "build": true,
+    "date": "2023-10-02",
+    "commitId": "9f540b7e4c61924709f9b768c07094536c68c9cf"
+  },
+  {
+    "version": "1.4.2.0",
+    "description": "Login methods and user visibilities",
+    "build": true,
+    "date": "2023-09-13",
+    "commitId": "fc7ea8e6eb35c7ff247aed1fe1fd305acd37851c"
+  },
+  {
+    "version": "1.4.1.1",
+    "description": "Tests update and minor fixes",
+    "build": true,
+    "date": "2023-07-05",
+    "commitId": "fc7ea8e6eb35c7ff247aed1fe1fd305acd37851c"
+  },
+  {
+    "version": "1.4.1.0",
+    "description": "Oauth Login WIP - Grid view refactoring - Fixes: default operator for filters; password field removed from operators grid view; mandatory fields for customers",
+    "build": false,
+    "date": "2023-07-03",
+    "commitId": "ab3372c0969e4385cab8fb06319c88a6436bb8a8"
+  },
+  {
+    "version": "1.4.0.1",
+    "description": "Invoicing plugin - Fix transactions extraction filter",
+    "build": true,
+    "date": "2023-05-30",
+    "commitId": "549cac7b0f239fedc24875b345d8950613992c1d"
+  },
+  {
+    "version": "1.4.0.0",
+    "description": "Grid view inline editing - Invoicing plugin",
+    "build": true,
+    "date": "2023-05-26",
+    "commitId": "4800ecc9582f258b4de52e5e04ae8a2fc62922e5"
+  },
+  {
+    "version": "1.3.2.5",
+    "description": "Parallel API calls restored.",
+    "build": true,
+    "date": "2023-05-03",
+    "commitId": "efe301f370a2bd27d362cea1ceff36c5170a974a"
+  },
+  {
+    "version": "1.3.2.4",
+    "description": "Merchant entity added - Fixes: grid view language display fixed; grid view custom sorting; translations; customers saving",
+    "build": true,
+    "date": "2023-04-25",
+    "commitId": "ac8f14c4fbdf7d68ca1a1c04ccbcf8c2f8073c6b"
+  },
+  {
+    "version": "1.3.2.3",
+    "description": "\"Saving customer\" fixed: ABC group, additional cards date, name, email validation",
+    "build": false,
+    "date": "2023-04-25",
+    "commitId": "8afdd296ff491d56f850a4d6b10c67d3b1661dfd"
+  },
+  {
+    "version": "1.3.2.2",
+    "description": "\"The combo boxes present in the shops page are not translated\" fixed; language management updated",
+    "build": false,
+    "date": "2023-04-25",
+    "commitId": "5cff5b9ce3813b477d1bd49b51594e7c74210bf8"
+  },
+  {
+    "version": "1.3.2.0",
+    "description": "Fix grid view sorting for calculated fields (full name and language): added \"sortConverter\" function",
+    "build": false,
+    "date": "2023-04-24",
+    "commitId": "de905a41bb07e1fdfe5fccafeca19c3b5de722d8"
+  },
+  {
+    "version": "1.3.1.1",
+    "description": "Fix in grid view: \"Language is displayed in numeric format and 0 is displayed when the language is empty\"",
+    "build": false,
+    "date": "2023-04-24",
+    "commitId": "be29e4b66889239a39258799a8ab8fa151157e74"
+  },
+  {
+    "version": "1.3.1.0",
+    "description": "Added merchant entity",
+    "build": false,
+    "date": "2023-04-24",
+    "commitId": "ed246a9801cbe3138de6c5d2d06b1fd3d4e70346"
+  },
+  {
+    "version": "1.3.0.3",
+    "description": "Fixes: Some styling issues in the build version - Operators: Grid does not show all operators when paging - Extended fields in operators list (null date visualization and flags)",
+    "build": true,
+    "date": "2023-04-20",
+    "commitId": "b5999f9a1c0d04217978bfa2cf6bacc5c94c8e24"
+  },
+  {
+    "version": "1.3.0.2",
+    "description": "Shop in shop minor fixes - Cypress tests update - Added commit id to version",
+    "build": true,
+    "date": "2023-04-19",
+    "commitId": "fb5fcbceae3a354170d6cf58b87f0ffd2fd4d504"
+  },
+  {
+    "version": "1.3.0.1",
+    "description": "Languages management - Loader on detail view - Minor fixes",
+    "build": true,
+    "date": "2023-04-19",
+    "commitId": "bfebc4c28613464fd83086654b9eaa56514f36d0"
+  },
+  {
+    "version": "1.3.0.0",
+    "description": "Kumo API new endpoints migrated to Microsoft Entity Framework - Full Database Mappings - Plugins for frontend (UI) and backend (APIs) - Shop entity - Shop in shop and Receipt text plugins",
+    "build": true,
+    "date": "2023-04-14",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.5",
+    "description": "General: ID in Grid FIXED",
+    "build": false,
+    "date": "2023-03-31",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.4",
+    "description": "",
+    "build": true,
+    "date": "2023-03-30",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.3",
+    "description": "Double click on grid view - General: line select FIXED",
+    "build": false,
+    "date": "2023-03-30",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.2",
+    "description": "Version history implementation",
+    "build": false,
+    "date": "2023-03-30",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.1",
+    "description": "Default values and validation - Adding operators not working FIXED - Operators: Permissions missing FIXED - Operators: Windows username required FIXED - Operators: Lastname Column naming FIXED",
+    "build": false,
+    "date": "2023-03-29",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.2.0",
+    "description": "Entity errors visualization and navigation",
+    "build": false,
+    "date": "2023-03-28",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.1.0",
+    "description": "Cypress tests configuration - Menu item \"Dashboard\" does not lead to any page FIXED",
+    "build": false,
+    "date": "2023-03-24",
+    "commitId": ""
+  },
+  {
+    "version": "1.2.0.1",
+    "description": "Grid view quick actions - Mobile version",
+    "build": false,
+    "date": "2023-03-23"
+  },
+  {
+    "version": "1.2.0.0",
+    "description": "First online demo",
+    "build": true
+  }
+]

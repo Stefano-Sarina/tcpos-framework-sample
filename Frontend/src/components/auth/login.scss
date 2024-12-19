@@ -1,0 +1,34 @@
+@use "sass:math";
+
+.auth-wrapper {
+  .login-dialog {
+    margin: auto;
+    grid-row: 2;
+
+    .login-header {
+
+      .logo {
+      $logoSize: 9em;
+        //margin-bottom: 1.25em;
+      /*
+        height: $logoSize;*/
+        line-height: $logoSize*2.4;
+
+        width: $logoSize;
+        display: inline-block;
+      }
+    }
+
+  }
+
+  footer {
+
+    grid-row: 3;
+  }
+
+  display: grid;
+  width: 100%;
+  align-items: center;
+
+  grid-template-rows: 2em 1fr 2em;
+}

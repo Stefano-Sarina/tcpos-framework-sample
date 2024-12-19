@@ -1,0 +1,130 @@
+{
+  "objectName" : "order",
+  "toolbar": [],
+  "detailView" : {
+    "titleField": "Id",
+    "label": "Order",
+    "entityName": "Order",
+    "layoutGroups" : [
+      {
+        "groupName" : "Definitions",
+        "label" : "Header",
+        "sections": [
+          {
+            "xs" : 12,
+            "lg" : 12,
+            "sectionName": "header",
+            "label": "Header",
+            "components" : [
+              {
+                "componentName": "CustomerId",
+                "componentType": "wdCombobox",
+                "fieldName" : "CustomerId",
+                "displayFieldName": "Customer",
+                "label" : "Customer",
+                "multiSelect" : false,
+                "listName": "Customer_List",
+                "xs": 12,
+                "lg": 6
+              },
+              {
+                "componentName" : "OrderDate",
+                "componentType" : "wdDatePicker",
+                "fieldName" : "OrderDate",
+                "label" : "Order date",
+                "xs": 12,
+                "lg": 6,
+                "type": "date"
+              },
+              {
+                "componentName" : "Notes",
+                "componentType" : "wdStringTextField",
+                "fieldName" : "Notes",
+                "label" : "Notes",
+                "xs": 12,
+                "lg": 12
+              }
+            ]
+          },
+          {
+            "sectionName": "OrderDetail",
+            "label": "Details",
+            "xs" : 12,
+            "lg" : 12,
+            "components": [
+              {
+                "componentName": "OrderDetailSubForm",
+                "entityName": "OrderDetail",
+                "label": "Details",
+                "componentType": "wdSubForm",
+                "minHeight" : "300px",
+                "pagination" : false,
+                "xs" : 12,
+                "lg" : 12,
+                "subFields": [
+                  {
+                    "colId": "ProductId",
+                    "sortable": false,
+                    "filter": false,
+                    "lockPinned": null,
+                    "flex": 1,
+                    "minWidth": 200,
+                    "cellRenderer": {
+                      "componentName": "ProductId",
+                      "componentType": "wdCombobox",
+                      "fieldName": "ProductId",
+                      "displayFieldName": "Product",
+                      "label": "Product",
+                      "multiSelect": false,
+                      "listName": "Product_List"
+                    }
+                  },
+                  {
+                    "colId": "Quantity",
+                    "sortable": false,
+                    "filter": false,
+                    "lockPinned": null,
+                    "flex": 1,
+                    "minWidth": 200,
+                    "cellRenderer": {
+                      "componentName": "Quantity",
+                      "componentType": "wdNumberTextField",
+                      "fieldName": "Quantity",
+                      "label": "Quantity"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      } 
+    ]
+  },
+  "defaultGridView": {
+    "label": "Orders",
+    "editInline": false,
+    "layout" : [
+      {
+        "columnName" : "Customer",
+        "sourceName" : "Customer",
+        "label" : "Customer",
+        "width" : 200,
+        "visible": true,
+        "indexPosition": 1,
+        "type": "string"
+      },
+      {
+        "columnName" : "OrderDate",
+        "sourceName" : "OrderDate",
+        "sourceType" : "Field",
+        "label" : "Date",
+        "width" : 200,
+        "visible": true,
+        "indexPosition": 2,
+        "type": "date"
+      }
+    ],
+    "quickOps": []
+  }
+}

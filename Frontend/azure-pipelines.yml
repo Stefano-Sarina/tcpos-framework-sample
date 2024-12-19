@@ -1,0 +1,107 @@
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+parameters:
+  - name: push_package
+    displayName: NPM PUBLISH
+    default: false
+    type: boolean
+
+pool:
+  name: Release
+
+steps:
+- checkout: self
+  clean: true
+  fetchDepth: 1
+
+#install node and npm 
+- task: UseNode@1
+  inputs:
+    version: '20.11'
+  displayName: 'Install Node.js'
+  enabled: true
+
+#install pnpm
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+        Write-Host "Installing pnpm"
+        npm i -g pnpm@9.1.0
+  displayName: Install pnpm
+  enabled: true
+
+#install the npm dependecies
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+        Write-Host "Installing npm packages"
+        pnpm install --loglevel error
+  displayName: Pnpm Install Packages
+  enabled: true
+
+#clean project
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      Write-Host "npm run clean"
+      npm run clean --loglevel error
+  displayName: Npm Run Clean
+  enabled: true
+  
+#build project
+- task: PowerShell@2
+  inputs:
+    targetType: inline
+    script: |
+      Write-Host "npm run build"
+      npm run build --loglevel error
+  timeoutInMinutes: 5
+  displayName: Npm Run Build
+  enabled: true
+  
+#create the package to push
+- task: Npm@1
+  inputs:
+    command: custom
+    workingDir: $(System.DefaultWorkingDirectory)
+    verbose: true
+    customCommand: pack
+  displayName: 'Npm Pack'
+  enabled: true
+
+#move the npm package to npm_package folder
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      new-item -Path $(System.DefaultWorkingDirectory) -name npm_package -itemtype "directory" 
+      move-item -Path "$(System.DefaultWorkingDirectory)\*.tgz" -Destination "$(System.DefaultWorkingDirectory)\npm_package"
+    errorActionPreference: 'continue'
+    failOnStderr: true
+  displayName: Move npm package to npm_package folder
+  continueOnError: false
+  enabled: true
+  
+#publish artifact in pipeline
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)\npm_package'
+    artifact: 'npm-pack'
+    publishLocation: 'pipeline'
+  displayName: 'Publish Npm Artifact'
+  enabled: true
+
+#publish npm package to nexus
+- task: Npm@1
+  inputs:
+    command: 'publish'
+    workingDir: '$(System.DefaultWorkingDirectory)'
+    verbose: true
+    publishEndpoint: 'nexus-npm-webcomponents'
+  condition: and(succeeded(), eq('${{ parameters.push_package }}', 'true'))
+  displayName: 'Push Npm Package'
+  enabled: true
