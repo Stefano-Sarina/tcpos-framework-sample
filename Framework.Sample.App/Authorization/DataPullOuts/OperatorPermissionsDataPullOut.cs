@@ -18,9 +18,11 @@ namespace Framework.Sample.App.Authorization.DataPullOuts;
 
 public class OperatorPermission : Entity
 {
-    public override int Id {get; set;}
-    public int UserId { get; set; }
-    public string UserName { get; set; }
+    public override int Id {get; set; }
+    public int OperatorId { get; set; }
+    public string OperatorCode { get; set; }
+    public int? OperatorGroupId { get; set; }
+    public string? OperatorGroupCode { get; set; }
     public int PermissionId { get; set; }
     public string PermissionName { get; set; }
     public PermissionValue PermissionValue { get; set; }
@@ -28,8 +30,10 @@ public class OperatorPermission : Entity
 
 public class OperatorPermissionIn<T>
 {
-    public T UserId { get; set; }
-    public string UserName { get; set; }
+    public T OperatorId { get; set; }
+    public string OperatorCode { get; set; }
+    public T? OperatorGroupId { get; set; }
+    public string? OperatorGroupCode { get; set; }
     public T PermissionId { get; set; }
     public string PermissionName { get; set; }
     public PermissionValue PermissionValue { get; set; }
@@ -62,10 +66,29 @@ public class OperatorPermissionsDataPullOut(DataPullOutConfiguration configurati
         var dbContext = storageProvider.GetStorage<SampleDbContext>();
 
         FormattableString sql = $@"
-select p.id, u.id userid, u.username username , p.id permissionid, p.permissionname permissionname, up.permissionvalue
-  from Permission p 
-  left join UserPermission up on up.PermissionId = p.id
-  left join [sample_app].[dbo].[User] u on up.UserId = u.id";
+select x.* from (
+	select ISNULL (cast ( ROW_NUMBER () OVER (ORDER BY u.id, p.id) as int) ,0) id, 
+	u.id OperatorId, u.username OperatorCode, g.id operatorgroupid, g.groupname operatorgroupcode, p.id permissionid, p.permissionname permissionname, x.permissionvalue 
+		from 
+		(
+			select u.id operatorid, null groupid, up.permissionid, up.permissionvalue
+				from [sample_app].[dbo].[user] u 
+				join [sample_app].[dbo].[userpermission] up on u.id = up.userid
+				where up.permissionvalue is not null
+			union all
+			select u.id operatorid, g.id groupid, gp.permissionid,min(gp.permissionvalue) permission_value
+				from [sample_app].[dbo].[usergroup]  ug 
+				join [sample_app].[dbo].[group] g on g.id = ug.groupid 
+				join [sample_app].[dbo].[user] u on u.id = ug.userid 
+				join [sample_app].[dbo].[grouppermission] gp on g.id = gp.groupid 
+				where gp.permissionvalue is not null
+					and not exists (select 1 from [sample_app].[dbo].[userpermission] up where up.userid = ug.userid and up.permissionid = gp.permissionid)
+				group by u.id , g.id , gp.permissionid
+		) x
+		join [sample_app].[dbo].[user] u on u.id = x.operatorid
+		left join [sample_app].[dbo].[group] g on g.id = x.groupid
+		join [sample_app].[dbo].[permission] p on p.id = x.permissionid
+) x";
 
         return dbContext.Database.SqlQueryRaw<OperatorPermission>(sql.ToString());
     }
@@ -77,6 +100,6 @@ select p.id, u.id userid, u.username username , p.id permissionid, p.permissionn
         var userCode = request.HttpContext.User.Identities.FirstOrDefault()?.Name ?? "";
         var userId = authzUserStore.GetUserAsync(userCode, cancellationTokenSource.Token)?.Result?.Id ?? 0;
 
-        return base.GetDataFilterEntity(queryable.Where(p => p.UserId == (int)userId), request);
+        return base.GetDataFilterEntity(queryable.Where(p => p.OperatorId == (int)userId), request);
     }
 }

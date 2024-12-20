@@ -24,6 +24,7 @@ public static class WebAppBuilderExtension
 
         serviceCollection.AddHttpContextAccessor();
 
+        serviceCollection.AddScoped<IAuthorizationContextStore<HttpContext>, AuthzCtxHttpStore>();
         serviceCollection.AddScoped<IAuthorizationContextStore<AuthorizationHandlerContext>, AuthzCtxStore>();
         serviceCollection.AddScoped<IAuthorizationUserStore<AuthzUser, int>, AuthzUserStore>();
         serviceCollection.AddScoped<IAuthorizationGroupStore<AuthzUser, AuthzGroup, int>, AuthzGroupStore>();

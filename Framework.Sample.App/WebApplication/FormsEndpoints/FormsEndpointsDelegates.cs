@@ -5,7 +5,7 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
 {
     public static class FormsEndpointsDelegates
     {
-        public static async Task<IResult> SaveFormEndpoints([FromServices] FeManager feManager, [FromBody] FeIn formsEndpoints)
+        public static async Task<IResult> SaveFormEndpoints([FromServices] FeManager feManager, [FromRoute] string version, [FromBody] FeIn formsEndpoints)
         {
             Safety.Check(formsEndpoints != null, "formsEndpoints payload is null");
 
