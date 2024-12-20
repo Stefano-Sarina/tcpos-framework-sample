@@ -141,6 +141,7 @@ public static class WebApplicationFactory
         });
         webApplication.MapPost("/api/login", async (HttpContext httpContext, [FromQuery] bool isAdmin) =>
         {
+            
             var claims = new List<Claim>
             {
                 new(ClaimTypes.Name, isAdmin ? Admin : User),
@@ -153,8 +154,13 @@ public static class WebApplicationFactory
 
             return Results.Created();
         });
+        webApplication.MapGet("connect/userinfo", async (HttpContext httpContext) =>
+        {
+            var name = httpContext.User.FindFirst(ClaimTypes.Name);
+            return await Task.FromResult(Results.Ok(name?.Value));
+        });
 
-        webApplication.MapPost("/api/formsendpoints", FormsEndpointsDelegates.SaveFormEndpoints)
+        webApplication.MapPost("/api/{version}/formsendpoints", FormsEndpointsDelegates.SaveFormEndpoints)
            .RequireTcposAuthorization<AuthorizationRequirementFormsEndpoints>();
 
         webApplication.UseAuthorization();
@@ -221,8 +227,12 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
               //UserPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
-              //OperatorPermissions
+             //OperatorPermissions !! RASAP, DEBUG ONLY !!
              .AddDataPullOutItem<OperatorPermissionsDataPullOut>()
+             //PermissionsOperator
+             .AddDataPullOutItem<PermissionsOperatorDataPullOut>()
+             //PermissionsOperator
+             .AddDataPullOutItem<PermissionsDependenciesDataPullOut>()
              //AdWebVersionEntity
              .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
 

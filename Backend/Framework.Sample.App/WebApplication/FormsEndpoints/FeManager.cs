@@ -43,10 +43,11 @@ public class FeManager(SampleDbContext sampleDbContext)
 
             AddApiPermissionsToRootNodes(nodes, existingPermissions, formsEndpoints.ApplicationName);
             await AddPermissionsAsync(nodes, existingPermissions, formsEndpoints.ApplicationName);
+
+            RemoveUnusedPemissionsDependencies(nodes, existingDependencies, formsEndpoints.ApplicationName);
+            RemoveUnusedPemissions(nodes, existingPermissions, formsEndpoints.ApplicationName);
             // AddPermissionsDependenciesAsync must be after AddPermissionsAsync because we are using the dbcontext.Permissions.Local collection
             await AddPermissionsDependenciesAsync(nodes, existingDependencies, formsEndpoints.ApplicationName);
-            RemoveUnusedPemissions(nodes, existingPermissions, formsEndpoints.ApplicationName);
-            RemoveUnusedPemissionsDependencies(nodes, existingDependencies, formsEndpoints.ApplicationName);
 
             adWebEntityVersion.Version = formsEndpoints.Version;
 
@@ -119,7 +120,8 @@ public class FeManager(SampleDbContext sampleDbContext)
                 Permission? childPermission = GetPermissionFromNode(node, applicationName);
 
                 if (parentPermission != null && childPermission != null
-                    && !existingDependencies.Any(p => p.ParentPermissionId == parentPermission.Id && p.ChildPermissionId == childPermission.Id))
+                    && !existingDependencies.Any(p => p.ParentPermissionId == parentPermission.Id && p.ChildPermissionId == childPermission.Id)
+                    && !dependencies.Any(p => p.ParentPermission == parentPermission && p.ChildPermission == childPermission))
                 {
                     dependencies.Add(new PermissionDependency()
                     {
@@ -166,7 +168,7 @@ public class FeManager(SampleDbContext sampleDbContext)
         IEnumerable<PermissionDependency> dependenciesToRemove = existingDependencies
             .Where(ed => !nodesDependencies.Any(nd => nd.ParentPermissionId == ed.ParentPermissionId && nd.ChildPermissionId == ed.ChildPermissionId));
 
-       sampleDbContext.PermissionsDependencies.RemoveRange(dependenciesToRemove);
+        sampleDbContext.PermissionsDependencies.RemoveRange(dependenciesToRemove);
     }
 
     private Permission? GetPermissionFromNode(PermissionNode node, string applicationName)

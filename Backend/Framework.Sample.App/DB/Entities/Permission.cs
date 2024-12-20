@@ -19,7 +19,7 @@ public class Permission : Entity
 
     [ConcurrencyItem]
     [UniqueKeyField]
-    [StringLength(40, MinimumLength = 1)]
+    [StringLength(250, MinimumLength = 1)]
     public string PermissionName
     {
         get;

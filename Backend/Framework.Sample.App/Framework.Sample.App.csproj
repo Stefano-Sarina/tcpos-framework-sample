@@ -18,7 +18,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
     <PackageReference Include="TCPOS.AspNetCore.DataBind" Version="0.1.0" />
     <PackageReference Include="TCPOS.AspNetCore.DataBind.Implementations" Version="0.1.0" />
-    <PackageReference Include="TCPOS.Authorization" Version="0.1.1" />
+    <PackageReference Include="TCPOS.Authorization" Version="0.1.2" />
     <PackageReference Include="TCPOS.Common" Version="0.1.1" />
     <PackageReference Include="TCPOS.Data.Batches" Version="0.1.0" />
     <PackageReference Include="TCPOS.EntityFramework" Version="0.1.0" />
