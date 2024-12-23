@@ -63,19 +63,9 @@ const AfterLoginVerification = () => {
         const getUserinfo = async () => {
             try {
                 response = await apiClient.get('/connect/userinfo', {}, false, true);
-                dispatch(setLogged({logged: true, name: response.Subject ?? ""})); // This function also sets initialized = true
+                dispatch(setLogged({logged: true, name: response ?? ""})); // This function also sets initialized = true
             } catch {
                 dispatch(setLogged({logged: false})); // This function also sets initialized = true
-            }
-            try {
-                response = await apiClient.get(`${apiUrl}/readonlyvisibilities`, {}, false,     true);
-                if (response.fullAccessVisibilities) {
-                    dispatch(setVisibilities(response));
-                } else {
-                    dispatch(setVisibilities({fullAccessVisibilities: [], readOnlyVisibilities: []}));
-                }
-            } catch {
-                dispatch(setVisibilities({fullAccessVisibilities: [], readOnlyVisibilities: []}));
             }
         };
         getUserinfo();

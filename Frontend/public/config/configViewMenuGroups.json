@@ -7,7 +7,7 @@
     "loginWithGoogle": false
   },
   "apiUrl": "/api/1.0",
-  "uiVersion": "1.0.4",
+  "uiVersion": "1.0.5",
   "defaultLang": "en-US",
   "applicationName": "BackOfficeSample",
   "menuGroups" : [
@@ -31,12 +31,6 @@
         {
           "entityId" : "customer",
           "label" : "Customers",
-          "icon" : "account-cash",
-          "active": true
-        },
-        {
-          "entityId" : "tax",
-          "label" : "Taxes",
           "icon" : "account-cash",
           "active": true
         },

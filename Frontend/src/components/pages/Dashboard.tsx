@@ -99,7 +99,7 @@ const DashboardDefault = () => {
       const getUserinfo = async () => {
           try {
               response = await apiClient.get('/connect/userinfo', {}, false, true);
-              dispatch(setLogged({logged: true, name: response.Subject ?? ""})); // This function also sets initialized = true
+              dispatch(setLogged({logged: true, name: response ?? ""})); // This function also sets initialized = true
           } catch {
               dispatch(setLogged({logged: false})); // This function also sets initialized = true
           }
@@ -122,11 +122,11 @@ const DashboardDefault = () => {
         </Box>
       </Grid>
       {/* row 1 */}
-      {/*<Grid item xs={12} sx={{ mb: -2.25 }}>
+      <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h5"><FormattedMessage id={'Dashboard'} /></Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        <AnalyticEcommerce
+        {/* <AnalyticEcommerce
                 title={intl.formatMessage({id: 'New customer cards in the last week'})}
             count={intl.formatNumber(4236)} percentage={5.3} extra={intl.formatNumber(35000)} />
       </Grid>
@@ -145,10 +145,10 @@ const DashboardDefault = () => {
                            count={intl.formatNumber(35078, {style: 'currency', currency: 'EUR'})}
                            percentage={27.4}
                            isLoss
-                           color="warning" extra={intl.formatNumber(20395, {style: 'currency', currency: 'EUR'})} />
+                           color="warning" extra={intl.formatNumber(20395, {style: 'currency', currency: 'EUR'})} /> */}
       </Grid>
 
-      <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />*/}
+      <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
       {/* row 2 */}
       {/*<Grid item xs={12} md={7} lg={8}>

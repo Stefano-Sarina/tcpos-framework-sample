@@ -18,6 +18,11 @@ import {
     Typography,
     CircularProgress,
     Box,
+    FormControl,
+    FormLabel,
+    RadioGroup,
+    Radio,
+    FormGroup,
 } from "@mui/material";
 
 // third party
@@ -28,7 +33,7 @@ import {Formik} from 'formik';
 import IconButton from "../../../../themeComponents/@extended/IconButton";
 import AnimateButton from '../../../../themeComponents/@extended/AnimateButton';
 import type { ILoginConfiguration} from '@tcpos/backoffice-core';
-import {store, setInit, setAutoRedirect, DailyPublicRegistrationContainer, removeAppLoadingState, setDirtyData, ABaseApiController, setUserData} from '@tcpos/backoffice-core';
+import {store, setInit, setAutoRedirect, DailyPublicRegistrationContainer, removeAppLoadingState, setDirtyData, ABaseApiController, setUserData, setLogged} from '@tcpos/backoffice-core';
 // assets
 import {EyeOutlined, EyeInvisibleOutlined, AppstoreFilled} from '@ant-design/icons';
 
@@ -57,6 +62,9 @@ const AuthLogin = () => {
     const [showPassword, setShowPassword] = React.useState(false);
 
     const [loginProcess, setLoginProcess] = React.useState<boolean>(false);
+    const [admin, setAdmin] = React.useState<boolean>(false);
+
+
     const intl = useIntl();
     const theme = useTheme();
     const navigate = useNavigate();
@@ -123,8 +131,8 @@ const AuthLogin = () => {
                         onSubmit={async (values, {setErrors, setStatus, setSubmitting}) => {
                             //navigate(`/${lang}/home`);
                             const response = await DailyPublicRegistrationContainer.resolve(ABaseApiController)
-                                .apiPost(`/api/login?isAdmin=true`, {});
-                            dispatch(setUserData(values.username));
+                                .apiPost(`/api/login?isAdmin=${admin ? 'true' : 'false'}`, {});
+                            dispatch(setUserData(admin ? "Admin" : "Not admin")); // TODO refactor setUserData and  add user data (is admin)
                             //window.location.href = `/${lang}/home`;
                             window.location.href = `/${lang}/after-login-verification`;
                             //if ((response as Record<string, unknown>).status === 201) {
@@ -323,6 +331,13 @@ const AuthLogin = () => {
                                                 <FormHelperText error>{errors.submit}</FormHelperText>
                                             </Grid>
                                     )}
+                                    <Grid item xs={12}>
+                                        <FormGroup>
+                                            <FormControlLabel control={<Checkbox 
+                                                value={admin} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAdmin(e.target.checked)}
+                                            />} name='IsAdmin'  label="Admin" />
+                                        </FormGroup>                                    
+                                    </Grid>
                                     {loginConfiguration.simpleLogin &&
                                             <Grid item xs={12}>
                                                 <AnimateButton>
@@ -394,38 +409,6 @@ const AuthLogin = () => {
                                                 </AnimateButton>
                                             </Grid>
                                     }
-                                    {/*
-                                    <Grid item xs={12}>
-                                        <Grid container spacing={2}>
-                                            <Grid item xs={6}>
-                                                <AnimateButton>
-                                                    <Button startIcon={
-                                                        <img className="logo logo-image"  style={{marginBottom: '-17px'}}  src={theme.palette.mode === 'dark' ? logoImageDark : logoImage} alt="TCPos" width="60" />
-                                                    } id={'loginTCPOS-button'}
-                                                            disableElevation disabled={loginProcess}
-                                                            fullWidth size="large" type="submit" variant="outlined"
-                                                            color="primary"
-                                                            onClick={() => {setLoginProcess(true);}}
-                                                            href={`/connect/authorize?client_id=tcpos.daily&redirect_uri=${window.location.origin}/callback/login/local&response_type=code&scope=openid profile KumoAPI&returnUrl=${window.location.origin}/after-login-verification`}>
-                                                    </Button>
-                                                </AnimateButton>
-                                            </Grid>
-                                            <Grid item xs={6}>
-                                                <AnimateButton>
-                                                    <Button startIcon={<AppstoreFilled/>} id={'loginMicrosoft-button'}
-                                                            disableElevation disabled={loginProcess}
-                                                            fullWidth size="large" type="submit" variant="outlined"
-                                                            style={{margin: 'auto'}}
-                                                            color="primary"
-                                                            onClick={() => {setLoginProcess(true);}}
-                                                            href={`/connect/authorize?client_id=tcpos.daily&redirect_uri=${window.location.origin}/callback/login/microsoft&response_type=code&scope=openid profile KumoAPI&returnUrl=${window.location.origin}/after-login-verification&identity_provider=Microsoft`}>
-                                                        Microsoft
-                                                    </Button>
-                                                </AnimateButton>
-                                            </Grid>
-                                        </Grid>
-                                    </Grid>
-*/}
                                 </Grid>
                             </form>
                     )}
