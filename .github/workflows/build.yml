@@ -27,7 +27,7 @@ jobs:
     - name: 'Dotnet Build'
       shell: pwsh # For Linux, use bash
       run: |
-        dotnet build Framework.Sample.App.sln --configuration Release
+        dotnet build Backend/Framework.Sample.App.sln --configuration Release
 
     - name: 'Create Test Settings'
       shell: pwsh # For Linux, use bash
