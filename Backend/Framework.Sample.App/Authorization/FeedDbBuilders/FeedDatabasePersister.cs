@@ -7,7 +7,8 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<FeedDatabasePersister> logger) : IFeedDatabasePersister
+internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<FeedDatabasePersister> logger) 
+    : IFeedDatabasePersister<FeedDatabaseItem>
 {
     public async Task<bool> SaveAsync(IEnumerable<FeedDatabaseItem> feedDbItems, CancellationToken cancellationToken)
     {
@@ -19,7 +20,7 @@ internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<F
             var permissions = await dbContext.Permissions.ToListAsync();
             var permissionNames = permissions.Select(x => x.PermissionName);
 
-            var existingPermissions = feedDbItems.Where(x => permissionNames.Contains(x.Permission.Name()));
+            var existingPermissions = feedDbItems.Where(x => permissionNames.Contains(x.PermissionName));
             var missingPermissions = feedDbItems.Except(existingPermissions).ToList();
 
             if (!missingPermissions.Any())
@@ -28,11 +29,11 @@ internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<F
             }
 
             // remove duplicated permissions: multiple endpoint could refer same permissions
-            missingPermissions = missingPermissions.DistinctBy(x => new { x.Permission.KeyCode }).ToList();
+            missingPermissions = missingPermissions.DistinctBy(x => new { x.PermissionName}).ToList();
             var missingDbPermissions = missingPermissions.Select(
                 p => new Permission()
                 {
-                    PermissionName = p.Permission.Name(),
+                    PermissionName = p.PermissionName,
                     PermissionType = DB.Enums.PermissionTypes.Api,
                 });
 
@@ -75,6 +76,7 @@ internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<F
 //    }
 //}
 
+/*
 public static class FeedDbExtension
 {
     public static string Name(this FeedDatabaseItem.FeedPermission p)
@@ -88,3 +90,4 @@ public static class FeedDbExtension
         return string.Compare(feedPermission.KeyCode, $"{permission.PermissionName}-{permission.PermissionType}", true) == 0;
     }
 }
+*/

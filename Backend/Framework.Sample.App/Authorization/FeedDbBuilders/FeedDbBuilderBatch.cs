@@ -6,7 +6,7 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDbBuilderBatch : IFeedDatabaseManager
+internal class FeedDbBuilderBatch : IFeedDatabaseManager<FeedDatabaseItem>
 {
     public async Task<bool> CanHandleAsync(Endpoint endpoint)
     {
@@ -29,10 +29,7 @@ internal class FeedDbBuilderBatch : IFeedDatabaseManager
             {
                 foreach (var method in methods.HttpMethods)
                 {
-                    items.Add(new FeedDatabaseItem()
-                    {
-                        Permission = new FeedDatabaseItem.FeedPermission("batch", PermissionTypes.Api.ToString(), method)
-                    });
+                    items.Add(new FeedDatabaseItem($"batch-{PermissionTypes.Api}-{method}"));
                 }
             }
         }
