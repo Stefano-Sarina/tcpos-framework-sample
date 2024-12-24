@@ -17,16 +17,33 @@ using TCPOS.Data.Batches.Payload;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
-public class PermissionsOperator : OperatorPermission
+public class PermissionsOperator : Entity
 {
+    public override int Id { get; set; }
+    public int OperatorId { get; set; }
+    public string OperatorCode { get; set; }
+    public int? OperatorGroupId { get; set; }
+    public string? OperatorGroupCode { get; set; }
+    public int PermissionId { get; set; }
+    public string PermissionName { get; set; }
+    public PermissionValue PermissionValue { get; set; }
 }
 
-public class PermissionsOperatorIn<T> : OperatorPermissionIn<T>
+public class PermissionsOperatorIn<T> 
 {
+    public T OperatorId { get; set; }
+    public string OperatorCode { get; set; }
+    public T? OperatorGroupId { get; set; }
+    public string? OperatorGroupCode { get; set; }
+    public T PermissionId { get; set; }
+    public string PermissionName { get; set; }
+    public PermissionValue PermissionValue { get; set; }
 }
 
-public class PermissionsOperatorOut<T> : OperatorPermissionOut<T>
+public class PermissionsOperatorOut<T> : PermissionsOperatorIn<T>
 {
+    public string ConcurrencyCode { get; set; }
+    public int Id { get; set; }
 }
 
 public class PermissionsOperatorProfile : Profile

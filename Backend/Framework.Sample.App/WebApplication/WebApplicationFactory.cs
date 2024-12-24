@@ -227,8 +227,8 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
               //UserPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
-             //OperatorPermissions !! RASAP, DEBUG ONLY !!
-             .AddDataPullOutItem<OperatorPermissionsDataPullOut>()
+             ////OperatorPermissions !! RASAP, DEBUG ONLY !!
+             //.AddDataPullOutItem<OperatorPermissionsDataPullOut>()
              //PermissionsOperator
              .AddDataPullOutItem<PermissionsOperatorDataPullOut>()
              //PermissionsOperator

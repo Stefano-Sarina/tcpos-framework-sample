@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDbBuilderDataPullOut : IFeedDatabaseManager
+internal class FeedDbBuilderDataPullOut : IFeedDatabaseManager<FeedDatabaseItem>
 {
     private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers;
     //public FeedDbBuilderDataPullOut(IDataEntitiesRetriever[] dataEntitiesRetrievers)
@@ -48,10 +48,7 @@ internal class FeedDbBuilderDataPullOut : IFeedDatabaseManager
                 {
                     foreach (var method in methods.HttpMethods)
                     {
-                        items.Add(new FeedDatabaseItem()
-                        {
-                            Permission = new FeedDatabaseItem.FeedPermission(dataPullOut.Name, PermissionTypes.Api.ToString(), method)
-                        });
+                        items.Add(new FeedDatabaseItem($"{dataPullOut.Name}-{PermissionTypes.Api}-{method}"));
                     }
                 }
             }

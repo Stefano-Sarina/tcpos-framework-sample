@@ -9,7 +9,7 @@ using TCPOS.Data.Batches.Enums;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal abstract class FeedDbBuilderErpBase<TAuthzReq> : IFeedDatabaseManager
+internal abstract class FeedDbBuilderErpBase<TAuthzReq> : IFeedDatabaseManager<FeedDatabaseItem>
     where TAuthzReq : IAuthorizationRequirement
 {
     private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers;
@@ -48,10 +48,7 @@ internal abstract class FeedDbBuilderErpBase<TAuthzReq> : IFeedDatabaseManager
                 {
                     foreach (var method in methods.HttpMethods)
                     {
-                        items.Add(new FeedDatabaseItem()
-                        {
-                            Permission = new FeedDatabaseItem.FeedPermission(dataPullOut.Name, PermissionTypes.Api.ToString(), method)
-                        });
+                        items.Add(new FeedDatabaseItem($"{dataPullOut.Name}-{PermissionTypes.Api}-{method}"));
                     }
                 }
             }
