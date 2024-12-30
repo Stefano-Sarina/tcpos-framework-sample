@@ -24,6 +24,7 @@ public static class WebAppBuilderExtension
 
         serviceCollection.AddHttpContextAccessor();
 
+        serviceCollection.AddScoped<IAuthorizationContextStore<HttpContext>, AuthzCtxHttpStore>();
         serviceCollection.AddScoped<IAuthorizationContextStore<AuthorizationHandlerContext>, AuthzCtxStore>();
         serviceCollection.AddScoped<IAuthorizationUserStore<AuthzUser, int>, AuthzUserStore>();
         serviceCollection.AddScoped<IAuthorizationGroupStore<AuthzUser, AuthzGroup, int>, AuthzGroupStore>();
@@ -59,15 +60,15 @@ public static class WebAppBuilderExtension
             });
         }
 
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderBatch>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderDataPullOut>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpInsert>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpRemove>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpReplace>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderErpUpdate>();
-        serviceCollection.AddSingleton<IFeedDatabaseManager, FeedDbBuilderFormsEndpoints>();
-        serviceCollection.AddSingleton<IFeedDatabasePersister, FeedDatabasePersister>();
-        serviceCollection.AddSingleton<IFeedDatabaseEngine, FeedDatabaseEngine>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderBatch>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderDataPullOut>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpInsert>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpRemove>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpReplace>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpUpdate>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderFormsEndpoints>();
+        serviceCollection.AddSingleton<IFeedDatabasePersister<FeedDatabaseItem>, FeedDatabasePersister>();
+        serviceCollection.AddSingleton<IFeedDatabaseEngine, FeedDatabaseEngine<FeedDatabaseItem>>();
 
         serviceCollection.AddHostedService<PermissionBackgroundService>();
     }

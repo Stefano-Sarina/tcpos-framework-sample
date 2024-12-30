@@ -6,7 +6,7 @@ using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDbBuilderFormsEndpoints : IFeedDatabaseManager
+internal class FeedDbBuilderFormsEndpoints : IFeedDatabaseManager<FeedDatabaseItem>
 {
     public async Task<IEnumerable<FeedDatabaseItem>> BuildFeedDatabaseItemsAsync(Endpoint endpoint, CancellationToken cancellationToken)
     {
@@ -23,15 +23,13 @@ internal class FeedDbBuilderFormsEndpoints : IFeedDatabaseManager
         {
             foreach (var method in methods.HttpMethods)
             {
-                items.Add(new FeedDatabaseItem()
-                {
-                    Permission = new FeedDatabaseItem.FeedPermission("formsendpoints", PermissionTypes.Api.ToString(), method)
-                });
+                items.Add(new FeedDatabaseItem($"formsendpoints-{PermissionTypes.Api}-{method}"));
             }
         }
 
         return await Task.FromResult(items);
     }
+
 
     public async Task<bool> CanHandleAsync(Endpoint endpoint)
     {

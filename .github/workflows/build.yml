@@ -27,15 +27,15 @@ jobs:
     - name: 'Dotnet Build'
       shell: pwsh # For Linux, use bash
       run: |
-        dotnet build Framework.Sample.App.sln --configuration Release
+        dotnet build Backend/Framework.Sample.App.sln --configuration Release
 
     - name: 'Create Test Settings'
       shell: pwsh # For Linux, use bash
       run: |
-        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > .\Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
+        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > .\Backend\Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
 
     - name: 'Dotnet Test'
       shell: pwsh # For Linux, use bash
       run: |
-        dotnet test Framework.Sample.AppTests\Framework.Sample.AppTests.csproj --configuration Release
+        dotnet test Backend/Framework.Sample.AppTests\Framework.Sample.AppTests.csproj --configuration Release
   
