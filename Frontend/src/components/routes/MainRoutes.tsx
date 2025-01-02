@@ -22,7 +22,7 @@ const UserTabPassword = Loadable(lazy(() => import('../pages/TabPassword')));
 const UserTabSettings = Loadable(lazy(() => import('../pages/TabSettings')));
 */
 
-import DashboardDefault from "../pages/Dashboard";
+import DashboardDefault from "../pages/dashboard/Dashboard";
 import UserTabPersonal from "../pages/TabPersonal";
 import UserProfile from "../pages/UserProfile";
 import UserTabPassword from "../pages/TabPassword";

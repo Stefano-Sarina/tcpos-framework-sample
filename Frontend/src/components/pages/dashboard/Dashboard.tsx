@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import {FormattedMessage, FormattedNumber, useIntl} from 'react-intl';
 import {setLogged, store, DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
-import logoIcon from '../../assets/images/logo-tcposDaily.png';
-import logoIconDark from '../../assets/images/logo-tcposDaily_dark1.png';
+import logoIcon from '../../../assets/images/logo-tcposDaily.png';
+import logoIconDark from '../../../assets/images/logo-tcposDaily_dark1.png';
 
 // material-ui
 import {
@@ -23,26 +23,19 @@ import {
 } from '@mui/material';
 
 // project import
-/*
-import {MainCard, useConfig} from '@tcpos/backoffice-mantis-theme';
-import {AnalyticEcommerce} from '@tcpos/backoffice-mantis-theme';
-import {IncomeAreaChart} from '@tcpos/backoffice-mantis-theme';
-import {MonthlyBarChart} from '@tcpos/backoffice-mantis-theme';
-import {ReportAreaChart} from '@tcpos/backoffice-mantis-theme';
-import {SalesChart} from '@tcpos/backoffice-mantis-theme';
-import {OrdersTable} from '@tcpos/backoffice-mantis-theme';
-*/
-
-// assets
-/*
+import AnalyticEcommerce from './AnalyticEcommerce';
+import MainCard from '../../themeComponents/MainCard';
+import IncomeAreaChart from './IncomeAreaChart';
+import MonthlyBarChart from './MonthlyBarChart';
+import ReportAreaChart from './ReportAreaChart';
+import OrdersTable from './OrdersTable';
+import SalesChart from './SalesChart';
 import { GiftOutlined, MessageOutlined, SettingOutlined } from '@ant-design/icons';
-import avatar1 from '../../assets/images/users/avatar-1.png';
-import avatar2 from '../../assets/images/users/avatar-2.png';
-import avatar3 from '../../assets/images/users/avatar-3.png';
-import avatar4 from '../../assets/images/users/avatar-4.png';
-import {DateTime} from "luxon";
-import Logo from "../../logo/LogoMain";
-*/
+import avatar1 from '../../../assets/images/users/avatar-1.png';
+import avatar2 from '../../../assets/images/users/avatar-2.png';
+import avatar3 from '../../../assets/images/users/avatar-3.png';
+import avatar4 from '../../../assets/images/users/avatar-4.png';
+
 import {useTheme} from "@mui/material/styles";
 import {ADailyApiClient} from "@tcpos/backoffice-core";
 /*
@@ -109,24 +102,26 @@ const DashboardDefault = () => {
 
   return (
     <Grid container rowSpacing={4.5} columnSpacing={2.75}>
-      <Grid item xs={12} sx={{
-        display: 'flex',
-        overflow: "visible",
-        flex: "1 0 auto",
-        maxHeight: 'calc(100vh - 90px)'
-      }}>
-        <Box sx={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-          <img className="logo logo-image" src={theme.palette.mode === 'dark' ? logoIconDark : logoIcon} alt="TCPos"
-               style={{maxHeight: '100%', maxWidth: '100%'}}
-               />
-        </Box>
-      </Grid>
+      {/*       
+        <Grid item xs={12} sx={{
+          display: 'flex',
+          overflow: "visible",
+          flex: "1 0 auto",
+          maxHeight: 'calc(100vh - 90px)'
+        }}>
+          <Box sx={{flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+            <img className="logo logo-image" src={theme.palette.mode === 'dark' ? logoIconDark : logoIcon} alt="TCPos"
+                style={{maxHeight: '100%', maxWidth: '100%'}}
+                />
+          </Box>
+        </Grid>
+      */}      
       {/* row 1 */}
       <Grid item xs={12} sx={{ mb: -2.25 }}>
         <Typography variant="h5"><FormattedMessage id={'Dashboard'} /></Typography>
       </Grid>
       <Grid item xs={12} sm={6} md={4} lg={3}>
-        {/* <AnalyticEcommerce
+      <AnalyticEcommerce
                 title={intl.formatMessage({id: 'New customer cards in the last week'})}
             count={intl.formatNumber(4236)} percentage={5.3} extra={intl.formatNumber(35000)} />
       </Grid>
@@ -145,13 +140,13 @@ const DashboardDefault = () => {
                            count={intl.formatNumber(35078, {style: 'currency', currency: 'EUR'})}
                            percentage={27.4}
                            isLoss
-                           color="warning" extra={intl.formatNumber(20395, {style: 'currency', currency: 'EUR'})} /> */}
+                           color="warning" extra={intl.formatNumber(20395, {style: 'currency', currency: 'EUR'})} />
       </Grid>
 
       <Grid item md={8} sx={{ display: { sm: 'none', md: 'block', lg: 'none' } }} />
 
       {/* row 2 */}
-      {/*<Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5"><FormattedMessage id={'Unique Visitors'} /></Typography>
@@ -201,10 +196,10 @@ const DashboardDefault = () => {
           </Box>
           <MonthlyBarChart />
         </MainCard>
-      </Grid>*/}
+      </Grid>
 
       {/* row 3 */}
-      {/*<Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5"><FormattedMessage id={'Recent Orders'} /></Typography>
@@ -241,10 +236,10 @@ const DashboardDefault = () => {
           </List>
           <ReportAreaChart />
         </MainCard>
-      </Grid>*/}
+      </Grid>
 
       {/* row 4 */}
-      {/*<Grid item xs={12} md={7} lg={8}>
+      <Grid item xs={12} md={7} lg={8}>
         <Grid container alignItems="center" justifyContent="space-between">
           <Grid item>
             <Typography variant="h5">{intl.formatMessage({id: "Sales Report"})}</Typography>
@@ -390,7 +385,7 @@ const DashboardDefault = () => {
             </Button>
           </Stack>
         </MainCard>
-      </Grid>*/}
+      </Grid>
     </Grid>
   );
 };
