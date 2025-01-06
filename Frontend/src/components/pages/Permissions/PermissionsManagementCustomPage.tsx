@@ -329,8 +329,8 @@ export const PermissionsManagementCustomPage = () => {
                                 )*/
                             )
                     ).map(el => ({ // Data format for combobox
-                        value: String(el.Id),
-                        label: el.ChildPermissionName!.split('-').slice(0,el.ChildPermissionName!.split('-').length -1).join('-') ?? ""
+                        value: el.ChildPermissionName!.split('-').slice(0,el.ChildPermissionName!.split('-').length -1).join('-'),
+                        label: el.ChildPermissionName!.split('-').slice(0,el.ChildPermissionName!.split('-').length -1).join('-')
                     })).sort((a,b) => a.label < b.label ? -1 : 1), true, (a) => a.value)
                 })
             ));
@@ -492,7 +492,7 @@ export const PermissionsManagementCustomPage = () => {
                         perm => perm.type === permissionType)!.entities!.length === 0
                     || selectedPermissionEntities.find(
                         perm => perm.type === permissionType)!.entities!.find(
-                        ent => ent.value === el.data!.params!.mainPermissionEntity)
+                        ent => ent.value === String(el.data!.params!.mainPermissionEntity ?? "").slice(0, ent.value.length))
                 );
         } else {
             return [];
@@ -666,7 +666,7 @@ export const PermissionsManagementCustomPage = () => {
 
     const onUserChange = (value: string | undefined) => {
         if (value) {
-            setSelectedUserProfile({type: value[0] === 'O' ? 'User' : "Group", id: Number(value.slice(1))});
+            setSelectedUserProfile({type: value[0] === 'U' ? 'User' : "Group", id: Number(value.slice(1))});
         } else {
             setSelectedUserProfile(undefined);
         }
@@ -798,12 +798,12 @@ export const PermissionsManagementCustomPage = () => {
             };
         }
         // Extract the permission tree for the permission being modified
-        let childrenPermissionTree: IPermissionsCtesPayload[] = [];
-        let childrenPermissionTreeForDeny: IPermissionsCtesPayload[] = [];
+        let childrenPermissionTree: IFullPermissionDependencyPayload[] = [];
+        let childrenPermissionTreeForDeny: IFullPermissionDependencyPayload[] = [];
         let depPermissionTree: IPermissionPayload[] = [];
         let splitCnt: number;
         const callSize = 40;
-        let results: IPermissionsCtesPayload[] = [];
+        let results: IFullPermissionDependencyPayload[] = [];
         if (actions?.find(el => el.value === 1) || actions?.find(el => el.value === 3)) {
             // If the selected operation can be "AllowAll" or "Deny", the children permissions must be loaded
             splitCnt = 0;
@@ -812,22 +812,28 @@ export const PermissionsManagementCustomPage = () => {
             ]);
             results = [];
             while (splitCnt < idList.length) {
-                const res = await permissionDataController.dataListLoad<IPermissionsCtesPayload>(
+                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IFullPermissionDependencyPayload[]>(
+                    "FullPermissionDependency"
+                ).apiCall({queryParams: {}, noCache: false, filter: [
+                    {id: 1, field: "ParentPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
+                ]});
+        
+/*                 const res = await permissionDataController.dataListLoad<IPermissionsCtesPayload>(
                     `ParentPermissionId in (${idList.slice(splitCnt, splitCnt + callSize).join(',')}) and ParentType eq Type`, // and ParentSubType eq SubType`,
                     [], ['Type', 'Description'], undefined, undefined, undefined, abortSignal, true);
-                splitCnt += callSize;
+ */                splitCnt += callSize;
                 if (Array.isArray(res)) {
                     results = [...results, ...res];
                 }
             }
             childrenPermissionTreeForDeny = results;
-            childrenPermissionTree = results.filter(el => el.ParentSubType === el.SubType);
+            childrenPermissionTree = results; //.filter(el => el.ParentSubType === el.SubType);
         }
         if (actions?.find(el => el.value === 1) || actions?.find(el => el.value === 2)) {
             // If the selected operation can be "AllowAll" or "Allow", the permission dependencies must be loaded
             splitCnt = 0;
             const idList = _.uniq([
-                ...modifyingPermissionIdList, ...childrenPermissionTree.map(el => el.PermissionId)
+                ...modifyingPermissionIdList, ...childrenPermissionTree.map(el => el.Id)
             ]);
             let results: IPermissionPayload[] = [];
             while (splitCnt < idList.length) {
@@ -851,29 +857,29 @@ export const PermissionsManagementCustomPage = () => {
             }
             depPermissionTree = results;
         }
-        const modifyingList: IPermissionBeingUpdated[] = [] /*_.uniq([
+        const modifyingList: IPermissionBeingUpdated[] = _.uniq([
             ...depPermissionTree.map(el => ({
-                permissionId: el.ParentPermissionId!,
-                description: el.ParentType + ' - ' + el.ParentDescription! + " - " + String(el.ParentSubType).toUpperCase(),
+                permissionId: el.Id!,
+                description: el.PermissionType + ' - ' + el.PermissionName,
                 isBeingChanged: false
             })),
             ...childrenPermissionTreeForDeny.map(el => ({
-                permissionId: el.PermissionId!,
-                description: el.Type + ' - ' + el.Description! + " - " + String(el.SubType).toUpperCase(),
+                permissionId: el.Id!,
+                description: el.ChildPermissionName!,
                 isBeingChanged: false
             }))
-        ], false, a => a.permissionId);*/
+        ], false, a => a.permissionId);
 
-        const depPermissions = modifyingList/* .filter(el => depPermissionTree.find(
-            prm => prm.ParentPermissionId === el.permissionId)) */;
-        const depMainPermissions = modifyingList/* .filter(el => depPermissionTree.find(
-            prm => prm.ParentPermissionId === el.permissionId &&
-                modifyingPermissionIdList.findIndex(id => Number(prm.PermissionId) === id) !== -1
-        )) */;
+        const depPermissions = modifyingList.filter(el => depPermissionTree.find(
+            prm => prm.Id === el.permissionId)) ;
+        const depMainPermissions = modifyingList.filter(el => depPermissionTree.find(
+            prm => prm.Id === el.permissionId &&
+                modifyingPermissionIdList.findIndex(id => Number(prm.Id) === id) !== -1
+        ));
         const childrenPermissions = modifyingList.filter(el => childrenPermissionTree.find(
-            prm => prm.PermissionId === el.permissionId));
+            prm => prm.Id === el.permissionId));
         const childrenPermissionsForDeny = modifyingList.filter(el => childrenPermissionTreeForDeny.find(
-            prm => prm.PermissionId === el.permissionId));
+            prm => prm.Id === el.permissionId));
         const singlePermissionsForNotSet = modifyingList.filter(el =>
             modifyingPermissionIdList.indexOf(el.permissionId) !== -1);
         return {
@@ -1226,7 +1232,7 @@ export const PermissionsManagementCustomPage = () => {
                                     <Grid item xs={12} md={12}>
                                         <Box>
                                             <WD_StaticCombobox
-                                                valueList={[...userList.map(el => ({...el, value: 'O' + el.value})),
+                                                valueList={[...userList.map(el => ({...el, value: 'U' + el.value})),
                                                     ...userGroupList.map(el => ({...el, value: 'G' + el.value}))]}
                                                 componentName={'UserList'}
                                                 componentId={'UserList'}
@@ -1241,7 +1247,7 @@ export const PermissionsManagementCustomPage = () => {
                                                 groupName={""}
                                                 groupBy={(option) => option.value[0]}
                                                 renderGroup={params => <li key={params.key}>
-                                                    <GroupHeader>{intl.formatMessage({id: params.group === 'O' ? 'Users' : 'Groups'})}</GroupHeader>
+                                                    <GroupHeader>{intl.formatMessage({id: params.group === 'U' ? 'Users' : 'Groups'})}</GroupHeader>
                                                     <GroupItems>{params.children}</GroupItems>
                                                 </li>}
                                             />

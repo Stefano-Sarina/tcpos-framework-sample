@@ -41,6 +41,8 @@ import { UserDataController } from "./dataControllers/UserDataController";
 import { UserGroupDataController } from "./dataControllers/UserGroupDataController";
 import { TaxDataController } from "./dataControllers/TaxDataController";
 import { TaxObjectController } from "./objectControllers/TaxObjectController";
+import { GroupDataController } from "./dataControllers/GroupDataController";
+import { GroupObjectController } from "./objectControllers/GroupObjectController";
 
 /**
  * Registration of core services:
@@ -79,6 +81,8 @@ export function registerCoreServices() {
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserGroup", controller: UserGroupDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+        _registrationName: "Group", controller: GroupDataController}));
+    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Permission", controller: PermissionDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "FullPermissionDependency", controller: FullPermissionDependencyDataController}));
@@ -93,6 +97,8 @@ export function registerCoreServices() {
         {_registrationName: "customer", controller: CustomerObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "product", controller: ProductObjectController}));
+    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+        {_registrationName: "group", controller: GroupObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "order", controller: OrderObjectController}));
 

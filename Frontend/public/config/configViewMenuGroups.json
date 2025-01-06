@@ -7,7 +7,7 @@
     "loginWithGoogle": false
   },
   "apiUrl": "/api/1.0",
-  "uiVersion": "1.0.5",
+  "uiVersion": "1.0.10",
   "defaultLang": "en-US",
   "applicationName": "BackOfficeSample",
   "menuGroups" : [
@@ -41,7 +41,7 @@
           "active": true
         },
         {
-          "entityId" : "userGroup",
+          "entityId" : "group",
           "label" : "User groups",
           "icon" : "account-group",
           "active": true

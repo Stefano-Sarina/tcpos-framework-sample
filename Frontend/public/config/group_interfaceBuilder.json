@@ -1,10 +1,10 @@
 {
-  "objectName" : "operatorGroup",
+  "objectName" : "group",
   "toolbar": [],
   "detailView" : {
-    "titleField": "Description",
-    "label": "Group name",
-    "entityName": "OperatorGroups",
+    "titleField": "GroupName",
+    "label": "Group",
+    "entityName": "Group",
     "layoutGroups" : [
       {
         "groupName" : "main_definitions",
@@ -17,33 +17,25 @@
             "label": "",
             "components" : [
               {
-                "componentName" : "Code",
+                "componentName" : "GroupName",
                 "componentType" : "wdStringTextField",
-                "fieldName" : "Code",
-                "label" : "Code",
-                "xs": 12,
-                "lg": 6
-              },
-              {
-                "componentName" : "Description",
-                "componentType" : "wdStringTextField",
-                "fieldName" : "Description",
-                "label" : "Description",
+                "fieldName" : "GroupName",
+                "label" : "GroupName",
                 "xs": 12,
                 "lg": 6
               }
             ]
           },
           {
-            "sectionName": "OperatorGroupMap",
+            "sectionName": "UserGroup",
             "label": "Group components",
             "xs" : 12,
             "lg" : 12,
             "components": [
               {
-                "componentName": "OperatorGroupsMapSubForm",
-                "entityName": "OperatorGroupsMaps",
-                "label": "Operators",
+                "componentName": "UserGroupSubForm",
+                "entityName": "UserGroup",
+                "label": "Components",
                 "componentType": "wdSubForm",
                 "minHeight": "300px",
                 "pagination": false,
@@ -51,19 +43,19 @@
                 "lg": 12,
                 "subFields": [
                   {
-                    "colId": "OperatorId",
+                    "colId": "UserId",
                     "sortable": false,
                     "filter": false,
                     "lockPinned": null,
                     "flex": 1,
                     "minWidth": 300,
                     "cellRenderer": {
-                      "componentName": "OperatorId",
+                      "componentName": "UserId",
                       "componentType": "wdCombobox",
-                      "fieldName": "OperatorId",
-                      "label": "Operator",
+                      "fieldName": "UserId",
+                      "label": "User",
                       "multiSelect": false,
-                      "listName": "Operators_List",
+                      "listName": "User_List",
                       "dynamicReload": true
                     }
                   }
@@ -76,27 +68,17 @@
     ]
   },
   "defaultGridView": {
-    "label": "OperatorGroups",
+    "label": "Groups",
     "editInline": false,
     "layout" : [
       {
-        "columnName" : "Code",
-        "sourceName" : "Code",
+        "columnName" : "GroupName",
+        "sourceName" : "GroupName",
         "sourceType" : "Field",
-        "label" : "Code",
+        "label" : "GroupName",
         "width" : 200,
         "visible": true,
         "indexPosition": 1,
-        "type": "string"
-      },
-      {
-        "columnName" : "Description",
-        "sourceName" : "Description",
-        "sourceType" : "Field",
-        "label" : "Description",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 2,
         "type": "string"
       }
     ],
