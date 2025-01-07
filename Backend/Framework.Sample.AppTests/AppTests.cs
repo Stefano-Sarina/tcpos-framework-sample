@@ -441,6 +441,8 @@ public partial class AppTests
     [Fact]
     public async Task RouteReferenceShouldWork()
     {
+        await RemoveAll<CustomerOut>("Customer");
+
         var customerIn = new CustomerIn
         {
             FirstName = "Dario",

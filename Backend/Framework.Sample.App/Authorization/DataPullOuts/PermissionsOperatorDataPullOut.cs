@@ -3,17 +3,14 @@ using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities.Base;
 using Framework.Sample.App.DB.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
-using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Data.Batches.Interfaces;
-using TCPOS.Data.Batches.Payload;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
@@ -59,27 +56,28 @@ public class PermissionsOperatorProfile : Profile
 
 public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, 
         IStorageProvider storageProvider, IMapper mapper,
+        [FromServices] IHttpContextAccessor httpContextAccessor,
         [FromServices] SampleDbContext dbContext,
         [FromServices] IAuthorizationContextStore<HttpContext> authzCtx,
         [FromServices] IAuthorizationUserStore<AuthzUser, int> authzUser,
         [FromServices] ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authzRepo)
     : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
-    public async override Task<System.Collections.IEnumerable> GetData(HttpRequest request, AdditionalData[] requestAdditionalData)
+    protected override IQueryable<PermissionsOperator> Query()
     {
         using (CancellationTokenSource cts = new CancellationTokenSource(1000))
         {
             // retrieve the user
-            var userId = await authzCtx.GetUserIdAsync(request.HttpContext, cts.Token);
-            var user = await authzUser.GetUserAsync(userId, cts.Token);
+            var userId = authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, cts.Token).Result;
+            var user = authzUser.GetUserAsync(userId, cts.Token).Result;
             Safety.Check(user != null, $"User not found: {userId}");
 
             if (user == null)
             {
-                return Array.Empty<PermissionsOperatorOut<int>>();
+                return Array.Empty<PermissionsOperator>().AsQueryable();
             }
 
-            var permissionValues = await authzRepo.GetPermissionValues(user, cts.Token);
+            var permissionValues = authzRepo.GetPermissionValues(user, cts.Token).Result;
 
             // retrieve permissions and group id's
             var permissionIds = permissionValues.Select(y => y.PermissionId);
@@ -96,7 +94,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
                 .ToDictionary(y => y.Id, y => y);
 
             int id = 1;
-            var result = permissionValues.Select(x => new PermissionsOperatorOut<int>()
+            return permissionValues.Select(x => new PermissionsOperator()
             {
                 Id = id++,
                 OperatorId = dbUser.Id,
@@ -108,9 +106,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
                 PermissionValue = x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Allow ? PermissionValue.Allow :
                                   x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Inherit ? PermissionValue.Inherit:
                                   PermissionValue.Deny
-            });
-
-            return result;
+            }).AsQueryable();
         }            
     }
 }
