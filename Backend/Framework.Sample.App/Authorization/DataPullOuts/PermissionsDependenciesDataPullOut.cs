@@ -107,14 +107,14 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
         }
     }
 
-    public async override Task<System.Collections.IEnumerable> GetData(HttpRequest request, AdditionalData[] requestAdditionalData)
+    protected override IQueryable<FullPermissionDependency> Query()
     {
         using (CancellationTokenSource cts = new CancellationTokenSource(1000))
         {
             // retrieve permissions and group id's
-            var permissions = await dbContext.Permissions
+            var permissions = dbContext.Permissions
                 .OrderBy(x => x.Id)
-                .ToDictionaryAsync(y => y.Id, y => y);
+                .ToDictionary(y => y.Id, y => y);
 
             var permissionsDependencies = dbContext.PermissionsDependencies
                 .OrderBy(x => x.ParentPermissionId)
@@ -124,7 +124,7 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
             var rootPermissions = permissions.Select(x => new PermissionNode(x.Value.Id))
                 .ToList();
 
-            foreach (var node in rootPermissions) 
+            foreach (var node in rootPermissions)
             {
                 node.Explode(permissionsDependencies);
             }
@@ -138,7 +138,7 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
             int id = 0;
             result.ForEach(x => x.Id = ++id);
 
-            return mapper.Map<IEnumerable<FullPermissionDependency>, IEnumerable<FullPermissionDependencyOut<int>>>(result); 
+            return result.AsQueryable();
         }
     }
 
