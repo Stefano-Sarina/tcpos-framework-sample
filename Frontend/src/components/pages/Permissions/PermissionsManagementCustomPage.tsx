@@ -523,7 +523,7 @@ export const PermissionsManagementCustomPage = () => {
                 id: 1,
                 parentId: 0,
                 type: 'filter',
-                field: selectedUserProfile.type === 'Group' ? 'UserId' : 'GroupId',
+                field: selectedUserProfile.type === 'Group' ? 'GroupId' : 'UserId',
                 values: [selectedUserProfile.id],
                 embedded: false,
                 operator: 'Number.equals'
@@ -577,7 +577,7 @@ export const PermissionsManagementCustomPage = () => {
                     inheritedPermission = "";
                     if (!currentPermission) {
                         newStatus = PermissionState.NOT_SET;
-                    } else if (selectedUserProfile?.type === 'User' && currentPermission.userGroupId !== null) {
+                    } else if (selectedUserProfile?.type === 'User' && currentPermission.userGroupId) {
                         newStatus = PermissionState.NOT_SET;
                         inheritedPermission = userGroupList
                             .find(el => el.value === currentPermission.userGroupId)!.label;
@@ -800,7 +800,7 @@ export const PermissionsManagementCustomPage = () => {
         // Extract the permission tree for the permission being modified
         let childrenPermissionTree: IFullPermissionDependencyPayload[] = [];
         let childrenPermissionTreeForDeny: IFullPermissionDependencyPayload[] = [];
-        let depPermissionTree: IPermissionPayload[] = [];
+        let depPermissionTree: IFullPermissionDependencyPayload[] = [];
         let splitCnt: number;
         const callSize = 40;
         let results: IFullPermissionDependencyPayload[] = [];
@@ -833,11 +833,11 @@ export const PermissionsManagementCustomPage = () => {
             // If the selected operation can be "AllowAll" or "Allow", the permission dependencies must be loaded
             splitCnt = 0;
             const idList = _.uniq([
-                ...modifyingPermissionIdList, ...childrenPermissionTree.map(el => el.Id)
+                ...modifyingPermissionIdList, ...childrenPermissionTree.map(el => el.ChildPermissionId)
             ]);
-            let results: IPermissionPayload[] = [];
+            let results: IFullPermissionDependencyPayload[] = [];
             while (splitCnt < idList.length) {
-                const res = await permissionDataController.dataListLoad<IPermissionPayload>(
+/*                 const res = await permissionDataController.dataListLoad<IPermissionPayload>(
                     [
                         {
                             id: 1,
@@ -850,6 +850,12 @@ export const PermissionsManagementCustomPage = () => {
                         },
                     ],
                     [], ['ParentType', 'ParentDescription'], undefined, undefined, undefined, abortSignal, true);
+ */                
+                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IFullPermissionDependencyPayload[]>(
+                    "FullPermissionDependency"
+                ).apiCall({queryParams: {}, noCache: false, filter: [
+                    {id: 1, field: "ChildPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
+                ]});
                 if (Array.isArray(res)) {
                     results = [...results, ...res];
                 }
@@ -859,27 +865,31 @@ export const PermissionsManagementCustomPage = () => {
         }
         const modifyingList: IPermissionBeingUpdated[] = _.uniq([
             ...depPermissionTree.map(el => ({
-                permissionId: el.Id!,
-                description: el.PermissionType + ' - ' + el.PermissionName,
+                permissionId: el.ChildPermissionId!,
+                description: el.ChildPermissionName!,
+                isBeingChanged: false
+            })),
+            ...depPermissionTree.map(el => ({
+                permissionId: el.ParentPermissionId!,
+                description: el.ParentPermissionName!,
                 isBeingChanged: false
             })),
             ...childrenPermissionTreeForDeny.map(el => ({
-                permissionId: el.Id!,
+                permissionId: el.ChildPermissionId!,
                 description: el.ChildPermissionName!,
                 isBeingChanged: false
             }))
         ], false, a => a.permissionId);
 
         const depPermissions = modifyingList.filter(el => depPermissionTree.find(
-            prm => prm.Id === el.permissionId)) ;
+            prm => prm.ChildPermissionId === el.permissionId || prm.ParentPermissionId === el.permissionId)) ;
         const depMainPermissions = modifyingList.filter(el => depPermissionTree.find(
-            prm => prm.Id === el.permissionId &&
-                modifyingPermissionIdList.findIndex(id => Number(prm.Id) === id) !== -1
+            prm => prm.ChildPermissionId === el.permissionId || prm.ParentPermissionId === el.permissionId 
         ));
         const childrenPermissions = modifyingList.filter(el => childrenPermissionTree.find(
-            prm => prm.Id === el.permissionId));
+            prm => prm.ChildPermissionId === el.permissionId));
         const childrenPermissionsForDeny = modifyingList.filter(el => childrenPermissionTreeForDeny.find(
-            prm => prm.Id === el.permissionId));
+            prm => prm.ChildPermissionId === el.permissionId));
         const singlePermissionsForNotSet = modifyingList.filter(el =>
             modifyingPermissionIdList.indexOf(el.permissionId) !== -1);
         return {
@@ -1028,12 +1038,16 @@ export const PermissionsManagementCustomPage = () => {
                         entity: type === 'user' ? "UserPermission" : "GroupPermission", // Table name
                         operation: operation !== 4 ? (currentExisting ? "Replace" : "Insert") : "Remove", // Operation (Replace of Remove) if the row exists, otherwise Insert)
                         objectId: currentExisting?.existingId ?? -1, // Id (only if the row exists)
-                        payload: {
-                            UserId: type === 'user' ? {Value: id, ValueType: 0} : undefined,
-                            GroupId: type === 'group' ? {Value: id, ValueType: 0} : undefined,
-                            PermissionId: {Value: perm, ValueType: 0},
-                            PermissionValue: permissionValue
-                        },
+                        payload:  type === 'user' ? {
+                                UserId: {Value: id, ValueType: 0},
+                                PermissionId: {Value: perm, ValueType: 0},
+                                PermissionValue: permissionValue
+                            } :
+                            {
+                                GroupId: {Value: id, ValueType: 0},
+                                PermissionId: {Value: perm, ValueType: 0},
+                                PermissionValue: permissionValue
+                            },
                         refFields: []
                     });
                 }
