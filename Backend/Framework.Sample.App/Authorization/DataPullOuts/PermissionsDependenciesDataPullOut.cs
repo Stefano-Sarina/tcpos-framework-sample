@@ -109,37 +109,34 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
 
     protected override IQueryable<FullPermissionDependency> Query()
     {
-        using (CancellationTokenSource cts = new CancellationTokenSource(1000))
+        // retrieve permissions and group id's
+        var permissions = dbContext.Permissions
+            .OrderBy(x => x.Id)
+            .ToDictionary(y => y.Id, y => y);
+
+        var permissionsDependencies = dbContext.PermissionsDependencies
+            .OrderBy(x => x.ParentPermissionId)
+            .ThenBy(x => x.ChildPermissionId);
+
+        // add root permissions
+        var rootPermissions = permissions.Select(x => new PermissionNode(x.Value.Id))
+            .ToList();
+
+        foreach (var node in rootPermissions)
         {
-            // retrieve permissions and group id's
-            var permissions = dbContext.Permissions
-                .OrderBy(x => x.Id)
-                .ToDictionary(y => y.Id, y => y);
-
-            var permissionsDependencies = dbContext.PermissionsDependencies
-                .OrderBy(x => x.ParentPermissionId)
-                .ThenBy(x => x.ChildPermissionId);
-
-            // add root permissions
-            var rootPermissions = permissions.Select(x => new PermissionNode(x.Value.Id))
-                .ToList();
-
-            foreach (var node in rootPermissions)
-            {
-                node.Explode(permissionsDependencies);
-            }
-
-            List<FullPermissionDependency> result = [];
-            foreach (var node in rootPermissions)
-            {
-                result.AddRange(CreateNodes(node, permissions, 0));
-            }
-
-            int id = 0;
-            result.ForEach(x => x.Id = ++id);
-
-            return result.AsQueryable();
+            node.Explode(permissionsDependencies);
         }
+
+        List<FullPermissionDependency> result = [];
+        foreach (var node in rootPermissions)
+        {
+            result.AddRange(CreateNodes(node, permissions, 0));
+        }
+
+        int id = 0;
+        result.ForEach(x => x.Id = ++id);
+
+        return result.AsQueryable();
     }
 
     protected IEnumerable<FullPermissionDependency> CreateNodes(PermissionNode node, Dictionary<int, Permission> permissions, int level)
