@@ -16,7 +16,7 @@
     "build": "webpack --mode=production --config webpack/webpack.config.cjs",
     "dev": "webpack serve --mode=development --env sources=all --config webpack/webpack.config.cjs --hot",
     "serve": "node scripts/serve.mjs ./dist",
-    "merge-loca le": "node scripts/mergeLocale.cjs",
+    "merge-locale": "node scripts/mergeLocale.cjs",
     "extract-locale-from-json-config": "node scripts/extractLocalesFromJsonConfig.cjs",
     "createItDeLangs": "node scripts/createItDeLangs.cjs",
     "extract-locale": "formatjs extract  \"../[!plugin]*/src/**/!(*.d).ts*\" \"../../../../Shared/**!(types)/src/**/!(*.d).ts*\" --ignore=\"**/*.d.ts\" --out-file ../backoffice-lang/lang_temp/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]' --extract-source-location --format \"scripts/langFormat.cjs\" && formatjs compile-folder ../backoffice-lang//lang_temp ../backoffice-lang/lang&& node scripts/extractLocalesFromJsonConfig.cjs ",

@@ -74,6 +74,10 @@ interface IDialogParams {
     selectedAction?: number,
 }
 
+enum PermissionAccessValue {
+    ALLOW = 1,
+    DENY = 2
+}
 
 // TabPanel
 interface TabPanelProps {
@@ -582,7 +586,7 @@ export const PermissionsManagementCustomPage = () => {
                         inheritedPermission = userGroupList
                             .find(el => el.value === currentPermission.userGroupId)!.label;
                     } else {
-                        newStatus = currentPermission.permissionValue === 1 ? PermissionState.DENIED : PermissionState.ALLOWED;
+                        newStatus = currentPermission.permissionValue === PermissionAccessValue.DENY ? PermissionState.DENIED : PermissionState.ALLOWED;
                     }
 
                     if (!node.data) return;
@@ -591,7 +595,7 @@ export const PermissionsManagementCustomPage = () => {
                     node.data.params!.status = newStatus;
                     if (inheritedPermission !== "") {
                         node.data.params!.inherited = inheritedPermission;
-                        node.data.params!.inheritedPermissionState = currentPermission!.permissionValue === 1
+                        node.data.params!.inheritedPermissionState = currentPermission!.permissionValue === PermissionAccessValue.DENY
                             ? PermissionState.DENIED : PermissionState.ALLOWED;
                     } else {
                         node.data.params!.inherited = undefined;
@@ -823,7 +827,10 @@ export const PermissionsManagementCustomPage = () => {
                     [], ['Type', 'Description'], undefined, undefined, undefined, abortSignal, true);
  */                splitCnt += callSize;
                 if (Array.isArray(res)) {
-                    results = [...results, ...res];
+                    results = [...results, ...res.filter(
+                        el => el.ChildPermissionName!.split('-').slice(String(el.ChildPermissionName).split('-').length -1)[0] === 
+                                el.ParentPermissionName!.split('-').slice(String(el.ParentPermissionName).split('-').length -1)[0]
+                    )];
                 }
             }
             childrenPermissionTreeForDeny = results;
@@ -1026,7 +1033,7 @@ export const PermissionsManagementCustomPage = () => {
             }
 
             const commands: IBatchCommand[] = [];
-            const permissionValue = operation === 3 ? 1 : 2; // Deny = 1, Allow = 2
+            const permissionValue = operation === 3 ? PermissionAccessValue.DENY : PermissionAccessValue.ALLOW; // Deny = 2, Allow = 1
             const addCommand = (type: 'user' | 'group', id: number, perm: number) => {
                 // Check if the permission assoc exists
                 const currentExisting = existingDataList.find(el =>

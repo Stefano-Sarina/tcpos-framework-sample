@@ -105,15 +105,15 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                     }
                 });
             });
-            response = await apiClient.get(apiUrl + `/PermissionsOperator?$filter=Type eq '${interfaceConfig.applicationName.toLowerCase()}' and ` +
-                "((KeyCode in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-read").join("','") + "')) or " +
-                "(KeyCode in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-write").join("','") + "')))",
+            response = await apiClient.get(apiUrl + `/PermissionsOperator?$filter=contains(PermissionName, '-${interfaceConfig.applicationName.toLowerCase()}-') and ` +
+                "((PermissionName in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-read").join("','") + "')) or " +
+                "(PermissionName in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-write").join("','") + "')))",
                 {}, false, true);
             const permissions: {code: string, type: string}[] =
                 Array.isArray(response) ?
-                    response.filter((row: Record<string, unknown>) => row.PermissionValue === 2)
+                    response.filter((row: Record<string, unknown>) => row.PermissionValue === 1)
                         .map((row: Record<string, unknown>) => {
-                            return {code: String(row.KeyCode), type: String(row.SubType)};
+                            return {code: String(row.PermissionName), type: String(row.PermissionName).split('-').slice(String(row.PermissionName).split('-').length -1)[0]};
                         })
                         : [];
 /*             const permissions: {code: string, type: string, permissionValue?: number}[] = [
