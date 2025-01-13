@@ -79,7 +79,7 @@ export class CustomerObjectController extends
         const errors = await super.validate(data, 'customer');
         const customerEntity =
             data.objectData.find(el => el.entityName === 'Customer');
-        if (customerEntity) {
+/*         if (customerEntity) {
             const customerEntityData = customerEntity.data as ICustomerPayload;
             if (customerEntityData.LastName && customerEntityData.LastName.substring(0,1) !== 'A') {
                 const localError = "Customer last name must start with 'A'";
@@ -104,6 +104,7 @@ export class CustomerObjectController extends
 
             }
         }
+ */        
         return errors;
 
     };

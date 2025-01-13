@@ -32,7 +32,14 @@
           "entityId" : "customer",
           "label" : "Customers",
           "icon" : "account-cash",
-          "active": true
+          "active": true,
+          "endpoints": {
+            "gridReadOp": {
+              "endpoint": "Customer",
+              "mainFieldSearch": "LastName",
+              "secondaryFieldsSearch": [{"field": "FirstName", "label": "First name"}]
+            }
+          }
         },
         {
           "entityId" : "product",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 // material-ui
 import { Box, CircularProgress, FormControl, InputAdornment, OutlinedInput } from "@mui/material";
 
@@ -11,7 +11,7 @@ import {useAppSelector} from "@tcpos/backoffice-components";
 
 // ==============================|| HEADER CONTENT - SEARCH ||============================== //
 
-const Search = () => {
+const Search = React.memo(() => {
     let timeout: number; // = setTimeout(() => {console.log("TEST");}, 3000);
     const [wait, setWait] = useState<boolean>(false);
     const navigate=useNavigate();
@@ -62,7 +62,7 @@ const Search = () => {
                             size="small"
                             id="header-search"
                             startAdornment={
-                                <InputAdornment position="start" sx={{mr: -0.5}}>
+                                <InputAdornment position="start">
                                     {wait ?
                                             <CircularProgress
                                                     size={20}
@@ -86,6 +86,6 @@ const Search = () => {
 
             </Box>
     );
-};
+});
 
 export default Search;
