@@ -65,11 +65,12 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
 {
     protected override IQueryable<PermissionsOperator> Query()
     {
-        using (CancellationTokenSource cts = new CancellationTokenSource(1000))
+        CancellationToken none = CancellationToken.None;
+
         {
             // retrieve the user
-            var userId = authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, cts.Token).Result;
-            var user = authzUser.GetUserAsync(userId, cts.Token).Result;
+            var userId = authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, none).Result;
+            var user = authzUser.GetUserAsync(userId, none).Result;
             Safety.Check(user != null, $"User not found: {userId}");
 
             if (user == null)
@@ -77,7 +78,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
                 return Array.Empty<PermissionsOperator>().AsQueryable();
             }
 
-            var permissionValues = authzRepo.GetPermissionValues(user, cts.Token).Result;
+            var permissionValues = authzRepo.GetPermissionValues(user, none).Result;
 
             // retrieve permissions and group id's
             var permissionIds = permissionValues.Select(y => y.PermissionId);
