@@ -35,6 +35,8 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
     // entityDataContext used in case of single editing
     const entityDataContext = useAppSelector(state =>
         state.dataObjectSlice.objects.find(el => el.objectName === objectName && el.objectId === objectId));
+    const applicationName = useAppSelector(state => state.interfaceConfig.applicationName);
+    const apiUrl = useAppSelector(state => state.interfaceConfig.apiUrl);
 
     // multiEditingId used in case of multiple editing
     const [multiEditing, setMultiEditing] = useState<boolean>(false);
@@ -166,7 +168,7 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                             }
                         }
                         newObject.rwMode = rwMode;
-                        newObject.componentPermissions = await objectController.getPermissions( 'webdaily', objectName,
+                        newObject.componentPermissions = await objectController.getPermissions(applicationName.toLowerCase(), objectName,
                                 objectController.objectDescription ?? objectName);
                         dispatch(setNewObject(newObject));
                         setReadOnly(userReadOnlyVisibilities.indexOf(

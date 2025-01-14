@@ -353,7 +353,7 @@ export const PermissionsManagementCustomPage = () => {
                 permissionEntityList.find(el => el.type === permissionType)!.entities ?? [];
             if (currentPermissionEntityList.length) {
                 let nodeId = 0;
-                const newData: NodeModel<IPermissionData>[] = [];
+                let newData: NodeModel<IPermissionData>[] = [];
                 let entities: { value: string, label: string }[];
                 if (selectedPermissionEntities.find(el => el.type === permissionType)?.entities?.length) {
                     entities = selectedPermissionEntities.find(el => el.type === permissionType)!.entities!;
@@ -396,57 +396,60 @@ export const PermissionsManagementCustomPage = () => {
                     ) || permissionType !== applicationName
                 );
                 rootNodes.forEach(rootNode => {
-                     nodeId++;
-                     // Root node for each permission entity and subtype
-                     newData.push({
-                         id: nodeId,
-                         text: rootNode.ParentPermissionName!, // + ' - ' + rootNode.ParentSubType,
-                         parent: -1, // Temporary value for rootNodes; it will be changed into 1 ("All permissions" node); setting 1 here would cause a problem if the permission id is 1
-                         droppable: false, // updated later
-                         data: {
-                             /**
-                              * this is created as NOT SET and then assigned when user/group is selected
-                              */
-                             nodeStatus: PermissionState.NOT_SET,
-                             permissionID: rootNode.ParentPermissionId,
-                             typographyProps: {variant: 'h4'},
-                             params: {
-                                 permissionId: rootNode.ParentPermissionId,
-                                 permissionEntity: permissionType,
-                                 mainPermissionEntity: rootNode.ParentPermissionName! // Main permission entity: used for filtering
-                             },
+                    nodeId=Number(newData[newData.length-1].id) + 1;
+                    // Root node for each permission entity and subtype
+                    newData.push({
+                        id: nodeId,
+                        text: rootNode.ParentPermissionName!, // + ' - ' + rootNode.ParentSubType,
+                        parent: -1, // Temporary value for rootNodes; it will be changed into 1 ("All permissions" node); setting 1 here would cause a problem if the permission id is 1
+                        droppable: false, // updated later
+                        data: {
+                            /**
+                             * this is created as NOT SET and then assigned when user/group is selected
+                             */
+                            nodeStatus: PermissionState.NOT_SET,
+                            permissionID: rootNode.ParentPermissionId,
+                            typographyProps: {variant: 'h4'},
+                            params: {
+                                permissionId: rootNode.ParentPermissionId,
+                                permissionEntity: permissionType,
+                                mainPermissionEntity: rootNode.ParentPermissionName! // Main permission entity: used for filtering
+                            },
 
-                         }
-                     });
-                     const childrenNodes = permissionTypeTree.filter(el =>
-                            el.ParentPermissionId === rootNode.ParentPermissionId && el.Level! > 0 &&
-                            el.ChildPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] ===
-                            el.ParentPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0]
-                        ); // && el.SubType === rootNode.SubType);
-                     childrenNodes.forEach(childNode => {
-                         nodeId++;
-                        //  Children nodes (same subtype)
-                         newData.push({
-                             id: nodeId,
-                             text: childNode.ChildPermissionName!,
-                             parent: childNode.ParentPermissionId!, // Temporary value to be translated into node id
-                             droppable: false, // updated later
-                             data: {
-                                 /**
-                                  * this is created as NOT SET and then assigned when user/group is selected
-                                  */
-                                 nodeStatus: PermissionState.NOT_SET,
-                                 permissionID: rootNode.ParentPermissionId,
-                                 params: {
-                                     permissionId: childNode.ChildPermissionId!,
-                                     permissionEntity: permissionType,
-                                     mainPermissionEntity: rootNode.ParentPermissionName // Main permission entity: used for filtering
-                                 },
+                        }
+                    });
 
-                             }
-                         });
-                     });
-                 });
+                    newData = [...newData, ...loadPermissionSubTree(Number(newData[newData.length-1].id), rootNode.ParentPermissionId!, rootNode.ParentPermissionId!, 
+                                                    permissionType, rootNode.ParentPermissionName!, permissionTypeTree)];
+                    // const childrenNodes = permissionTypeTree.filter(el =>
+                    //     el.ParentPermissionId === rootNode.ParentPermissionId && el.Level! > 0 &&
+                    //     el.ChildPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] ===
+                    //     el.ParentPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0]
+                    // ); // && el.SubType === rootNode.SubType);
+                    // childrenNodes.forEach(childNode => {
+                    //     nodeId++;
+                    // //  Children nodes (same subtype)
+                    //     newData.push({
+                    //         id: nodeId,
+                    //         text: childNode.ChildPermissionName!,
+                    //         parent: childNode.ParentPermissionId!, // Temporary value to be translated into node id
+                    //         droppable: false, // updated later
+                    //         data: {
+                    //             /**
+                    //              * this is created as NOT SET and then assigned when user/group is selected
+                    //              */
+                    //             nodeStatus: PermissionState.NOT_SET,
+                    //             permissionID: rootNode.ParentPermissionId,
+                    //             params: {
+                    //                 permissionId: childNode.ChildPermissionId!,
+                    //                 permissionEntity: permissionType,
+                    //                 mainPermissionEntity: rootNode.ParentPermissionName // Main permission entity: used for filtering
+                    //             },
+
+                    //         }
+                    //     });
+                    // });
+                });
                 // Parent nodes translation
                 newData.forEach(el => {
                     if (el.parent === -1) {
@@ -520,6 +523,48 @@ export const PermissionsManagementCustomPage = () => {
         return getDatalistGraph(currenDataList);
     }, [fullDataList, permissionTypes, tabsValue, selectedUserProfile, permissionTree, selectedPermissionEntities, treeData]);
 
+    const loadPermissionSubTree = (newId: number, immediateParentId: number, mainParentId: number, permissionType: string,
+                        mainPermissionName: string,
+                        permissionTypeTree: IFullPermissionDependencyPayload[]): NodeModel<IPermissionData>[] => {
+        let result: NodeModel<IPermissionData>[] = [];
+        const childrenNodes = permissionTypeTree.filter(el =>
+            el.ParentPermissionId === immediateParentId && el.Level! === 1 &&
+            el.ChildPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] ===
+            el.ParentPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0]
+        );
+        let nodeId = newId;
+        childrenNodes.forEach(childNode => {
+            nodeId++;
+           //  Children nodes (same subtype)
+            result.push({
+                id: nodeId,
+                text: childNode.ChildPermissionName!,
+                parent: childNode.ParentPermissionId!, // Temporary value to be translated into node id
+                droppable: false, // updated later
+                data: {
+                    /**
+                     * this is created as NOT SET and then assigned when user/group is selected
+                     */
+                    nodeStatus: PermissionState.NOT_SET,
+                    permissionID: mainParentId,
+                    params: {
+                        permissionId: childNode.ChildPermissionId!,
+                        permissionEntity: permissionType,
+                        mainPermissionEntity: mainPermissionName // Main permission entity: used for filtering
+                    },
+                }
+            });
+        });
+        childrenNodes.forEach(childNode => {
+            const subResult = loadPermissionSubTree(nodeId, childNode.ChildPermissionId!, mainParentId, permissionType, mainPermissionName, 
+                permissionTypeTree);
+            result = [...result, ...subResult];
+            if (subResult.length > 0) {
+                nodeId = Number(subResult[subResult.length-1].id);
+            }
+        });
+        return result;
+    };
 
     const getCurrentAssignedPermission = async (abortSignal: AbortSignal): Promise<IAssignedPermission[]> => {
         if (selectedUserProfile) {

@@ -9,9 +9,11 @@ import {
     type IBatchCommand,
     type IBatchSavedReturnValue,
     type IExternalObjectData,
-    type IUiComponentPermissionAccess
+    type IUiComponentPermissionAccess,
+    type IUserPermission
 } from "@tcpos/backoffice-core";
 import {ALocalizationService, type IEntityDataMainObject} from "@tcpos/common-core";
+import { getPermissions } from "../../core/common/getPermissions";
 
 @PublicInjectable()
 export class OrderObjectController extends CommonObjectController<OrderObjectDataType, OrderObjectExtendedDataType, 
@@ -115,24 +117,9 @@ export class OrderObjectController extends CommonObjectController<OrderObjectDat
         }
     ];
 
-    async getPermissions(applicationName: string, objectName: string, objectDescription: string): Promise<IUiComponentPermissionAccess[]> {
-        const componentPermissions: IUiComponentPermissionAccess[] = [];
-        const uiTree = await this.getDependencyTree(objectName, applicationName, objectDescription);
-        const calculatePermissionAccess = (node: IUiTree) => {
-            componentPermissions.push({
-                componentName: node.component,
-                access: 'Write',
-            });
-            uiTree.filter(el => el.parentNodeId === node.nodeId).forEach((subNode) => {
-                calculatePermissionAccess(subNode);
-            });
-        };
-        const mainNode = uiTree.find(el => el.parentNodeId === 0);
-        if (mainNode) {
-            calculatePermissionAccess(mainNode);
-        }
-        return componentPermissions;
+    getPermissions = async (applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> => {
+        return getPermissions<OrderObjectDataType, OrderObjectExtendedDataType, OrderObjectExternalDataType, I18n>(applicationName, objectName, objectDescription, this);
+     }
 
-    }
 
 }

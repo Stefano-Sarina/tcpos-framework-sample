@@ -4,10 +4,11 @@ import {
     CommonObjectController, ADailyConfigService
 } from "@tcpos/backoffice-core";
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import type { IBatchCommand, IUiComponentPermissionAccess } from "@tcpos/backoffice-core";
+import type { IBatchCommand, IUiComponentPermissionAccess, IUserPermission } from "@tcpos/backoffice-core";
 import type {I18n} from "../services/intl";
 import type {IExternalObjectData} from "@tcpos/backoffice-core";
 import type { IGroupObjectModel, GroupObjectDataType, GroupObjectExternalDataType } from "./objectControllerModels/IGroupObjectModel";
+import { getPermissions } from "../../core/common/getPermissions";
 
 @PublicInjectable()
 export class GroupObjectController extends
@@ -48,24 +49,8 @@ export class GroupObjectController extends
 
     externalData: IExternalObjectData<GroupObjectDataType, GroupObjectExternalDataType>[] = [];
 
-    async getPermissions(applicationName: string, objectName: string, objectDescription: string): Promise<IUiComponentPermissionAccess[]> {
-        const componentPermissions: IUiComponentPermissionAccess[] = [];
-        const uiTree = await this.getDependencyTree(objectName, applicationName, objectDescription);
-        const calculatePermissionAccess = (node: IUiTree) => {
-            componentPermissions.push({
-                componentName: node.component,
-                access: 'Write',
-            });
-            uiTree.filter(el => el.parentNodeId === node.nodeId).forEach((subNode) => {
-                calculatePermissionAccess(subNode);
-            });
-        };
-        const mainNode = uiTree.find(el => el.parentNodeId === 0);
-        if (mainNode) {
-            calculatePermissionAccess(mainNode);
-        }
-        return componentPermissions;
-
-    }
+    getPermissions = async (applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> => {
+        return getPermissions<GroupObjectDataType, GroupObjectDataType, GroupObjectExternalDataType, I18n>(applicationName, objectName, objectDescription, this);
+     }
 
 }
