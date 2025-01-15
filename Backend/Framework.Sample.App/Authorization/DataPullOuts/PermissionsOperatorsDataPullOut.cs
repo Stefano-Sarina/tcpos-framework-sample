@@ -2,65 +2,55 @@
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.DataPullOuts.Entities;
 using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
-using Framework.Sample.App.DB;
-using Framework.Sample.App.DB.Entities.Base;
 using Framework.Sample.App.DB.Enums;
+using Framework.Sample.App.DB;
 using Microsoft.AspNetCore.Mvc;
 using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
-using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Authorization.Abstracts;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Data.Batches.Interfaces;
+using Framework.Sample.App.DataBind;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
-public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, 
+public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder,
         IStorageProvider storageProvider, IMapper mapper,
-        [FromServices] IHttpContextAccessor httpContextAccessor,
-        [FromServices] SampleDbContext dbContext,
-        [FromServices] IAuthorizationContextStore<HttpContext> authzCtx,
-        [FromServices] IAuthorizationUserStore<AuthzUser, int> authzUser,
         [FromServices] ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authzRepo)
     : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
+    public override string Name
+    {
+        get;
+    } = "PermissionsOperators";
+
+
     protected override IQueryable<PermissionsOperator> Query()
     {
         CancellationToken none = CancellationToken.None;
 
-        // retrieve the user
-        var userId = authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, none).Result;
-        var user = authzUser.GetUserAsync(userId, none).Result;
-        Safety.Check(user != null, $"User not found: {userId}");
+        var dbContext = storageProvider.GetStorage<SampleDbContext>();
 
-        if (user == null)
-        {
-            return Array.Empty<PermissionsOperator>().AsQueryable();
-        }
-
-        var permissionValues = authzRepo.GetPermissionValues(user, none).Result;
+        var permissionValues = authzRepo.GetPermissionValues(none).Result;
+        Safety.Check(permissionValues != null, new ArgumentNullException(nameof(permissionValues)));
 
         // retrieve permissions and group id's
         var permissionIds = permissionValues.Select(y => y.PermissionId);
         var groupIds = permissionValues.Select(y => y.GroupId).Distinct();
 
-        // retrieve user from db
-        var dbUser = dbContext.Users.FirstOrDefault(x => user.Id == x.Id);
-        Safety.Check(dbUser != null, $"User not found on db, Id:{user.Id}");
-
         // retrieve permissions and groups from db, than transform to dictionary for performances
-        var dbPermissions = dbContext.Permissions.Where(x => permissionIds.Contains(x.Id))
-            .ToDictionary(y => y.Id, y => y);
-        var dbGroups = dbContext.Groups.Where(x => groupIds.Contains(x.Id))
-            .ToDictionary(y => y.Id, y => y);
+        var dbPermissions = dbContext.Permissions.ToDictionary(y => y.Id, y => y);
+        var dbGroups = dbContext.Groups.ToDictionary(y => y.Id, y => y);
+        var dbUsers = dbContext.Users.ToDictionary(y => y.Id, y => y);
 
         int id = 1;
         return permissionValues.Select(x => new PermissionsOperator()
         {
             Id = id++,
-            OperatorId = dbUser.Id,
-            OperatorCode = dbUser.UserName,
+            OperatorId = x.UserId,
+            OperatorCode = x.UserId.ToString(),
             OperatorGroupId = x.GroupId,
             OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId].GroupName : null,
             PermissionId = x.PermissionId,
