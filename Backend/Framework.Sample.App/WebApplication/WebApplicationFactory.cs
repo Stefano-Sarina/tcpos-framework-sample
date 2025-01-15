@@ -227,12 +227,12 @@ public static class WebApplicationFactory
              .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
               //UserPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
-             ////OperatorPermissions !! RASAP, DEBUG ONLY !!
-             //.AddDataPullOutItem<OperatorPermissionsDataPullOut>()
-             //PermissionsOperator
+             //PermissionsOperators
              .AddDataPullOutItem<PermissionsOperatorDataPullOut>()
              //PermissionsOperator
-             .AddDataPullOutItem<PermissionsDependenciesDataPullOut>()
+             .AddDataPullOutItem<PermissionsOperatorsDataPullOut>()
+             //PermissionsOperator
+             .AddDataPullOutItem<PermissionsCtesDataPullOut>()
              //AdWebVersionEntity
              .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
 

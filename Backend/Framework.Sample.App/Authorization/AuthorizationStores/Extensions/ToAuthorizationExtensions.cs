@@ -21,6 +21,7 @@ public static class ToAuthorizationExtensions
         return item != null ?
                    new AuthzPermissionValue
                    {
+                       UserId = item.UserId,
                        PermissionId = item.PermissionId,
                        Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
                                item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :
@@ -34,6 +35,7 @@ public static class ToAuthorizationExtensions
         return item != null ?
                    new AuthzPermissionValue
                    {
+                       GroupId = item.GroupId,
                        PermissionId = item.PermissionId,
                        Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
                                item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :

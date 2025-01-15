@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
+using Framework.Sample.App.Authorization.DataPullOuts.Entities;
+using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Entities.Base;
@@ -20,74 +22,9 @@ using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
-public class FullPermissionDependency : Entity
-{
-    public override int Id { get; set; }
 
-    public int ChildPermissionId{get;set;}
-
-    public string ChildPermissionName { get; set; }
-
-    public int ParentPermissionId { get; set; }
-
-    public string ParentPermissionName { get; set; }
-    public int Level { get; set; }
-}
-
-public class FullPermissionDependencyIn<T> 
-{
-    [Required]
-    public T ChildPermissionId
-    {
-        get;
-        set;
-    }
-
-    [Required]
-    public string ChildPermissionName
-    {
-        get;
-        set;
-    }
-
-    [Required]
-    public T ParentPermissionId
-    {
-        get;
-        set;
-    }
-
-    [Required]
-    public string ParentPermissionName
-    {
-        get;
-        set;
-    }
-
-    [Required] 
-    public int Level { get; set; }
-}
-
-public class FullPermissionDependencyOut<T> : FullPermissionDependencyIn<T>, IIDEntity, IConcurrencyEntity
-{
-    public string ConcurrencyCode { get; set; }
-
-    public int Id { get; set; }
-}
-
-public class PermissionsDependencyProfile : Profile
-{
-    public PermissionsDependencyProfile()
-    {
-        CreateMap<FullPermissionDependencyIn<int>, FullPermissionDependency>(MemberList.None);
-        CreateMap<FullPermissionDependency, FullPermissionDependencyIn<int>>(MemberList.None);
-        CreateMap<FullPermissionDependency, FullPermissionDependencyOut<int>>(MemberList.None);
-        CreateMap<FullPermissionDependency, FullPermissionDependency>(MemberList.None);
-    }
-}
-
-public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, IStorageProvider storageProvider, IMapper mapper, SampleDbContext dbContext)
-    : DbContextDataPullOutItem<FullPermissionDependency, FullPermissionDependencyOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
+public class PermissionsCtesDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, IStorageProvider storageProvider, IMapper mapper, SampleDbContext dbContext)
+    : DbContextDataPullOutItem<PermissionsCtes, PermissionsCtesOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     protected class PermissionNode(int id)
     {
@@ -107,12 +44,12 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
         }
     }
 
-    protected override IQueryable<FullPermissionDependency> Query()
+    protected override IQueryable<PermissionsCtes> Query()
     {
         // retrieve permissions and group id's
         var permissions = dbContext.Permissions
-            .OrderBy(x => x.Id)
-            .ToDictionary(y => y.Id, y => y);
+        .OrderBy(x => x.Id)
+        .ToDictionary(y => y.Id, y => y);
 
         var permissionsDependencies = dbContext.PermissionsDependencies
             .OrderBy(x => x.ParentPermissionId)
@@ -127,7 +64,7 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
             node.Explode(permissionsDependencies);
         }
 
-        List<FullPermissionDependency> result = [];
+        List<PermissionsCtes> result = [];
         foreach (var node in rootPermissions)
         {
             result.AddRange(CreateNodes(node, permissions, 0));
@@ -139,19 +76,21 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
         return result.AsQueryable();
     }
 
-    protected IEnumerable<FullPermissionDependency> CreateNodes(PermissionNode node, Dictionary<int, Permission> permissions, int level)
+    protected IEnumerable<PermissionsCtes> CreateNodes(PermissionNode node, Dictionary<int, Permission> permissions, int level)
     {
-        List<FullPermissionDependency> collection = [];
+        List<PermissionsCtes> collection = [];
 
         // add self dependency for roots
         if (level == 0)
         {
-            collection.Add(new FullPermissionDependency()
+            collection.Add(new PermissionsCtes()
             {
                 ParentPermissionId = node.Id,
                 ParentPermissionName = permissions[node.Id].PermissionName,
+                ParentPermissionType = (int)permissions[node.Id].PermissionType,
                 ChildPermissionId = node.Id,
                 ChildPermissionName = permissions[node.Id].PermissionName,
+                ChildPermissionType = (int)permissions[node.Id].PermissionType,
                 Level = 0,
             });
         }
@@ -159,12 +98,14 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
         // then add children
         foreach (var child in node.ChildNodes.ToEnumerableOrEmpty())
         {
-            collection.AddRange([new FullPermissionDependency()
+            collection.AddRange([new PermissionsCtes()
             {
                 ParentPermissionId = node.Id,
                 ParentPermissionName = permissions[node.Id].PermissionName,
+                ParentPermissionType = (int)permissions[node.Id].PermissionType,
                 ChildPermissionId = child.Id,
                 ChildPermissionName = permissions[child.Id].PermissionName,
+                ChildPermissionType = (int)permissions[child.Id].PermissionType,
                 Level = 1,
             }]);
 
@@ -175,5 +116,4 @@ public class PermissionsDependenciesDataPullOut(DataPullOutConfiguration configu
 
         return collection;
     }
-
 }

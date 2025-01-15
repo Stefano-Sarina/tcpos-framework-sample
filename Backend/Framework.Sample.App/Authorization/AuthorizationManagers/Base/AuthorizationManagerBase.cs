@@ -41,7 +41,7 @@ internal abstract class AuthorizationManagerBase<TAuthzReq>(
             Safety.Check(match.Groups.Count > 0, "cannot retrieve entity name from permission");
 
             string[] adminAllowedNames = [
-                "adwebentityversion","permissionsoperator", "fullpermissiondependency","formsendpoints",
+                "adwebentityversion","permissionsoperator", "permissionsoperators","fullpermissiondependency","formsendpoints",
                 "user", "group", "usergroup", "batch", "userpermission", "grouppermission"];
 
             isAllowed = user?.IsPermissionAdministrator != 0 && adminAllowedNames.Contains(match.Groups[1].Value);

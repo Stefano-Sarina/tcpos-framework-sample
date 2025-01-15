@@ -39,19 +39,8 @@ internal class FeedDatabasePersister(IServiceProvider serviceProvider, ILogger<F
 
             await dbContext.Permissions.AddRangeAsync(missingDbPermissions);
 
-#if DEBUG
-            UserPermission[] userPermissions = dbContext.Permissions.Local
-                .SelectMany(p => dbContext.Users, (p, u) => new UserPermission()
-                {
-                    Permission = p,
-                    User = u,
-                    PermissionValue = DB.Enums.PermissionValue.Allow
-                }).ToArray();
-
-            await dbContext.UserPermissions.AddRangeAsync(userPermissions);
-#endif
-
             await dbContext.SaveChangesAsync();
+
             return true;
         }
         catch (Exception ex)

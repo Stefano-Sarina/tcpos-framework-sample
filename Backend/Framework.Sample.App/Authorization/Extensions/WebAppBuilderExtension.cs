@@ -31,7 +31,7 @@ public static class WebAppBuilderExtension
         serviceCollection.AddScoped<IAuthorizationPermissionStore<AuthzPermission, int>, AuthzPermissionStore>();
         serviceCollection.AddScoped<IAuthorizationPermissionValueStore<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>, AuthzPermissionValueStore>();
         serviceCollection.AddScoped<ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>,
-            TcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int>>();
+            TcposAuthorizationRepositoryImpl<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue>>();
 
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerBatch>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerDataPullOut>();
