@@ -5,18 +5,11 @@ export type PermissionsCtesEntityType = EntityType<IPermissionsCtesPayload, "Per
 
 export interface IPermissionsCtesPayload extends IPayloadBase {
     Id: number;
-    ParentPermissionId: number;
-    ParentKeyCode: string;
-    ParentDescription: string;
-    ParentEntity: string;
-    ParentType: string;
-    ParentSubType: string;
-    PermissionId: number;
-    KeyCode: string;
-    Entity: string;
-    Type: string;
-    SubType: string;
-    Description: string;
-    Level: number;
-    ImmediateParentId: number;
+    ChildPermissionId: number | null; // Mandatory
+    ChildPermissionName: string | null; // Mandatory
+    ChildPermissionType: number | null; // Mandatory
+    ParentPermissionId: number | null; // Mandatory
+    ParentPermissionName: string | null; // Mandatory
+    ParentPermissionType: number | null; // Mandatory
+    Level: number | null; // Mandatory
 }

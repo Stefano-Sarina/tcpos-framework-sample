@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import MainCard from "../../themeComponents/MainCard";
 import {FormattedMessage, useIntl} from "react-intl";
-import type {IDataFilter, IDataFilterGroup, IPermissionsCtesPayload,
+import type {IDataFilter, IDataFilterGroup,
     IApiError, IBatchCommand,
     IViewConfigModel} from "@tcpos/backoffice-core";
 import {
@@ -50,7 +50,7 @@ import type {IPermissionsOperatorPayload} from "../../../core/apiModels/IPermiss
 import type { IPermissionPayload } from "../../../core/apiModels/IPermissionPayload";
 import type { IUserPermissionPayload } from "../../../core/apiModels/IUserPermissionPayload";
 import type { IGroupPermissionPayload } from "../../../core/apiModels/IGroupPermissionPayload";
-import type { IFullPermissionDependencyPayload } from "../../../core/apiModels/IFullPermissionDependencyPayload";
+import type { IPermissionsCtesPayload } from "../../../core/apiModels/IPermissionsCtesPayload";
 
 interface IAssignedPermission {
     permissionId: number,
@@ -177,7 +177,7 @@ export const PermissionsManagementCustomPage = () => {
 
     const [permissionTypes, setPermissionTypes] = useState<ComboValues[]>([]);
     const [permissionTree, setPermissionTree] =
-        useState<IFullPermissionDependencyPayload[]>([]);
+        useState<IPermissionsCtesPayload[]>([]);
     const [permissionEntityList, setPermissionEntityList] =
         useState<{ type: string, entities?: { value: string, label: string }[] }[]>([]);
     const [selectedPermissionEntities, setSelectedPermissionEntities] =
@@ -226,9 +226,9 @@ export const PermissionsManagementCustomPage = () => {
     const permissionDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "Permission").controller;
     const permissionDataController = DailyPublicRegistrationContainer.resolveConstructor(permissionDataControllerRegistration);
     permissionDataController.init();
-    const fullPermissionDependencyDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "FullPermissionDependency").controller;
-    const fullPermissionDependencyDataController = DailyPublicRegistrationContainer.resolveConstructor(fullPermissionDependencyDataControllerRegistration);
-    fullPermissionDependencyDataController.init();
+    const PermissionsCtesDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "PermissionsCtes").controller;
+    const PermissionsCtesDataController = DailyPublicRegistrationContainer.resolveConstructor(PermissionsCtesDataControllerRegistration);
+    PermissionsCtesDataController.init();
     const userPermissionDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "UserPermission").controller;
     const userPermissionDataController = DailyPublicRegistrationContainer.resolveConstructor(userPermissionDataControllerRegistration);
     userPermissionDataController.init();
@@ -290,11 +290,11 @@ export const PermissionsManagementCustomPage = () => {
     const loadPermissionEntityList = async (abortSignal: AbortSignal) => {
         setLoading(true);
         // Download all the permission tree using the Permission endpoint
-/*         const allEntities = await fullPermissionDependencyDataController.dataListLoad<IFullPermissionDependencyPayload>(
+/*         const allEntities = await PermissionsCtesDataController.dataListLoad<IPermissionsCtesPayload>(
             [], [], [], undefined, undefined, undefined, abortSignal, true);
  */        
-        const allEntities = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IFullPermissionDependencyPayload[]>(
-            "FullPermissionDependency"
+        const allEntities = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+            "PermissionsCtes"
         ).apiCall({queryParams: {}, noCache: false, filter: []});
         if (Array.isArray(allEntities)) {
             const permissionTypesList = ['api', 'BackOfficeSample'];
@@ -525,7 +525,7 @@ export const PermissionsManagementCustomPage = () => {
 
     const loadPermissionSubTree = (newId: number, immediateParentId: number, mainParentId: number, permissionType: string,
                         mainPermissionName: string,
-                        permissionTypeTree: IFullPermissionDependencyPayload[]): NodeModel<IPermissionData>[] => {
+                        permissionTypeTree: IPermissionsCtesPayload[]): NodeModel<IPermissionData>[] => {
         let result: NodeModel<IPermissionData>[] = [];
         const childrenNodes = permissionTypeTree.filter(el =>
             el.ParentPermissionId === immediateParentId && el.Level! === 1 &&
@@ -847,12 +847,12 @@ export const PermissionsManagementCustomPage = () => {
             };
         }
         // Extract the permission tree for the permission being modified
-        let childrenPermissionTree: IFullPermissionDependencyPayload[] = [];
-        let childrenPermissionTreeForDeny: IFullPermissionDependencyPayload[] = [];
-        let depPermissionTree: IFullPermissionDependencyPayload[] = [];
+        let childrenPermissionTree: IPermissionsCtesPayload[] = [];
+        let childrenPermissionTreeForDeny: IPermissionsCtesPayload[] = [];
+        let depPermissionTree: IPermissionsCtesPayload[] = [];
         let splitCnt: number;
         const callSize = 40;
-        let results: IFullPermissionDependencyPayload[] = [];
+        let results: IPermissionsCtesPayload[] = [];
         if (actions?.find(el => el.value === 1) || actions?.find(el => el.value === 3)) {
             // If the selected operation can be "AllowAll" or "Deny", the children permissions must be loaded
             splitCnt = 0;
@@ -861,16 +861,16 @@ export const PermissionsManagementCustomPage = () => {
             ]);
             results = [];
             while (splitCnt < idList.length) {
-                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IFullPermissionDependencyPayload[]>(
-                    "FullPermissionDependency"
+                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+                    "PermissionsCtes"
                 ).apiCall({queryParams: {}, noCache: false, filter: [
                     {id: 1, field: "ParentPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
                 ]});
-        
 /*                 const res = await permissionDataController.dataListLoad<IPermissionsCtesPayload>(
                     `ParentPermissionId in (${idList.slice(splitCnt, splitCnt + callSize).join(',')}) and ParentType eq Type`, // and ParentSubType eq SubType`,
                     [], ['Type', 'Description'], undefined, undefined, undefined, abortSignal, true);
- */                splitCnt += callSize;
+ */                
+                splitCnt += callSize;
                 if (Array.isArray(res)) {
                     results = [...results, ...res.filter(
                         el => el.ChildPermissionName!.split('-').slice(String(el.ChildPermissionName).split('-').length -1)[0] === 
@@ -887,7 +887,7 @@ export const PermissionsManagementCustomPage = () => {
             const idList = _.uniq([
                 ...modifyingPermissionIdList, ...childrenPermissionTree.map(el => el.ChildPermissionId)
             ]);
-            let results: IFullPermissionDependencyPayload[] = [];
+            let results: IPermissionsCtesPayload[] = [];
             while (splitCnt < idList.length) {
 /*                 const res = await permissionDataController.dataListLoad<IPermissionPayload>(
                     [
@@ -903,8 +903,8 @@ export const PermissionsManagementCustomPage = () => {
                     ],
                     [], ['ParentType', 'ParentDescription'], undefined, undefined, undefined, abortSignal, true);
  */                
-                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IFullPermissionDependencyPayload[]>(
-                    "FullPermissionDependency"
+                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+                    "PermissionsCtes"
                 ).apiCall({queryParams: {}, noCache: false, filter: [
                     {id: 1, field: "ChildPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
                 ]});

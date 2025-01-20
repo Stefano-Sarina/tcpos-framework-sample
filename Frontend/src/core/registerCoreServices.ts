@@ -26,7 +26,7 @@ import {
     OrderDataController,
     OrderDetailDataController,
     PermissionDataController,
-    FullPermissionDependencyDataController,
+    PermissionsCtesDataController,
     ProductDataController,
     UserPermissionDataController
 } from "./dataControllers";
@@ -85,7 +85,7 @@ export function registerCoreServices() {
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Permission", controller: PermissionDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
-        _registrationName: "FullPermissionDependency", controller: FullPermissionDependencyDataController}));
+        _registrationName: "PermissionsCtes", controller: PermissionsCtesDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserPermission", controller: UserPermissionDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
