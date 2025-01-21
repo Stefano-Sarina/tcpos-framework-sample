@@ -44,7 +44,7 @@ public class PermissionsCtesDataPullOut(DataPullOutConfiguration configuration, 
         }
     }
 
-    protected override IQueryable<PermissionsCtes> Query()
+    protected override async Task<IQueryable<PermissionsCtes>> QueryAsync(CancellationToken cancellationToken = default)
     {
         // retrieve permissions and group id's
         var permissions = dbContext.Permissions

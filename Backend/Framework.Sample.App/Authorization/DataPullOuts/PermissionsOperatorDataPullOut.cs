@@ -25,13 +25,11 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
         [FromServices] ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authzRepo)
     : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
-    protected override IQueryable<PermissionsOperator> Query()
+    protected override async Task<IQueryable<PermissionsOperator>> QueryAsync(CancellationToken cancellationToken = default)
     {
-        CancellationToken none = CancellationToken.None;
-
         // retrieve the user
-        var userId = authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, none).Result;
-        var user = authzUser.GetUserAsync(userId, none).Result;
+        var userId = await authzCtx.GetUserIdAsync(httpContextAccessor.HttpContext!, cancellationToken);
+        var user = await authzUser.GetUserAsync(userId, cancellationToken);
         Safety.Check(user != null, $"User not found: {userId}");
 
         if (user == null)
@@ -39,7 +37,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
             return Array.Empty<PermissionsOperator>().AsQueryable();
         }
 
-        var permissionValues = authzRepo.GetPermissionValues(user, none).Result;
+        var permissionValues = await authzRepo.GetPermissionValues(user, cancellationToken);
 
         // retrieve permissions and group id's
         var permissionIds = permissionValues.Select(y => y.PermissionId);

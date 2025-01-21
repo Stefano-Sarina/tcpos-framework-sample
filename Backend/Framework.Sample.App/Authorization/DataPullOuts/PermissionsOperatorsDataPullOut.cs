@@ -18,7 +18,7 @@ namespace Framework.Sample.App.Authorization.DataPullOuts;
 
 public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder,
         IStorageProvider storageProvider, IMapper mapper,
-        [FromServices] ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authzRepo)
+        [FromServices] ITcposAuthorizationQuerable<AuthzPermissionValue, int> authzQuerable)
     : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     public override string Name
@@ -27,13 +27,11 @@ public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configurat
     } = "PermissionsOperators";
 
 
-    protected override IQueryable<PermissionsOperator> Query()
+    protected override async Task<IQueryable<PermissionsOperator>> QueryAsync(CancellationToken cancellationToken = default)
     {
-        CancellationToken none = CancellationToken.None;
-
         var dbContext = storageProvider.GetStorage<SampleDbContext>();
 
-        var permissionValues = authzRepo.GetPermissionValues(none).Result;
+        var permissionValues = await authzQuerable.QueryPermissionValues(cancellationToken);
         Safety.Check(permissionValues != null, new ArgumentNullException(nameof(permissionValues)));
 
         // retrieve permissions and group id's
@@ -45,10 +43,9 @@ public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configurat
         var dbGroups = dbContext.Groups.ToDictionary(y => y.Id, y => y);
         var dbUsers = dbContext.Users.ToDictionary(y => y.Id, y => y);
 
-        int id = 1;
         return permissionValues.Select(x => new PermissionsOperator()
         {
-            Id = id++,
+            Id = x.PermissionId,
             OperatorId = x.UserId,
             OperatorCode = x.UserId.ToString(),
             OperatorGroupId = x.GroupId,
@@ -58,6 +55,6 @@ public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configurat
             PermissionValue = x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Allow ? PermissionValue.Allow :
                                 x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Inherit ? PermissionValue.Inherit :
                                 PermissionValue.Deny
-        }).AsQueryable();
+        });
     }
 }
