@@ -11,4 +11,5 @@ public class PermissionsOperatorIn<T>
     public required T PermissionId { get; set; }
     public required string PermissionName { get; set; }
     public PermissionValue PermissionValue { get; set; }
+    public int PermissionType { get; set; }
 }

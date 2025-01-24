@@ -63,6 +63,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
             OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId].GroupName : null,
             PermissionId = x.PermissionId,
             PermissionName = dbPermissions[x.PermissionId].PermissionName,
+            PermissionType = (int)dbPermissions[x.PermissionId].PermissionType,
             PermissionValue = x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Allow ? PermissionValue.Allow :
                                 x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Inherit ? PermissionValue.Inherit :
                                 PermissionValue.Deny

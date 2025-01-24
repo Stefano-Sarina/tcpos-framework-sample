@@ -13,4 +13,5 @@ public class PermissionsOperator : Entity
     public int PermissionId { get; set; }
     public required string PermissionName { get; set; }
     public PermissionValue PermissionValue { get; set; }
+    public int PermissionType { get; set; }
 }
