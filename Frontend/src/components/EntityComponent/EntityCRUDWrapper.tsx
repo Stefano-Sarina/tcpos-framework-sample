@@ -21,6 +21,7 @@ import {
     rwModes
 } from "@tcpos/common-core";
 import {useNavigate, useParams} from "react-router-dom";
+import { PermissionLogic } from "../../core/businessLogic/permissions/PermissionLogic";
 
 /**
  * the standard wrapper to bind webdaily entity fields to the context
@@ -168,7 +169,7 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                             }
                         }
                         newObject.rwMode = rwMode;
-                        newObject.componentPermissions = await objectController.getPermissions(applicationName.toLowerCase(), objectName,
+                        newObject.componentPermissions = await PermissionLogic.getPermissions(applicationName.toLowerCase(), objectName,
                                 objectController.objectDescription ?? objectName);
                         dispatch(setNewObject(newObject));
                         setReadOnly(userReadOnlyVisibilities.indexOf(

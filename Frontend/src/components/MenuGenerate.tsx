@@ -15,7 +15,6 @@ import type  {
     IPluginEntitiesMenuCustomization,
     IPluginGroupsMenuCustomization,
     IViewConfigModel,
-    IOperatorPayload
 } from "@tcpos/backoffice-core";
 import {useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
 

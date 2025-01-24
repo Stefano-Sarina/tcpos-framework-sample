@@ -43,6 +43,7 @@ import { TaxDataController } from "./dataControllers/TaxDataController";
 import { TaxObjectController } from "./objectControllers/TaxObjectController";
 import { GroupDataController } from "./dataControllers/GroupDataController";
 import { GroupObjectController } from "./objectControllers/GroupObjectController";
+import { PermissionsOperatorDataController } from "./dataControllers/PermissionsOperatorDataController";
 
 /**
  * Registration of core services:
@@ -90,7 +91,9 @@ export function registerCoreServices() {
         _registrationName: "UserPermission", controller: UserPermissionDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "GroupPermission", controller: GroupPermissionDataController}));
-                    
+    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+        _registrationName: "PermissionsOperator", controller: PermissionsOperatorDataController}));
+    
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "tax", controller: TaxObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(

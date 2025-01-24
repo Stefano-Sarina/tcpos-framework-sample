@@ -3,7 +3,7 @@ import {
     ABaseApiController, ADailyConfigService,
     DailyPublicRegistrationContainer, Graph, store
 } from "@tcpos/backoffice-core";
-import type {AERObjectController, IApiError, IViewConfigModel, IBatchOperationType,
+import type {AERObjectController, IApiError, IViewConfigModel, IBatchOperationType, IUserPermission, IUiComponentPermissionAccess,
 } from "@tcpos/backoffice-core";
 import type {IUiTree} from "@tcpos/backoffice-core";
 import type {
@@ -11,6 +11,7 @@ import type {
     IInterfaceBuilderComponent,
     IInterfaceBuilderSubFormFields, IInterfaceBuilderComboBox, ICustomComponentPermissionTree
 } from "@tcpos/common-core";
+import type { IPermissionsOperatorPayload } from "../../apiModels/IPermissionsOperatorPayload";
 
 interface IRemoteVersion {
     Id: number,
@@ -222,6 +223,113 @@ export class PermissionLogic {
             return undefined;
         }
     };
+
+    public static async getPermissions(applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> {
+        if (!permissionData) {
+            const dataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers",
+                'PermissionsOperator').controller;
+            const currentDataController = DailyPublicRegistrationContainer.resolveConstructor(dataControllerRegistration);
+            currentDataController.init('PermissionsOperator');
+            let skip = 0;
+            const size = 100;
+            let result: IPermissionsOperatorPayload[] = [];
+            let partialResult: IPermissionsOperatorPayload[] | undefined | IApiError = [];
+            const top = size;
+            let endExtraction = false;
+            while (!endExtraction) {
+                partialResult = await currentDataController.dataListLoad<IPermissionsOperatorPayload>([
+                    {id: 1, parentId: 0, type: 'filterGroup', mode: 'AND'},
+                    {id: 2, parentId: 1, embedded: false, type: 'filter', field: 'KeyCode', operator: "String.startsWith", values: [objectName]},
+                    {id: 3, parentId: 1, embedded: false, type: 'filter', field: 'Type', operator: "String.equals", values: [applicationName]}
+                ], [], [], size, skip);
+                /*
+                            if (Array.isArray(partialResult)) {
+                                result = [...result, ...partialResult];
+                            }
+                */
+                if (partialResult && Array.isArray(partialResult)) {
+                    if (partialResult.length) {
+                        result = [...result, ...partialResult];
+                        if (partialResult.length === top) {
+                            skip += top;
+                        } else {
+                            endExtraction = true;
+                        }
+                    } else {
+                        endExtraction = true;
+                    }
+                } else {
+                    endExtraction = true;
+                }
+            }
+            permissionData = result.map(row => ({
+                code: row.PermissionName!, type: String(row.PermissionType!), permissionValue: row.PermissionValue!
+            }));
+        }
+        if (permissionData) {
+            const componentPermissions: IUiComponentPermissionAccess[] = [];
+            const controllerRegistration = DailyPublicRegistrationContainer.resolveEntry("objectControllers", objectName)
+                .controller;
+            if (controllerRegistration) {
+                const controller = DailyPublicRegistrationContainer.resolveConstructor(controllerRegistration);
+                controller.init("-1", objectName);
+                const controllerInstance: IControllerInstance = {registrationKey: objectName, controller: controller as AERObjectController<any, any>};
+                const uiTree = await this.getDependencyTree(controllerInstance, applicationName);
+                const calculatePermissionAccess = (node: IUiTree) => {
+                    let component = permissionData.find(el =>
+                        String(el.code).toLowerCase() === (node.component + "-" + applicationName + "-" + "write").toLowerCase()
+                        && el.permissionValue === 2
+                    );
+                    if (component) {
+                        componentPermissions.push({
+                            componentName: node.component,
+                            access: 'Write',
+                        });
+                    } else {
+                        component = permissionData.find(el =>
+                            String(el.code).toLowerCase() === (node.component + "-" + applicationName + "-" + "read").toLowerCase()
+                        );
+                        if (component) {
+                            componentPermissions.push({
+                                componentName: node.component,
+                                access: component.permissionValue === 2 ? 'Read' : "NoAccess",
+                            });
+                        } else {
+                            // Not Set
+                            const parentNode = uiTree.find(el => el.nodeId === node.parentNodeId);
+                            if (parentNode) {
+                                componentPermissions.push({
+                                    componentName: node.component,
+                                    access: componentPermissions.find(
+                                        el => el.componentName === parentNode.component)?.access ?? "NoAccess"
+                                });
+                            } else {
+                                componentPermissions.push({
+                                    componentName: node.component,
+                                    access: "NoAccess",
+                                });
+                            }
+                        }
+                    }
+                    uiTree.filter(el => el.parentNodeId === node.nodeId).forEach((subNode) => {
+                        calculatePermissionAccess(subNode);
+                    });
+                };
+                if (Array.isArray(permissionData)) {
+                    const mainNode = uiTree.find(el => el.parentNodeId === 0);
+                    if (mainNode) {
+                        calculatePermissionAccess(mainNode);
+                    }
+                }
+                return componentPermissions;
+            } else {
+                return [];
+            }
+        } else {
+            return [];
+        }
+    }
+
 
     private static async setPermissionList(controller: IControllerInstance, applicationName: string, apiBaseUrl?: string): Promise<IPermissionList[]> {
         const readPermissions: IPermissionList = {Name: "Read", PermissionItems: []};
