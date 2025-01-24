@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using TCPOS.AspNetCore.DataBind.Configuration;
+using TCPOS.AspNetCore.DataBind.DataPullOut.Attributes;
 using TCPOS.AspNetCore.DataBind.Extensions;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches;
 using TCPOS.AspNetCore.DataBind.Implementations.Batches.Concurrency;
@@ -132,6 +133,7 @@ public static class WebApplicationFactory
         }, dataPullOutRouteMapper =>
         {
             dataPullOutRouteMapper.MapDataPullOut(HttpVerbs.Get, "/api/{version}/{name}", Delegates.DataPullOut)
+                                  .WithMetadata(new DataPullOutPageSizeAttribute(["permissionsoperator:10000", "permissionsoperators:10000", "permissionsctes:10000", "UserPermission:10000", "GroupPermission:10000"]))
                                   .RequireTcposAuthorization<AuthorizationRequirementDataPullout>();
             dataPullOutRouteMapper.MapDataPullOutWithKey(HttpVerbs.Get, "/api/{version}/{name}/{key}", Delegates.DataPullOutWithKey)
                                   .RequireTcposAuthorization<AuthorizationRequirementDataPullout>();
