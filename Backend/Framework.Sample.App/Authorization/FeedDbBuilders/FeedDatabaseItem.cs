@@ -1,14 +1,17 @@
-﻿using Framework.Sample.App.DB.Enums;
-using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
+﻿using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
-
-internal class FeedDatabaseItem: IFeedDatabaseItem
+//SARSTE - IFeedDatabaseItem è una interfaccia vuota....a cosa serve?
+internal class FeedDatabaseItem : IFeedDatabaseItem
 {
-    public string PermissionName { get; set; }
-
     public FeedDatabaseItem(string permissionName)
     {
         PermissionName = permissionName.ToLower();
+    }
+
+    public string PermissionName
+    {
+        get;
+        set;
     }
 }

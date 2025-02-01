@@ -53,7 +53,7 @@ public class PermissionsOperatorDataPullOut(DataPullOutConfiguration configurati
         var dbGroups = dbContext.Groups.Where(x => groupIds.Contains(x.Id))
             .ToDictionary(y => y.Id, y => y);
 
-        int id = 1;
+        var id = 1;
         return permissionValues.Select(x => new PermissionsOperator()
         {
             Id = id++,

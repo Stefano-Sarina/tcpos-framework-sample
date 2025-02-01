@@ -9,17 +9,12 @@ using TCPOS.Data.Batches.Enums;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal abstract class FeedDbBuilderErpBase<TAuthzReq> : IFeedDatabaseManager<FeedDatabaseItem>
+internal abstract class FeedDbBuilderErpBase<TAuthzReq>(IServiceProvider serviceProvider) : IFeedDatabaseManager<FeedDatabaseItem>
     where TAuthzReq : IAuthorizationRequirement
 {
-    private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers;
+    private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers = serviceProvider.GetServices<IDataEntitiesRetriever>().ToArray();
 
     protected abstract Operations Operation { get; }
-
-    public FeedDbBuilderErpBase(IServiceProvider serviceProvider)
-    {
-        _dataEntitiesRetrievers = serviceProvider.GetServices<IDataEntitiesRetriever>().ToArray();
-    }
 
     public async Task<bool> CanHandleAsync(Endpoint endpoint)
     {

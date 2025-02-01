@@ -5,21 +5,14 @@ using TCPOS.Authorization.FeedDatabase.Engine;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Data.Batches.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using TCPOS.Common.Linq.Extensions;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
-internal class FeedDbBuilderDataPullOut : IFeedDatabaseManager<FeedDatabaseItem>
+//SARSTE - NON passare mai IServiceProvider
+internal class FeedDbBuilderDataPullOut(IEnumerable<IDataEntitiesRetriever> dataEntitiesRetrievers) : IFeedDatabaseManager<FeedDatabaseItem>
 {
-    private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers;
-    //public FeedDbBuilderDataPullOut(IDataEntitiesRetriever[] dataEntitiesRetrievers)
-    //{
-    //    _dataEntitiesRetrievers = dataEntitiesRetrievers;
-    //}
-
-    public FeedDbBuilderDataPullOut(IServiceProvider serviceProvider)
-    {
-        _dataEntitiesRetrievers = serviceProvider.GetServices<IDataEntitiesRetriever>().ToArray();
-    }
+    private readonly IDataEntitiesRetriever[] _dataEntitiesRetrievers = dataEntitiesRetrievers.ToEnumerableOrEmpty().ToArray();
 
     public async Task<bool> CanHandleAsync(Endpoint endpoint)
     {
@@ -34,7 +27,7 @@ internal class FeedDbBuilderDataPullOut : IFeedDatabaseManager<FeedDatabaseItem>
 
     public async Task<IEnumerable<FeedDatabaseItem>> BuildFeedDatabaseItemsAsync(Endpoint endpoint, CancellationToken cancellationToken)
     {
-        List<FeedDatabaseItem> items = new List<FeedDatabaseItem>();
+        var items = new List<FeedDatabaseItem>();
         if (endpoint is RouteEndpoint routeEndpoint)
         {
             var dataPullOuts = _dataEntitiesRetrievers.SelectMany(x => x.GetDataEntities()

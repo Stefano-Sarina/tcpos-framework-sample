@@ -8,9 +8,9 @@ public class Configuration
         set;
     } = new();
 
-    public DatabaseConnection DatabaseConnection
+    public TenantSettings[] TenantSettings
     {
         get;
         set;
-    } = new();
+    } = [];
 }

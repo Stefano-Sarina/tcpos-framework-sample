@@ -7,14 +7,14 @@ namespace Framework.Sample.App.Utils
     {
         public override TEnum Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            string? enumString = reader.GetString();
+            var enumString = reader.GetString();
 
             if (string.IsNullOrEmpty(enumString))
             {
                 throw new JsonException($"Cannot convert empty string to {typeof(TEnum).Name}");
             }
 
-            if (Enum.TryParse<TEnum>(enumString, true, out TEnum result))
+            if (Enum.TryParse<TEnum>(enumString, true, out var result))
             {
                 return result;
             }

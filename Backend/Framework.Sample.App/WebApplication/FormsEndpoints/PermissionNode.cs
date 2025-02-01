@@ -38,9 +38,9 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
 
             nodes ??= new List<PermissionNode>();
 
-            bool found = false;
+            var found = false;
 
-            List<PermissionNode>? filteredNodes = ParentNodes?.Where(x => x.ParentNodes?.Length > 0).ToList();
+            var filteredNodes = ParentNodes?.Where(x => x.ParentNodes?.Length > 0).ToList();
 
             if (filteredNodes?.Count > 0)
             {
@@ -79,18 +79,18 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
         internal static List<PermissionNode> GetNodes(FeIn formsEndpoints)
         {
             // load all permissions and remove duplicates  
-            List<PermissionNode> nodes = formsEndpoints.Permissions
-                          .SelectMany(x => x.PermissionItems,
-                                      (parent, child) => new PermissionNode(parent, child))
-                          .DistinctBy(x => x.Item.Code)
-                          .ToList();
+            var nodes = formsEndpoints.Permissions
+                                      .SelectMany(x => x.PermissionItems,
+                                                  (parent, child) => new PermissionNode(parent, child))
+                                      .DistinctBy(x => x.Item.Code)
+                                      .ToList();
 
             // trim ending '/' on endpoint
             nodes.Where(x => x.Item.PermissionItemEndpoint != null).ToList()
                  .ForEach(x => x.Item.PermissionItemEndpoint.Url = x.Item.PermissionItemEndpoint.Url.TrimEnd('/'));
 
             // load parent permissions
-            List<PermissionNode> formNodes = nodes
+            var formNodes = nodes
                            .Where(n => n.Item.PermissionItemParents.ToEnumerableOrEmpty().Count() > 0)
                            .ToList();
 
@@ -109,7 +109,7 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
         private static void ValidateNodes(List<PermissionNode> nodes)
         {
             // check all parents are found
-            List<PermissionNode> invalidNodes = nodes
+            var invalidNodes = nodes
                               .Where(x => !x.HasAllParents())
                               .ToList();
 
@@ -118,10 +118,10 @@ namespace Framework.Sample.App.WebApplication.FormsEndpoints
                 throw new Exception($"Missing parents in nodes: {string.Join(',', invalidNodes.Select(x => $"<{x.Item.Code}>"))}");
             }
 
-            List<PermissionNode> circularCandidate = nodes.Where(x => x.ParentNodes?.Length > 0).ToList();
+            var circularCandidate = nodes.Where(x => x.ParentNodes?.Length > 0).ToList();
 
             // check for circular references
-            List<PermissionNode> circularNodes = circularCandidate
+            var circularNodes = circularCandidate
                                .Where(x => x.HasParent(x, null, 0))
                                .ToList();
 

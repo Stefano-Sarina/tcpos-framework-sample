@@ -21,7 +21,7 @@ internal class FeedDbBuilderBatch : IFeedDatabaseManager<FeedDatabaseItem>
 
     public async Task<IEnumerable<FeedDatabaseItem>> BuildFeedDatabaseItemsAsync(Endpoint endpoint, CancellationToken cancellationToken)
     {
-        List<FeedDatabaseItem> items = new List<FeedDatabaseItem>();
+        var items = new List<FeedDatabaseItem>();
         if (endpoint is RouteEndpoint routeEndpoint)
         {
             var methods = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();

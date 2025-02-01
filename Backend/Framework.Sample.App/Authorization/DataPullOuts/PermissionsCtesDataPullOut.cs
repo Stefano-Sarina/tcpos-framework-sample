@@ -70,7 +70,7 @@ public class PermissionsCtesDataPullOut(DataPullOutConfiguration configuration, 
             result.AddRange(CreateNodes(node, permissions, 0));
         }
 
-        int id = 0;
+        var id = 0;
         result.ForEach(x => x.Id = ++id);
 
         return result.AsQueryable();

@@ -29,17 +29,17 @@ public class FeManager(SampleDbContext sampleDbContext)
 
         try
         {
-            AdWebEntityVersion adWebEntityVersion = await GetAdWebEntityVersion(formsEndpoints.ApplicationName);
-            bool isAppVersionNewer = version > new Version(adWebEntityVersion.Version);
+            var adWebEntityVersion = await GetAdWebEntityVersion(formsEndpoints.ApplicationName);
+            var isAppVersionNewer = version > new Version(adWebEntityVersion.Version);
             if (!isAppVersionNewer)
             {
                 return Results.Created();
             }
 
-            List<Permission> existingPermissions = await sampleDbContext.Permissions.ToListAsync();
-            List<PermissionDependency> existingDependencies = await sampleDbContext.PermissionsDependencies
-                .Where(p => p.ChildPermission.PermissionType == DB.Enums.PermissionTypes.UI)
-                .ToListAsync();
+            var existingPermissions = await sampleDbContext.Permissions.ToListAsync();
+            var existingDependencies = await sampleDbContext.PermissionsDependencies
+                                                            .Where(p => p.ChildPermission.PermissionType == DB.Enums.PermissionTypes.UI)
+                                                            .ToListAsync();
 
             AddApiPermissionsToRootNodes(nodes, existingPermissions, formsEndpoints.ApplicationName);
             await AddPermissionsAsync(nodes, existingPermissions, formsEndpoints.ApplicationName);
@@ -62,8 +62,8 @@ public class FeManager(SampleDbContext sampleDbContext)
 
     private async Task<AdWebEntityVersion> GetAdWebEntityVersion(string applicationName)
     {
-        AdWebEntityVersion? dbAdWebEntityVersion = await sampleDbContext.AdWebEntityVersions
-                            .FirstOrDefaultAsync(x => x.EntityName == applicationName);
+        var dbAdWebEntityVersion = await sampleDbContext.AdWebEntityVersions
+                                                        .FirstOrDefaultAsync(x => x.EntityName == applicationName);
 
         if (dbAdWebEntityVersion == null)
         {
@@ -81,10 +81,10 @@ public class FeManager(SampleDbContext sampleDbContext)
 
     private void AddApiPermissionsToRootNodes(IEnumerable<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
     {
-        foreach (PermissionNode node in nodes.Where(x => x.Item.PermissionItemEndpoint != null))
+        foreach (var node in nodes.Where(x => x.Item.PermissionItemEndpoint != null))
         {
-            Permission? existingPermission = existingPermissions.FirstOrDefault(p => p.PermissionType == DB.Enums.PermissionTypes.Api
-                && p.PermissionName.Equals(node.Item.ApiPermissionName, StringComparison.InvariantCultureIgnoreCase));
+            var existingPermission = existingPermissions.FirstOrDefault(p => p.PermissionType == DB.Enums.PermissionTypes.Api
+                                                                             && p.PermissionName.Equals(node.Item.ApiPermissionName, StringComparison.InvariantCultureIgnoreCase));
 
             Safety.Check(existingPermission != null, $"{node.Item.PermissionItemEndpoint!.Verb} {node.Item.PermissionItemEndpoint!.Url} permission not found");
 
@@ -98,13 +98,13 @@ public class FeManager(SampleDbContext sampleDbContext)
 
     private async Task AddPermissionsAsync(List<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
     {
-        IEnumerable<Permission> permissionsToAdd = nodes.Where(n => n.Item.PermissionItemEndpoint == null
-            && !existingPermissions.Any(p => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)))
-            .Select(n => new Permission()
-            {
-                PermissionName = n.GetKeyCode(applicationName),
-                PermissionType = DB.Enums.PermissionTypes.UI
-            });
+        var permissionsToAdd = nodes.Where(n => n.Item.PermissionItemEndpoint == null
+                                                && !existingPermissions.Any(p => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)))
+                                    .Select(n => new Permission()
+                                     {
+                                         PermissionName = n.GetKeyCode(applicationName),
+                                         PermissionType = DB.Enums.PermissionTypes.UI
+                                     });
 
         await sampleDbContext.Permissions.AddRangeAsync(permissionsToAdd);
     }
@@ -112,12 +112,12 @@ public class FeManager(SampleDbContext sampleDbContext)
     private async Task AddPermissionsDependenciesAsync(List<PermissionNode> nodes, List<PermissionDependency> existingDependencies, string applicationName)
     {
         List<PermissionDependency> dependencies = [];
-        foreach (PermissionNode node in nodes)
+        foreach (var node in nodes)
         {
-            foreach (PermissionNode parentNode in node.ParentNodes.ToEnumerableOrEmpty())
+            foreach (var parentNode in node.ParentNodes.ToEnumerableOrEmpty())
             {
-                Permission? parentPermission = GetPermissionFromNode(parentNode, applicationName);
-                Permission? childPermission = GetPermissionFromNode(node, applicationName);
+                var parentPermission = GetPermissionFromNode(parentNode, applicationName);
+                var childPermission = GetPermissionFromNode(node, applicationName);
 
                 if (parentPermission != null && childPermission != null
                     && !existingDependencies.Any(p => p.ParentPermissionId == parentPermission.Id && p.ChildPermissionId == childPermission.Id)
@@ -137,8 +137,8 @@ public class FeManager(SampleDbContext sampleDbContext)
 
     private void RemoveUnusedPemissions(List<PermissionNode> nodes, List<Permission> existingPermissions, string applicationName)
     {
-        IEnumerable<Permission> permissionsToRemove = existingPermissions.Where(p => p.PermissionType == DB.Enums.PermissionTypes.UI &&
-            !nodes.Any(n => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)));
+        var permissionsToRemove = existingPermissions.Where(p => p.PermissionType == DB.Enums.PermissionTypes.UI &&
+                                                                 !nodes.Any(n => p.PermissionName.Equals(n.GetKeyCode(applicationName), StringComparison.InvariantCultureIgnoreCase)));
 
         sampleDbContext.Permissions.RemoveRange(permissionsToRemove);
     }
@@ -146,12 +146,12 @@ public class FeManager(SampleDbContext sampleDbContext)
     private void RemoveUnusedPemissionsDependencies(List<PermissionNode> nodes, List<PermissionDependency> existingDependencies, string applicationName)
     {
         List<PermissionDependency> nodesDependencies = [];
-        foreach (PermissionNode node in nodes)
+        foreach (var node in nodes)
         {
-            foreach (PermissionNode parentNode in node.ParentNodes.ToEnumerableOrEmpty())
+            foreach (var parentNode in node.ParentNodes.ToEnumerableOrEmpty())
             {
-                Permission? parentPermission = GetPermissionFromNode(parentNode, applicationName);
-                Permission? childPermission = GetPermissionFromNode(node, applicationName);
+                var parentPermission = GetPermissionFromNode(parentNode, applicationName);
+                var childPermission = GetPermissionFromNode(node, applicationName);
 
                 if (parentPermission != null && childPermission != null)
                 {
@@ -165,7 +165,7 @@ public class FeManager(SampleDbContext sampleDbContext)
         }
 
         // delete all dependencies that exists in existing and not in nodes
-        IEnumerable<PermissionDependency> dependenciesToRemove = existingDependencies
+        var dependenciesToRemove = existingDependencies
             .Where(ed => !nodesDependencies.Any(nd => nd.ParentPermissionId == ed.ParentPermissionId && nd.ChildPermissionId == ed.ChildPermissionId));
 
         sampleDbContext.PermissionsDependencies.RemoveRange(dependenciesToRemove);
@@ -173,8 +173,8 @@ public class FeManager(SampleDbContext sampleDbContext)
 
     private Permission? GetPermissionFromNode(PermissionNode node, string applicationName)
     {
-        string key = node.GetKeyCode(applicationName);
-        if (!permissionsCache.TryGetValue(key, out Permission? permission))
+        var key = node.GetKeyCode(applicationName);
+        if (!permissionsCache.TryGetValue(key, out var permission))
         {
             permission = sampleDbContext.Permissions.Local
                 .FirstOrDefault(p => p.PermissionName.Equals(key, StringComparison.InvariantCultureIgnoreCase));
