@@ -1,6 +1,6 @@
 ﻿using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.DB.Enums;
-using TCPOS.Authorization.FeedDatabase.Engine;
+using Microsoft.AspNetCore.Authorization;
 using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
 using TCPOS.Common.Diagnostics;
 
@@ -12,8 +12,8 @@ internal class FeedDbBuilderBatch : IFeedDatabaseManager<FeedDatabaseItem>
     {
         Safety.Check(endpoint != null, new ArgumentNullException(nameof(endpoint)));
 
-        var authorizationPolicy = endpoint.Metadata.OfType<Microsoft.AspNetCore.Authorization.AuthorizationPolicy>()
-            .FirstOrDefault();
+        var authorizationPolicy = endpoint.Metadata.OfType<AuthorizationPolicy>()
+                                          .FirstOrDefault();
 
         var canHandle = authorizationPolicy?.Requirements.OfType<AuthorizationRequirementBatch>().Any() ?? false;
         return await Task.FromResult(canHandle);
@@ -22,9 +22,11 @@ internal class FeedDbBuilderBatch : IFeedDatabaseManager<FeedDatabaseItem>
     public async Task<IEnumerable<FeedDatabaseItem>> BuildFeedDatabaseItemsAsync(Endpoint endpoint, CancellationToken cancellationToken)
     {
         var items = new List<FeedDatabaseItem>();
+
         if (endpoint is RouteEndpoint routeEndpoint)
         {
             var methods = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
+
             if (methods?.HttpMethods != null)
             {
                 foreach (var method in methods.HttpMethods)

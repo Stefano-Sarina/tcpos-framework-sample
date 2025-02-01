@@ -7,8 +7,13 @@ internal class FeedDbBuilderErpReplace : FeedDbBuilderErpBase<AuthorizationRequi
 {
     public FeedDbBuilderErpReplace(IServiceProvider serviceProvider) :
         base(serviceProvider)
-    {
-    }
+    { }
 
-    protected override Operations Operation => Operations.Replace;
+    protected override Operations Operation
+    {
+        get
+        {
+            return Operations.Replace;
+        }
+    }
 }

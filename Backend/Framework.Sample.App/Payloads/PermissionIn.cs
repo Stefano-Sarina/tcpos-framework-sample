@@ -1,11 +1,10 @@
-﻿using Framework.Sample.App.DB.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Framework.Sample.App.DB.Enums;
 
 namespace Framework.Sample.App.Payloads;
 
 public class PermissionIn
 {
-
     [Required]
     [StringLength(40, MinimumLength = 1)]
     public string PermissionName

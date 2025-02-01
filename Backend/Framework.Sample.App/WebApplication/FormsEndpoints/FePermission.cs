@@ -1,8 +1,16 @@
-﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints
+﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints;
+
+public class FePermission
 {
-    public class FePermission
+    public string Name
     {
-        public string Name { get; set; } = null!;
-        public FePermissionItem[] PermissionItems { get; set; }
+        get;
+        set;
+    } = null!;
+
+    public FePermissionItem[] PermissionItems
+    {
+        get;
+        set;
     }
 }

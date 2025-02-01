@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Globalization;
+using System.Linq.Expressions;
 using TCPOS.Common.Linq.Extensions;
 
 namespace Framework.Sample.AppTests.Helpers;
@@ -8,6 +9,7 @@ internal static class ODataUtils
     private static string ExpressionToODataFilter(Expression expr)
     {
         var value = expr.EvaluateExpression();
+
         if (value.Success)
         {
             return ValueToOdata(value.Value);
@@ -28,9 +30,9 @@ internal static class ODataUtils
         return expressionValue switch
         {
             null => "null",
-            int i => i.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            double d => d.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            decimal dc => dc.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            int i => i.ToString(CultureInfo.InvariantCulture),
+            double d => d.ToString(CultureInfo.InvariantCulture),
+            decimal dc => dc.ToString(CultureInfo.InvariantCulture),
             string s => $"'{s.Replace("'", "''")}'",
             DateTime dt => dt.ToString("O"),
             bool b => b ? "true" : "false",

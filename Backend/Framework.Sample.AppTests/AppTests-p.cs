@@ -1,6 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http.Headers;
-using Azure;
 using Framework.Sample.App.WebApplication;
 using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.Builder;

@@ -20,9 +20,9 @@ public class ExceptionMiddleware(RequestDelegate next)
             switch (e.BatchExceptionCode)
             {
                 case BatchExceptionCode.BatchNotFound:
-                    await Results.NotFound(new 
+                    await Results.NotFound(new
                     {
-                        Message = e.Message,
+                        e.Message,
                         Exception = e.InnerException.GetFullDetails()
                     }).ExecuteAsync(context);
                     break;
@@ -35,16 +35,16 @@ public class ExceptionMiddleware(RequestDelegate next)
                     await Results.Problem(e.Message).ExecuteAsync(context);
                     break;
                 case BatchExceptionCode.Conflict:
-                    await Results.Conflict(new 
+                    await Results.Conflict(new
                     {
-                        Message = e.Message,
+                        e.Message,
                         Exception = e.InnerException.GetFullDetails()
                     }).ExecuteAsync(context);
                     break;
                 case BatchExceptionCode.PayloadValidationError:
-                    await Results.BadRequest(new 
+                    await Results.BadRequest(new
                     {
-                        Message = e.Message,
+                        e.Message,
                         Exception = e.InnerException.GetFullDetails()
                     }).ExecuteAsync(context);
                     break;
@@ -54,9 +54,9 @@ public class ExceptionMiddleware(RequestDelegate next)
         }
         catch (DataException e)
         {
-            await Results.BadRequest(new 
+            await Results.BadRequest(new
             {
-                Message = e.Message,
+                e.Message,
                 Exception = e.GetFullDetails()
             }).ExecuteAsync(context);
         }

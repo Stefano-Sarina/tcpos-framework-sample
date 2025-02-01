@@ -20,7 +20,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         var authzValues = await dbContext.UserPermissions
-                                         .Where(x => x.UserId == (int)user.Id)
+                                         .Where(x => x.UserId == user.Id)
                                          .ToListAsync();
 
         return authzValues.Select(x => x.ToAuthorizationData())
@@ -35,7 +35,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         return (await dbContext.UserPermissions
-                               .FirstOrDefaultAsync(x => x.UserId == (int)user.Id && x.PermissionId == (int)permission.Id)
+                               .FirstOrDefaultAsync(x => x.UserId == user.Id && x.PermissionId == permission.Id)
                )?.ToAuthorizationData();
     }
 
@@ -47,7 +47,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         var authzValues = await dbContext.GroupPermissions
-                                         .Where(x => x.GroupId == (int)group.Id)
+                                         .Where(x => x.GroupId == group.Id)
                                          .ToListAsync();
 
         return authzValues.Select(x => x.ToAuthorizationData())
@@ -62,7 +62,7 @@ internal class AuthzPermissionValueStore(SampleDbContext dbContext)
         }
 
         return (await dbContext.GroupPermissions
-                               .FirstOrDefaultAsync(x => x.GroupId == (int)group.Id && x.PermissionId == (int)permission.Id)
+                               .FirstOrDefaultAsync(x => x.GroupId == group.Id && x.PermissionId == permission.Id)
                )?.ToAuthorizationData();
     }
 }

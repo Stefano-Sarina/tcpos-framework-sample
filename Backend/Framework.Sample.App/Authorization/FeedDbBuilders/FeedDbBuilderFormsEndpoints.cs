@@ -1,7 +1,7 @@
 ﻿using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.DB.Enums;
+using Microsoft.AspNetCore.Authorization;
 using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
-using TCPOS.Authorization.FeedDatabase.Engine;
 using TCPOS.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
@@ -30,13 +30,12 @@ internal class FeedDbBuilderFormsEndpoints : IFeedDatabaseManager<FeedDatabaseIt
         return await Task.FromResult(items);
     }
 
-
     public async Task<bool> CanHandleAsync(Endpoint endpoint)
     {
         Safety.Check(endpoint != null, new ArgumentNullException(nameof(endpoint)));
 
-        var authorizationPolicy = endpoint.Metadata.OfType<Microsoft.AspNetCore.Authorization.AuthorizationPolicy>()
-            .FirstOrDefault();
+        var authorizationPolicy = endpoint.Metadata.OfType<AuthorizationPolicy>()
+                                          .FirstOrDefault();
 
         var canHandle = authorizationPolicy?.Requirements.OfType<AuthorizationRequirementFormsEndpoints>().Any() ?? false;
         return await Task.FromResult(canHandle);

@@ -3,9 +3,9 @@ using Framework.Sample.App.DB.Enums;
 using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 using TCPOS.Authorization.Domains;
-using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.Implementations;
+
 //SARSTE - Querable in Queryable
 public class TcposAuthorizationQuerableImpl<TPermissionValue>(SampleDbContext dbContext) : ITcposAuthorizationQuerable<TPermissionValue, int>, IDisposable
     where TPermissionValue : ITPermissionValue<int>, new()

@@ -19,7 +19,7 @@ internal class AuthzGroupStore(SampleDbContext dbContext) : IAuthorizationGroupS
         }
 
         var mapUsrGrp = dbContext.UserGroups
-                                 .Where(x => x.UserId == (int)user.Id);
+                                 .Where(x => x.UserId == user.Id);
 
         var groups = await dbContext.Groups
                                     .Where(x => mapUsrGrp.Any(y => y.GroupId == x.Id))

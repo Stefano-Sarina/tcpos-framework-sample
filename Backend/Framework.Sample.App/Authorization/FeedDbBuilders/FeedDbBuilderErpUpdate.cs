@@ -7,8 +7,13 @@ internal class FeedDbBuilderErpUpdate : FeedDbBuilderErpBase<AuthorizationRequir
 {
     public FeedDbBuilderErpUpdate(IServiceProvider serviceProvider) :
         base(serviceProvider)
-    {
-    }
+    { }
 
-    protected override Operations Operation => Operations.Update;
+    protected override Operations Operation
+    {
+        get
+        {
+            return Operations.Update;
+        }
+    }
 }

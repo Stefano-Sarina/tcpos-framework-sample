@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 using TCPOS.Common.Diagnostics;
 

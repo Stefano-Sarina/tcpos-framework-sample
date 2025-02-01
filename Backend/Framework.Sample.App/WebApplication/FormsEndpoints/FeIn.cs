@@ -1,9 +1,22 @@
-﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints
+﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints;
+
+public class FeIn : IFormsEndpoint
 {
-    public class FeIn : IFormsEndpoint
+    public required string ApplicationName
     {
-        public required string ApplicationName { get; set; }
-        public required string Version { get; set; }
-        public required FePermission[] Permissions { get; set; }
+        get;
+        set;
+    }
+
+    public required string Version
+    {
+        get;
+        set;
+    }
+
+    public required FePermission[] Permissions
+    {
+        get;
+        set;
     }
 }

@@ -1,14 +1,16 @@
 ﻿namespace Framework.Sample.App.Utils;
 
 public class DisposableList<T> : List<T>, IDisposable
-    where T:IDisposable
+    where T : IDisposable
 {
     public DisposableList(IEnumerable<T> collection) : base(collection)
     { }
-    public DisposableList() : base()
+
+    public DisposableList()
     { }
+
     public void Dispose()
     {
-        this.ForEach(x => x.Dispose());
+        ForEach(x => x.Dispose());
     }
 }

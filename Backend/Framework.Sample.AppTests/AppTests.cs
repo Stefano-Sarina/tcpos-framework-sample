@@ -3,7 +3,6 @@ using FluentAssertions;
 using Framework.Sample.App.Payloads;
 using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.JsonPatch.Operations;
-using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
 using TCPOS.Common.Linq.Extensions;
 using TCPOS.Data.Batches.Enums;
 using TCPOS.Data.Batches.Payload;

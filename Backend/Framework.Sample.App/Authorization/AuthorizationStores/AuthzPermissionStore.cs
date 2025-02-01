@@ -1,8 +1,6 @@
-﻿using System.Text.RegularExpressions;
-using Framework.Sample.App.Authorization.AuthorizationStores.Extensions;
+﻿using Framework.Sample.App.Authorization.AuthorizationStores.Extensions;
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB;
-using Framework.Sample.App.DB.Enums;
 using Microsoft.EntityFrameworkCore;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 
@@ -19,7 +17,7 @@ internal class AuthzPermissionStore(SampleDbContext dbContext) : IAuthorizationP
         {
             return null;
         }
-        
+
         return (await dbContext.Permissions.FirstOrDefaultAsync(x => x.PermissionName == keyCode))?
            .ToAuthorizationData();
 

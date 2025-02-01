@@ -3,15 +3,15 @@ using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class CustomerOut : CustomerIn, IIDEntity,IConcurrencyEntity
+public class CustomerOut : CustomerIn, IIDEntity, IConcurrencyEntity
 {
-    public int Id
+    public string ConcurrencyCode
     {
         get;
         set;
     }
 
-    public string ConcurrencyCode
+    public int Id
     {
         get;
         set;

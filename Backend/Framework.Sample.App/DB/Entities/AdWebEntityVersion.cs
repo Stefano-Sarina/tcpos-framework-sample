@@ -1,14 +1,14 @@
-﻿using Framework.Sample.App.DB.Entities.Base;
-using Microsoft.EntityFrameworkCore;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+using Framework.Sample.App.DB.Entities.Base;
+using Microsoft.EntityFrameworkCore;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
 using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
 [Table("AdWebEntityVersions")]
-public class AdWebEntityVersion: Entity
+public class AdWebEntityVersion : Entity
 {
     [ConcurrencyItem]
     [PrimaryKeyField]

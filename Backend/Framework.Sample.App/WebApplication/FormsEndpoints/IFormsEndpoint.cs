@@ -1,9 +1,19 @@
-﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints
+﻿namespace Framework.Sample.App.WebApplication.FormsEndpoints;
+
+public interface IFormsEndpoint
 {
-    public interface IFormsEndpoint
+    string ApplicationName
     {
-        string ApplicationName { get; }
-        string Version { get; }
-        FePermission[] Permissions { get; }
+        get;
+    }
+
+    string Version
+    {
+        get;
+    }
+
+    FePermission[] Permissions
+    {
+        get;
     }
 }

@@ -5,13 +5,13 @@ namespace Framework.Sample.App.Payloads;
 
 public class UserOut : UserIn, IIDEntity, IConcurrencyEntity
 {
-    public int Id
+    public string ConcurrencyCode
     {
         get;
         set;
     }
 
-    public string ConcurrencyCode
+    public int Id
     {
         get;
         set;

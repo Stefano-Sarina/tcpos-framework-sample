@@ -2,6 +2,15 @@
 
 public class PermissionsOperatorOut<T> : PermissionsOperatorIn<T>
 {
-    public required string ConcurrencyCode { get; set; }
-    public int Id { get; set; }
+    public required string ConcurrencyCode
+    {
+        get;
+        set;
+    }
+
+    public int Id
+    {
+        get;
+        set;
+    }
 }

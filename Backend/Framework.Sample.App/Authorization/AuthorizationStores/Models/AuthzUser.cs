@@ -2,15 +2,15 @@
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
 
-public class AuthzUser: ITAuthorizationEntityId<int>
+public class AuthzUser : ITAuthorizationEntityId<int>
 {
-    public int Id
+    public decimal? IsPermissionAdministrator
     {
         get;
         set;
     }
 
-    public decimal? IsPermissionAdministrator
+    public int Id
     {
         get;
         set;

@@ -145,6 +145,9 @@ public static class Delegates
 
         return await erpUpdateRunner.GetSchema(name, versionVer);
     }
+
     private static AdditionalData[] GetAdditionalData(string? concurrencycode)
-        => !string.IsNullOrEmpty(concurrencycode) ? [new AdditionalData("ConcurrencyCode", Uri.UnescapeDataString(concurrencycode))] : [];
+    {
+        return !string.IsNullOrEmpty(concurrencycode) ? [new AdditionalData("ConcurrencyCode", Uri.UnescapeDataString(concurrencycode))] : [];
+    }
 }

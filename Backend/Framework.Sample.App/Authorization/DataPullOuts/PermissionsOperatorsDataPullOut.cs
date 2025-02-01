@@ -2,30 +2,31 @@
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.DataPullOuts.Entities;
 using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
-using Framework.Sample.App.DB.Enums;
 using Framework.Sample.App.DB;
+using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Mvc;
 using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
 using TCPOS.Authorization.Abstracts;
+using TCPOS.Authorization.Domains;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Data.Batches.Interfaces;
-using Framework.Sample.App.DataBind;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
-public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder,
-        IStorageProvider storageProvider, IMapper mapper,
-        [FromServices] ITcposAuthorizationQuerable<AuthzPermissionValue, int> authzQuerable)
+public class PermissionsOperatorsDataPullOut(
+    DataPullOutConfiguration configuration,
+    IEdmModelBuilder edmModelBuilder,
+    IStorageProvider storageProvider,
+    IMapper mapper,
+    [FromServices] ITcposAuthorizationQuerable<AuthzPermissionValue, int> authzQuerable)
     : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     public override string Name
     {
         get;
     } = "PermissionsOperators";
-
 
     protected override async Task<IQueryable<PermissionsOperator>> QueryAsync(CancellationToken cancellationToken = default)
     {
@@ -43,7 +44,7 @@ public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configurat
         var dbGroups = dbContext.Groups.ToDictionary(y => y.Id, y => y);
         var dbUsers = dbContext.Users.ToDictionary(y => y.Id, y => y);
 
-        return permissionValues.Select(x => new PermissionsOperator()
+        return permissionValues.Select(x => new PermissionsOperator
         {
             Id = x.PermissionId,
             OperatorId = x.UserId,
@@ -53,9 +54,9 @@ public class PermissionsOperatorsDataPullOut(DataPullOutConfiguration configurat
             PermissionId = x.PermissionId,
             PermissionName = dbPermissions[x.PermissionId].PermissionName,
             PermissionType = (int)dbPermissions[x.PermissionId].PermissionType,
-            PermissionValue = x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Allow ? PermissionValue.Allow :
-                                x.Value == TCPOS.Authorization.Domains.PermissionValueEnum.Inherit ? PermissionValue.Inherit :
-                                PermissionValue.Deny
+            PermissionValue = x.Value == PermissionValueEnum.Allow ? PermissionValue.Allow :
+                              x.Value == PermissionValueEnum.Inherit ? PermissionValue.Inherit :
+                              PermissionValue.Deny
         });
     }
 }

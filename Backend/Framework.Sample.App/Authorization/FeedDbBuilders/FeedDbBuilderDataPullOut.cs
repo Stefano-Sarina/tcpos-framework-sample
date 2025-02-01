@@ -1,11 +1,11 @@
 ﻿using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.DB.Enums;
+using Microsoft.AspNetCore.Authorization;
 using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
-using TCPOS.Authorization.FeedDatabase.Engine;
 using TCPOS.Common.Diagnostics;
-using TCPOS.Data.Batches.Interfaces;
-using Microsoft.Extensions.DependencyInjection;
 using TCPOS.Common.Linq.Extensions;
+using TCPOS.Data.Batches.Enums;
+using TCPOS.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 
@@ -18,8 +18,8 @@ internal class FeedDbBuilderDataPullOut(IEnumerable<IDataEntitiesRetriever> data
     {
         Safety.Check(endpoint != null, new ArgumentNullException(nameof(endpoint)));
 
-        var authorizationPolicy = endpoint.Metadata.OfType<Microsoft.AspNetCore.Authorization.AuthorizationPolicy>()
-            .FirstOrDefault();
+        var authorizationPolicy = endpoint.Metadata.OfType<AuthorizationPolicy>()
+                                          .FirstOrDefault();
 
         var canHandle = authorizationPolicy?.Requirements.OfType<AuthorizationRequirementDataPullout>().Any() ?? false;
         return await Task.FromResult(canHandle);
@@ -28,13 +28,15 @@ internal class FeedDbBuilderDataPullOut(IEnumerable<IDataEntitiesRetriever> data
     public async Task<IEnumerable<FeedDatabaseItem>> BuildFeedDatabaseItemsAsync(Endpoint endpoint, CancellationToken cancellationToken)
     {
         var items = new List<FeedDatabaseItem>();
+
         if (endpoint is RouteEndpoint routeEndpoint)
         {
             var dataPullOuts = _dataEntitiesRetrievers.SelectMany(x => x.GetDataEntities()
-                .Where(x => x.Operation == TCPOS.Data.Batches.Enums.Operations.Retrieve))
-                .ToArray();
+                                                                        .Where(x => x.Operation == Operations.Retrieve))
+                                                      .ToArray();
 
             var methods = endpoint.Metadata.OfType<HttpMethodMetadata>().FirstOrDefault();
+
             if (methods?.HttpMethods != null)
             {
                 foreach (var dataPullOut in dataPullOuts)
