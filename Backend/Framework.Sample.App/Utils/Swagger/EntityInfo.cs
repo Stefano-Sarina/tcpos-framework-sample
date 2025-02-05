@@ -61,4 +61,17 @@ internal class EntityInfo(string name, Version version, Operations operation, Ty
     {
         return $"Int32{Name}-{operation}-InRef";
     }
+
+    internal bool IsAllowed(RouteEndpoint endpoint)
+    {
+        Safety.Check(endpoint != null, "endpoint cannot be null");
+
+        if (endpoint.GetMetadata<SwaggerExplodeAttribute>()?.EndPointType == SwaggerExplodeAttribute.EndPointTypeEnum.Common
+            || Operation == Operations.Retrieve)
+        {
+            return true;
+        }
+
+        return endpoint.IsSchema() || endpoint.HasSegment(Operation.ToString());
+    }
 }

@@ -14,7 +14,6 @@ using Framework.Sample.App.Utils.Swagger;
 using Framework.Sample.App.WebApplication.FormsEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -111,7 +110,12 @@ public static class WebApplicationFactory
         webApplication.UseAuthentication();
 
         webApplication.UseSwagger();
-        webApplication.UseSwaggerUI();
+        webApplication.UseSwaggerUI(c =>
+        {
+            // Collapse all sections by default
+            c.DefaultModelsExpandDepth(0);
+            c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None); // Collapse all
+        });
         webApplication.UseDataBind(batchRouteMapper =>
         {
             var batchNamePrefix = Constants.Batch;
@@ -189,7 +193,7 @@ public static class WebApplicationFactory
             dataPullOutRouteMapper.MapDataPullSchema(HttpVerbs.Get, "/api/{version}/{name}/schema", Delegates.DataPullSchema)
                                   .WithMetadata(new SwaggerFilterAttribute());
         });
-        webApplication.MapPost("/api/login", async (HttpContext httpContext, [FromQuery] bool isAdmin) =>
+        webApplication.MapPost("/api/login", async (HttpContext httpContext, [Microsoft.AspNetCore.Mvc.FromQuery] bool isAdmin) =>
         {
             var claims = new List<Claim>
             {
@@ -375,13 +379,14 @@ public static class WebApplicationFactory
                 return lowerInvariant;
             });
 
-            // o.EnableAnnotations(enableAnnotationsForInheritance: false, enableAnnotationsForPolymorphism: false);
+            o.EnableAnnotations();
         });
-
         services.ConfigureSwaggerGen(options =>
         {
             options.DocumentFilter<SwaggerFilterDocumentFilter>();
             options.DocumentFilter<ExplodeDocumentFilter>();
+
+            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
         });
         return services;
     }

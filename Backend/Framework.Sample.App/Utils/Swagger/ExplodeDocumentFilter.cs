@@ -178,6 +178,11 @@ public class ExplodeDocumentFilter : IDocumentFilter
 
     internal void ApplyToEndpoint(OpenApiDocument swaggerDoc, DocumentFilterContext context, EntityInfo entityInfo, RouteEndpoint endpoint, OpenApiOperationSort sort, string tagPrefix)
     {
+        if (!entityInfo.IsAllowed(endpoint))
+        {
+            return;
+        }
+
         ++sort.SecondaryOrderNumber;
 
         var key = HttpUtility.UrlDecode(endpoint.RoutePattern.RawText.FillRoute(entityInfo));
@@ -238,9 +243,9 @@ public class ExplodeDocumentFilter : IDocumentFilter
                 openApiOperation.RequestBody = requestBody;
             }
 
-            if (swaggerDoc.Paths.TryGetValue(key, out OpenApiPathItem? value))
+            if (swaggerDoc.Paths.ContainsKey(key))
             {
-                value.Operations[operationType] = openApiOperation;
+                swaggerDoc.Paths[key].Operations[operationType] = openApiOperation;
             }
             else
             {
@@ -399,11 +404,9 @@ public class ExplodeDocumentFilter : IDocumentFilter
 
     internal OpenApiRequestBody? CreateOpenApiRequestBody(RouteEndpoint endpoint, EntityInfo entityInfo, OperationType operationType)
     {
-        OpenApiRequestBody? openApiRequestBody = null;
-
         if (endpoint.IsSchema())
         {
-            return openApiRequestBody;
+            return null;
         }
 
         var tr = new Dictionary<Operations, OperationType>
@@ -430,7 +433,6 @@ public class ExplodeDocumentFilter : IDocumentFilter
                                     : operationType == OperationType.Put ? Operations.Replace
                                     : throw new Exception($"Not implemented body for verb {operationType}");
 
-                    openApiRequestBody = new OpenApiRequestBody();
                     var openApiSchema = new OpenApiSchema
                     {
                         Reference = new OpenApiReference
@@ -440,13 +442,16 @@ public class ExplodeDocumentFilter : IDocumentFilter
                         }
                     };
 
+                    OpenApiRequestBody? openApiRequestBody = new();
                     openApiRequestBody.Content["application/json"] = new OpenApiMediaType
-                    { Schema = openApiSchema };
+                    { 
+                        Schema = openApiSchema 
+                    };
+                    return openApiRequestBody;
                 }
-                break;
+            default:
+                return null;
         }
-
-        return openApiRequestBody;
     }
 
     /// <summary>
