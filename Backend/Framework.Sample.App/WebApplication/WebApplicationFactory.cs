@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Framework.Sample.App.Authorization.DataPullOuts;
 using Framework.Sample.App.Authorization.Extensions;
 using Framework.Sample.App.Authorization.Requirements;
@@ -9,12 +8,15 @@ using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.Payloads;
 using Framework.Sample.App.Utils;
+using Framework.Sample.App.Utils.swagger;
+using Framework.Sample.App.Utils.swagger.attributes;
+using Framework.Sample.App.Utils.Swagger;
 using Framework.Sample.App.WebApplication.FormsEndpoints;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using TCPOS.AspNetCore.DataBind.Configuration;
 using TCPOS.AspNetCore.DataBind.DataPullOut.Attributes;
 using TCPOS.AspNetCore.DataBind.Extensions;
@@ -108,45 +110,90 @@ public static class WebApplicationFactory
         webApplication.UseAuthentication();
 
         webApplication.UseSwagger();
-        webApplication.UseSwaggerUI();
+        webApplication.UseSwaggerUI(c =>
+        {
+            // Collapse all sections by default
+            c.DefaultModelsExpandDepth(0);
+            c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None); // Collapse all
+        });
         webApplication.UseDataBind(batchRouteMapper =>
         {
+            var batchNamePrefix = Constants.Batch;
+
             batchRouteMapper.MapBatchCreate("/api/1.0/Batch/{numCommands}/{ttlMilliseconds}", Delegates.BatchCreate)
-                            .RequireTcposAuthorization<AuthorizationRequirementBatch>();
+                            .WithTags(batchNamePrefix)
+                            .RequireTcposAuthorization<AuthorizationRequirementBatch>()
+                            .WithMetadata(new SwaggerOrderAttribute(100));
             batchRouteMapper.MapBatchGet("/api/1.0/Batch/{batchId}", Delegates.BatchGet)
-                            .RequireTcposAuthorization<AuthorizationRequirementBatch>();
+                            .WithTags(batchNamePrefix)
+                            .RequireTcposAuthorization<AuthorizationRequirementBatch>()
+                            .WithMetadata(new SwaggerOrderAttribute(110));
             batchRouteMapper.MapBatchRun("/api/1.0/Batch/{batchId}/Run", Delegates.BatchRun)
-                            .RequireTcposAuthorization<AuthorizationRequirementBatch>();
+                            .WithTags(batchNamePrefix)
+                            .RequireTcposAuthorization<AuthorizationRequirementBatch>()
+                            .WithMetadata(new SwaggerOrderAttribute(120));
 
             batchRouteMapper.MapBatchAddInsert(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/insert", Delegates.BatchAddInsert)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpInsert>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpInsert>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(20))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.Batch));
             batchRouteMapper.MapBatchAddRemove(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/remove/{key}/{concurrencyCode?}", Delegates.BatchAddRemove)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpRemove>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpRemove>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(30))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.Batch));
             batchRouteMapper.MapBatchAddReplace(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/replace/{key}/{concurrencyCode?}", Delegates.BatchAddReplace)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpReplace>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpReplace>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(30))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.Batch));
             batchRouteMapper.MapBatchAddUpdate(HttpVerbs.Post, "/api/{version}/Batch/{batchId}/{commandId}/{name}/update/{key}/{concurrencyCode?}", Delegates.BatchAddUpdate)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpUpdate>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpUpdate>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(30))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.Batch));
 
             batchRouteMapper.MapErpInsert(HttpVerbs.Post, "/api/{version}/{name}", Delegates.ErpInsert)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpInsert>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpInsert>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(60))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
             batchRouteMapper.MapErpRemove(HttpVerbs.Delete, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpRemove)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpRemove>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpRemove>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(70))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
             batchRouteMapper.MapErpReplace(HttpVerbs.Put, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpReplace)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpReplace>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpReplace>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(70))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
             batchRouteMapper.MapErpUpdate(HttpVerbs.Patch, "/api/{version}/{name}/{key}/{concurrencyCode?}", Delegates.ErpUpdate)
-                            .RequireTcposAuthorization<AuthorizationRequirementErpUpdate>();
+                            .RequireTcposAuthorization<AuthorizationRequirementErpUpdate>()
+                            .WithMetadata(new SwaggerFilterAttribute())
+                            .WithMetadata(new SwaggerOrderAttribute(70))
+                            .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
         }, dataPullOutRouteMapper =>
         {
             dataPullOutRouteMapper.MapDataPullOut(HttpVerbs.Get, "/api/{version}/{name}", Delegates.DataPullOut)
                                   .WithMetadata(new DataPullOutPageSizeAttribute(["permissionsoperator:10000", "permissionsoperators:10000", "permissionsctes:10000", "UserPermission:10000", "GroupPermission:10000"]))
-                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>();
+                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>()
+                                  .WithMetadata(new SwaggerFilterAttribute())
+                                  .WithMetadata(new SwaggerOrderAttribute(40))
+                                  .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
             dataPullOutRouteMapper.MapDataPullOutWithKey(HttpVerbs.Get, "/api/{version}/{name}/{key}", Delegates.DataPullOutWithKey)
-                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>();
+                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>()
+                                  .WithMetadata(new SwaggerFilterAttribute())
+                                  .WithMetadata(new SwaggerOrderAttribute(10))
+                                  .WithMetadata(new SwaggerExplodeAttribute(SwaggerExplodeAttribute.EndPointTypeEnum.DataPullOut));
             dataPullOutRouteMapper.MapDataPullOutCount(HttpVerbs.Get, "/api/{version}/{name}/count", Delegates.DataPullOutCount)
-                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>();
-            dataPullOutRouteMapper.MapDataPullSchema(HttpVerbs.Get, "/api/{version}/{name}/schema", Delegates.DataPullSchema);
+                                  .RequireTcposAuthorization<AuthorizationRequirementDataPullout>()
+                                  .WithMetadata(new SwaggerFilterAttribute());
+            dataPullOutRouteMapper.MapDataPullSchema(HttpVerbs.Get, "/api/{version}/{name}/schema", Delegates.DataPullSchema)
+                                  .WithMetadata(new SwaggerFilterAttribute());
         });
-        webApplication.MapPost("/api/login", async (HttpContext httpContext, [FromQuery] bool isAdmin) =>
+        webApplication.MapPost("/api/login", async (HttpContext httpContext, [Microsoft.AspNetCore.Mvc.FromQuery] bool isAdmin) =>
         {
             var claims = new List<Claim>
             {
@@ -219,88 +266,87 @@ public static class WebApplicationFactory
             }
         });
 
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
+        services.ConfigureSwagger();
 
         services.AddDataBind(c =>
         {
             c.AddDataPullOut()
-              //Customer
+             //Customer
              .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut>>()
-              //Order
+             //Order
              .AddDataPullOutItem<DbContextDataPullOutItem<Order, OrderOut<int>>>()
-              //OrderDetail
+             //OrderDetail
              .AddDataPullOutItem<DbContextDataPullOutItem<OrderDetail, OrderDetailOut<int>>>()
-              //Product
+             //Product
              .AddDataPullOutItem<DbContextDataPullOutItem<Product, ProductOut>>()
-              //User
+             //User
              .AddDataPullOutItem<DbContextDataPullOutItem<User, UserOut>>()
-              //Group
+             //Group
              .AddDataPullOutItem<DbContextDataPullOutItem<Group, GroupOut>>()
-              //UserGroup
+             //UserGroup
              .AddDataPullOutItem<DbContextDataPullOutItem<UserGroup, UserGroupOut<int>>>()
-              //Permission
+             //Permission
              .AddDataPullOutItem<DbContextDataPullOutItem<Permission, PermissionOut>>()
-              //GroupPermission
+             //GroupPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
-              //UserPermission
+             //UserPermission
              .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
-              //PermissionsOperators
+             //PermissionsOperators
              .AddDataPullOutItem<PermissionsOperatorDataPullOut>()
-              //PermissionsOperator
+             //PermissionsOperator
              .AddDataPullOutItem<PermissionsOperatorsDataPullOut>()
-              //PermissionsOperator
+             //PermissionsOperator
              .AddDataPullOutItem<PermissionsCtesDataPullOut>()
-              //AdWebVersionEntity
+             //AdWebVersionEntity
              .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
 
             c.AddBatches<InMemoryBatchStorage, StorageProvider>()
-              //Customer
+             //Customer
              .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Customer, CustomerIn, CustomerIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Customer>>()
-              //Order
+             //Order
              .AddBatchItem<DbContextTypedPostBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Order>>()
-              //OrderDetail
+             //OrderDetail
              .AddBatchItem<DbContextTypedPostBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<OrderDetail>>()
-              //Product
+             //Product
              .AddBatchItem<DbContextTypedPostBatchCommand<Product, ProductIn, ProductIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Product, ProductIn, ProductIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Product, ProductIn, ProductIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Product>>()
-              //User
+             //User
              .AddBatchItem<DbContextTypedPostBatchCommand<User, UserIn, UserIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<User, UserIn, UserIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<User, UserIn, UserIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<User>>()
-              //Group
+             //Group
              .AddBatchItem<DbContextTypedPostBatchCommand<Group, GroupIn, GroupIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Group, GroupIn, GroupIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Group, GroupIn, GroupIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Group>>()
-              //UserGroup
+             //UserGroup
              .AddBatchItem<DbContextTypedPostBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserGroup>>()
-              //Permission
+             //Permission
              .AddBatchItem<DbContextTypedPostBatchCommand<Permission, PermissionIn, PermissionIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Permission, PermissionIn, PermissionIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Permission, PermissionIn, PermissionIn>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Permission>>()
-              //GroupPermission
+             //GroupPermission
              .AddBatchItem<DbContextTypedPostBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<GroupPermission>>()
-              //UserPermission
+             //UserPermission
              .AddBatchItem<DbContextTypedPostBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
              .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
@@ -309,5 +355,39 @@ public static class WebApplicationFactory
 
         services.AddScoped<FeManager>();
         services.AddTcposAuthorization(webApplicationFactoryOptions);
+    }
+
+    private static IServiceCollection ConfigureSwagger(this IServiceCollection services)
+    {
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen(o =>
+        {
+            o.OrderActionsBy(apiDescription =>
+            {
+                var mSrt = (apiDescription?.HttpMethod?.ToUpperInvariant() ?? "") switch
+                {
+                    "GET" => 10,
+                    "POST" => 20,
+                    "PUT" => 30,
+                    "PATCH" => 40,
+                    "DELETE" => 50,
+                    _ => 99
+                };
+
+                var lowerInvariant = $"{apiDescription?.ActionDescriptor?.EndpointMetadata?
+                    .OfType<TagsAttribute>()?.FirstOrDefault()?.Tags?.FirstOrDefault()} - {mSrt:00} - {apiDescription?.RelativePath}/".ToLowerInvariant();
+                return lowerInvariant;
+            });
+
+            o.EnableAnnotations();
+        });
+        services.ConfigureSwaggerGen(options =>
+        {
+            options.DocumentFilter<SwaggerFilterDocumentFilter>();
+            options.DocumentFilter<ExplodeDocumentFilter>();
+
+            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
+        });
+        return services;
     }
 }

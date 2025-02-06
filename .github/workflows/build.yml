@@ -32,7 +32,7 @@ jobs:
     - name: 'Create Test Settings'
       shell: pwsh # For Linux, use bash
       run: |
-        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "DatabaseConnection": { "DatabaseType": "SqLite", "ConnectionString": "Data Source=.\\SampleApp.db;" }}' > .\Backend\Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
+        echo '{ "Debug": { "CreateDatabase": true, "FillDemoData": true }, "TenantSettings": [ { "Tenant": "localhost", "DatabaseConnection": { "DatabaseType": 1, "ConnectionString": "Data Source=.\\SampleApp.db;" }}]}' > .\Backend\Framework.Sample.AppTests\bin\Release\net8.0\appsettings.json
 
     - name: 'Dotnet Test'
       shell: pwsh # For Linux, use bash

@@ -27,8 +27,7 @@ public class ElasticTypedBatchCommand<TElasticDocument, TBatchPayload, TErpPaylo
 
     protected override async Task<TElasticDocument> SaveToDatabase(IStorageProvider storageProvider, TElasticDocument entity)
     {
-        var clie = storageProvider.GetStorage<TElasticClient>();
-        clie.Save();
+        throw new NotImplementedException();
     }
 
     protected override JToken GetEntityKey(TElasticDocument entity)

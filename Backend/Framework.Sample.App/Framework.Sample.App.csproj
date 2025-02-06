@@ -15,7 +15,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
     <PackageReference Include="TCPOS.AspNetCore.DataBind" Version="0.1.*" />
     <PackageReference Include="TCPOS.AspNetCore.DataBind.Implementations" Version="0.1.*" />
     <PackageReference Include="TCPOS.Authorization" Version="0.1.*" />
