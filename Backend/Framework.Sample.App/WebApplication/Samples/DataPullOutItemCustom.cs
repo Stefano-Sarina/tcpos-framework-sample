@@ -1,9 +1,9 @@
 using Framework.Sample.App.DB;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Items;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Items;
 
 namespace Framework.Sample.App.WebApplication.Samples;
 
-public class DataPullOutItemCustom<TE, TP>(TElasticClient elasticClient, SampleDbContext sampleDbContext) : DataPullOutItem<TE, TP>
+public class DataPullOutItemCustom<TE, TP>(TElasticClient elasticClient, SampleDbContext sampleDbContext) : DataPullOutItem<TE, TP, int>
     where TE : class
     where TP : class
 {

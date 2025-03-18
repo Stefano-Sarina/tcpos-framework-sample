@@ -4,8 +4,8 @@ using Framework.Sample.App.Payloads;
 using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.JsonPatch.Operations;
 using TCPOS.Common.Linq.Extensions;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Payload;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Payload;
 using Xunit;
 
 namespace Framework.Sample.AppTests;
@@ -450,7 +450,7 @@ public partial class AppTests
         await _httpClient.RunBatch(2, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/10/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
-            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Remove}/{ValueReference.CreateReference(10).ToRouteValue()}", HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Remove}/{ValueReferenceT<int>.CreateReference(10).ToRouteValue()}", HttpStatusCode.Created);
         }, HttpStatusCode.OK);
     }
 
@@ -492,22 +492,22 @@ public partial class AppTests
             Name = "Product 2",
             Price = 20.0m
         };
-        var orderIn = new OrderIn<ValueReference>
+        var orderIn = new OrderIn<ValueReferenceT<int>>
         {
-            CustomerId = ValueReference.CreateReference(20),
+            CustomerId = ValueReferenceT<int>.CreateReference(20),
             Notes = null,
             OrderDate = DateOnly.FromDateTime(DateTime.Now)
         };
-        var orderDetailIn1 = new OrderDetailIn<ValueReference>
+        var orderDetailIn1 = new OrderDetailIn<ValueReferenceT<int>>
         {
-            OrderId = ValueReference.CreateReference(30),
-            ProductId = ValueReference.CreateReference(10),
+            OrderId = ValueReferenceT<int>.CreateReference(30),
+            ProductId = ValueReferenceT<int>.CreateReference(10),
             Quantity = 5
         };
-        var orderDetailIn2 = new OrderDetailIn<ValueReference>
+        var orderDetailIn2 = new OrderDetailIn<ValueReferenceT<int>>
         {
-            OrderId = ValueReference.CreateReference(30),
-            ProductId = ValueReference.CreateReference(40),
+            OrderId = ValueReferenceT<int>.CreateReference(30),
+            ProductId = ValueReferenceT<int>.CreateReference(40),
             Quantity = 10
         };
         await _httpClient.RunBatch(6, 20000, async batchId =>
@@ -516,12 +516,12 @@ public partial class AppTests
 
             await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
 
-            await _httpClient.HttpPostAsync<OrderIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/30/Order/{Operations.Insert}", orderIn, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderIn<ValueReferenceT<int>>, string>($"/api/1.0/Batch/{batchId}/30/Order/{Operations.Insert}", orderIn, HttpStatusCode.Created);
 
             await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/40/Product/{Operations.Insert}", productIn2, HttpStatusCode.Created);
 
-            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/50/OrderDetail/{Operations.Insert}", orderDetailIn1, HttpStatusCode.Created);
-            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/60/OrderDetail/{Operations.Insert}", orderDetailIn2, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReferenceT<int>>, string>($"/api/1.0/Batch/{batchId}/50/OrderDetail/{Operations.Insert}", orderDetailIn1, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReferenceT<int>>, string>($"/api/1.0/Batch/{batchId}/60/OrderDetail/{Operations.Insert}", orderDetailIn2, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
     }
 }

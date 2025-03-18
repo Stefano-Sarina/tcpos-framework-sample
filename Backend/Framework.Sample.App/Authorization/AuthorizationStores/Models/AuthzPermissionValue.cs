@@ -17,13 +17,13 @@ public class AuthzPermissionValue : ITPermissionValue<int>
         set;
     }
 
-    public int UserId
+    public int? UserId
     {
         get;
         set;
     }
 
-    public int GroupId
+    public int? GroupId
     {
         get;
         set;

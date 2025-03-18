@@ -12,7 +12,8 @@ public static class ToAuthorizationExtensions
         return item != null ?
                    new AuthzUser
                    {
-                       Id = item.Id
+                       Id = item.Id,
+                       IsPermissionAdministrator = item.UserName == "Admin" ? 1:0
                    } : null;
     }
 

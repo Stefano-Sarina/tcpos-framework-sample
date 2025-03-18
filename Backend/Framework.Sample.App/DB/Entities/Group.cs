@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Framework.Sample.App.DB.Entities.Base;
-using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
+using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
 
 namespace Framework.Sample.App.DB.Entities;
 

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.Payloads;
 

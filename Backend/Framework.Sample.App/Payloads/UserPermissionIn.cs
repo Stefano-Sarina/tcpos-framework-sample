@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Framework.Sample.App.DB.Enums;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.Payloads;
 

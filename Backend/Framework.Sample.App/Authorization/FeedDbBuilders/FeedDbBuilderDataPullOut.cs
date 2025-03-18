@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authorization;
 using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
 using TCPOS.Common.Diagnostics;
 using TCPOS.Common.Linq.Extensions;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 

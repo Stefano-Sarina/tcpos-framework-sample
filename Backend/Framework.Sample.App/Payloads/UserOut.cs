@@ -1,9 +1,9 @@
-﻿using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
-using TCPOS.Data.Batches.Interfaces;
+﻿using TCPOS.Lib.Web.DataBind.Interfaces;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;
 
-public class UserOut : UserIn, IIDEntity, IConcurrencyEntity
+public class UserOut : UserIn, IIDEntity<int>, IConcurrencyEntity
 {
     public string ConcurrencyCode
     {

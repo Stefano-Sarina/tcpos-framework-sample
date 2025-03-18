@@ -5,14 +5,14 @@ using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Mvc;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Configuration;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.DataPullOut;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Abstracts.AuthorizationStores;
 using TCPOS.Authorization.Domains;
 using TCPOS.Common.Diagnostics;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
@@ -26,7 +26,7 @@ public class PermissionsOperatorDataPullOut(
     [FromServices] IAuthorizationContextStore<HttpContext> authzCtx,
     [FromServices] IAuthorizationUserStore<AuthzUser, int> authzUser,
     [FromServices] ITcposAuthorizationRepository<AuthzUser, AuthzGroup, AuthzPermission, AuthzPermissionValue, int> authzRepo)
-    : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
+    : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>, int>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     protected override async Task<IQueryable<PermissionsOperator>> QueryAsync(CancellationToken cancellationToken = default)
     {
@@ -63,7 +63,7 @@ public class PermissionsOperatorDataPullOut(
             OperatorId = dbUser.Id,
             OperatorCode = dbUser.UserName,
             OperatorGroupId = x.GroupId,
-            OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId].GroupName : null,
+            OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId.Value].GroupName : null,
             PermissionId = x.PermissionId,
             PermissionName = dbPermissions[x.PermissionId].PermissionName,
             PermissionType = (int)dbPermissions[x.PermissionId].PermissionType,

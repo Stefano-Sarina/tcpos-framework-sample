@@ -5,13 +5,13 @@ using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Mvc;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Configuration;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.DataPullOut;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Authorization.Abstracts;
 using TCPOS.Authorization.Domains;
 using TCPOS.Common.Diagnostics;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
@@ -21,7 +21,7 @@ public class PermissionsOperatorsDataPullOut(
     IStorageProvider storageProvider,
     IMapper mapper,
     [FromServices] ITcposAuthorizationQuerable<AuthzPermissionValue, int> authzQuerable)
-    : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
+    : DbContextDataPullOutItem<PermissionsOperator, PermissionsOperatorOut<int>, int>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     public override string Name
     {
@@ -47,10 +47,10 @@ public class PermissionsOperatorsDataPullOut(
         return permissionValues.Select(x => new PermissionsOperator
         {
             Id = x.PermissionId,
-            OperatorId = x.UserId,
+            OperatorId = x.UserId!.Value,
             OperatorCode = x.UserId.ToString(),
             OperatorGroupId = x.GroupId,
-            OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId].GroupName : null,
+            OperatorGroupCode = x.GroupId > 0 ? dbGroups[x.GroupId!.Value].GroupName : null,
             PermissionId = x.PermissionId,
             PermissionName = dbPermissions[x.PermissionId].PermissionName,
             PermissionType = (int)dbPermissions[x.PermissionId].PermissionType,

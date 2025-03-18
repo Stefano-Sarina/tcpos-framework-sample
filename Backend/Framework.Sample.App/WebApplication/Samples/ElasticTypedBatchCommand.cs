@@ -1,11 +1,11 @@
-using Newtonsoft.Json.Linq;
-using TCPOS.Data.Batches.Abstracts;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Interfaces;
+using System.Text.Json.Nodes;
+using TCPOS.Lib.Data.Batches.Abstracts;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.WebApplication.Samples;
 
-public class ElasticTypedBatchCommand<TElasticDocument, TBatchPayload, TErpPayload>(TElasticStorageProvider storageProvider) : TypedBatchCommand<TElasticDocument, TBatchPayload, TErpPayload>
+public class ElasticTypedBatchCommand<TElasticDocument, TBatchPayload, TErpPayload>(TElasticStorageProvider storageProvider) : TypedBatchCommand<TElasticDocument, TBatchPayload, TErpPayload, int>
     where TElasticDocument : class
     where TBatchPayload : class
     where TErpPayload : class
@@ -20,7 +20,7 @@ public class ElasticTypedBatchCommand<TElasticDocument, TBatchPayload, TErpPaylo
         get;
     }
 
-    protected override async Task<JToken> Execute(IStorageProvider storageProvider, TBatchPayload payload)
+    protected override async Task<JsonValue> Execute(IStorageProvider storageProvider, TBatchPayload payload)
     {
         throw new NotImplementedException();
     }
@@ -30,7 +30,7 @@ public class ElasticTypedBatchCommand<TElasticDocument, TBatchPayload, TErpPaylo
         throw new NotImplementedException();
     }
 
-    protected override JToken GetEntityKey(TElasticDocument entity)
+    protected override JsonValue GetEntityKey(TElasticDocument entity)
     {
         throw new NotImplementedException();
     }

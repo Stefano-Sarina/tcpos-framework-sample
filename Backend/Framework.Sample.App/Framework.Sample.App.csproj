@@ -17,15 +17,17 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
-    <PackageReference Include="TCPOS.AspNetCore.DataBind" Version="0.1.*" />
-    <PackageReference Include="TCPOS.AspNetCore.DataBind.Implementations" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Authorization" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Common" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Data.Batches" Version="0.1.*" />
-    <PackageReference Include="TCPOS.EntityFramework" Version="0.1.*" />
+    <PackageReference Include="TCPOS.Authorization" Version="2.0.1" />
+    <PackageReference Include="TCPOS.Lib.Common" Version="1.0.0" />
+    <PackageReference Include="TCPOS.Lib.Data.Batches" Version="1.0.0" />
+    <PackageReference Include="TCPOS.Lib.Data.EntityFramework" Version="1.0.0" />
+    <PackageReference Include="TCPOS.Lib.Web.DataBind.Implementations" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

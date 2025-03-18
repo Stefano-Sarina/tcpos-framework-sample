@@ -1,6 +1,6 @@
 ﻿using Framework.Sample.App.DB.Entities;
 using Microsoft.EntityFrameworkCore;
-using TCPOS.EntityFramework;
+using TCPOS.Lib.Data.EntityFramework;
 
 namespace Framework.Sample.App.DB;
 

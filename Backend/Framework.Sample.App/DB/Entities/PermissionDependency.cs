@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using Framework.Sample.App.DB.Entities.Base;
 using Microsoft.EntityFrameworkCore;
-using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
@@ -26,7 +26,8 @@ public class PermissionDependency : Entity
         set;
     }
 
-    [ForeignKeyOne(nameof(Permission.ChildPermissionDependencies), DeleteBehavior.Cascade, [nameof(ChildPermissionId)], null, false)]
+    // ForeignKeyOneAttribute(string[]? keyFieldsOne = null, bool isRequired = true, string[]? keyFieldsMany = null, string? manyNavigationProperty = null, DeleteBehavior deleteBehavior = DeleteBehavior.Restrict)
+    [ForeignKeyOne(null, false, [nameof(ChildPermissionId)], nameof(Permission.ChildPermissionDependencies), DeleteBehavior.Cascade)]
     public Permission ChildPermission
     {
         get;
@@ -42,7 +43,7 @@ public class PermissionDependency : Entity
         set;
     }
 
-    [ForeignKeyOne(nameof(Permission.ParentPermissionDependencies), DeleteBehavior.NoAction, [nameof(ParentPermissionId)], null, false)]
+    [ForeignKeyOne(null, false, [nameof(ParentPermissionId)], nameof(Permission.ParentPermissionDependencies), DeleteBehavior.NoAction)]
     public Permission ParentPermission
     {
         get;

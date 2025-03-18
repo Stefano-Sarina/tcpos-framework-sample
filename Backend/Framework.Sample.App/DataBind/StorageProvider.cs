@@ -1,6 +1,6 @@
 ﻿using Framework.Sample.App.DB;
 using Microsoft.EntityFrameworkCore.Storage;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.DataBind;
 

@@ -4,8 +4,9 @@ using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
-using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
+using TCPOS.Lib.Web.DataBind.Interfaces;
 using TCPOS.Common.Linq.Extensions;
+using Azure;
 
 namespace Framework.Sample.AppTests;
 
@@ -20,6 +21,9 @@ public partial class AppTests : IDisposable, IAsyncDisposable
         _webApplication.Start();
         _httpClient = _webApplication.GetTestClient();
         var responseMessage = _httpClient.PostAsync("/api/login?isAdmin=true", null).Result;
+        
+        string message = responseMessage.Content.ReadAsStringAsync().Result; //right!
+
         var cookie = responseMessage.Headers.SingleOrDefault(header => header.Key == "Set-Cookie").Value.ToEnumerableOrEmpty().First();
         _httpClient.DefaultRequestHeaders.Add("Cookie", cookie);
     }
@@ -37,7 +41,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     }
 
     private async Task RemoveAll<T>(string entityName)
-        where T : IIDEntity
+        where T : IIDEntity<int>
     {
         var entities = await _httpClient.ODataHttpGetAsync<T>($"/api/1.0/{entityName}", HttpStatusCode.OK);
 
