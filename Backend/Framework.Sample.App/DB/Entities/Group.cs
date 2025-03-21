@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Framework.Sample.App.DB.Entities.Base;
+using Microsoft.EntityFrameworkCore;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
+[PrimaryKey(nameof(Id))]
 public class Group : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;
@@ -16,7 +17,7 @@ public class Group : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueKeyField("Unk_GroupName")]
+    [UniqueIndexField("Unk_GroupName")]
     [StringLength(40, MinimumLength = 1)]
     public string GroupName
     {

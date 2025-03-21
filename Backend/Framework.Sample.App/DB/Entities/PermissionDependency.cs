@@ -1,16 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Framework.Sample.App.DB.Entities.Base;
+﻿using Framework.Sample.App.DB.Entities.Base;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
 [Table("PermissionsDependencies")]
+[PrimaryKey(nameof(Id))]
 public class PermissionDependency : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;
@@ -19,14 +19,16 @@ public class PermissionDependency : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueKeyField("unk_childprm_parentprm")]
+    [UniqueIndexField("unk_childprm_parentprm")]
     public int ChildPermissionId
     {
         get;
         set;
     }
 
-    [ForeignKeyOne(nameof(Permission.ChildPermissionDependencies), DeleteBehavior.Cascade, [nameof(ChildPermissionId)], null, false)]
+    [ForeignKey(nameof(ChildPermissionId))]
+    [InverseProperty(nameof(Permission.ChildPermissionDependencies))]
+    [DeleteBehavior(DeleteBehavior.Cascade)]
     public Permission ChildPermission
     {
         get;
@@ -35,14 +37,16 @@ public class PermissionDependency : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueKeyField("unk_childprm_parentprm")]
+    [UniqueIndexField("unk_childprm_parentprm")]
     public int ParentPermissionId
     {
         get;
         set;
     }
 
-    [ForeignKeyOne(nameof(Permission.ParentPermissionDependencies), DeleteBehavior.NoAction, [nameof(ParentPermissionId)], null, false)]
+    [ForeignKey(nameof(ParentPermissionId))]
+    [InverseProperty(nameof(Permission.ParentPermissionDependencies))]
+    [DeleteBehavior(DeleteBehavior.NoAction)]
     public Permission ParentPermission
     {
         get;

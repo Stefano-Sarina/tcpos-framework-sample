@@ -3,15 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Framework.Sample.App.DB.Entities.Base;
 using Microsoft.EntityFrameworkCore;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
 [Table("AdWebEntityVersions")]
+[PrimaryKey(nameof(Id))]
 public class AdWebEntityVersion : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;

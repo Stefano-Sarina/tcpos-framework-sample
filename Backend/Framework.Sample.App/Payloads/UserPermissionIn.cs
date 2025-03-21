@@ -1,13 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Framework.Sample.App.DB.Enums;
-using TCPOS.EntityFramework.Attributes;
+﻿using Framework.Sample.App.DB.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Framework.Sample.App.Payloads;
 
 public class UserPermissionIn<T>
 {
     [Required]
-    [UniqueKeyField("Unk_UserId_PermissionId")]
     public T UserId
     {
         get;

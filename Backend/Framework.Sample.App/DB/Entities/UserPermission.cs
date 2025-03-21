@@ -1,15 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Framework.Sample.App.DB.Entities.Base;
+﻿using Framework.Sample.App.DB.Entities.Base;
 using Framework.Sample.App.DB.Enums;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
+[PrimaryKey(nameof(Id))]
 public class UserPermission : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;
@@ -18,7 +19,7 @@ public class UserPermission : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(User))]
-    [UniqueKeyField("Unk_UserId_PermissionId")]
+    [UniqueIndexField("Unk_UserId_PermissionId")]
     public int UserId
     {
         get;
@@ -27,7 +28,7 @@ public class UserPermission : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueKeyField("Unk_UserId_PermissionId")]
+    [UniqueIndexField("Unk_UserId_PermissionId")]
     public int PermissionId
     {
         get;

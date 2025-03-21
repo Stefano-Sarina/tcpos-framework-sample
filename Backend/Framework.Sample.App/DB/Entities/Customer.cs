@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Framework.Sample.App.DB.Entities.Base;
+﻿using Framework.Sample.App.DB.Entities.Base;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
+[PrimaryKey(nameof(Id))]
 public class Customer : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;
@@ -16,7 +17,7 @@ public class Customer : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueKeyField("Unk_FirstName_LastName")]
+    [UniqueIndexField("Unk_FirstName_LastName")]
     [StringLength(40, MinimumLength = 1)]
     public string FirstName
     {
@@ -25,7 +26,7 @@ public class Customer : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueKeyField("Unk_FirstName_LastName")]
+    [UniqueIndexField("Unk_FirstName_LastName")]
     [StringLength(40, MinimumLength = 1)]
     public string LastName
     {

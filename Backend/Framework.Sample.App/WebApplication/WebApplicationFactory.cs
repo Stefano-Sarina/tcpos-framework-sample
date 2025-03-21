@@ -25,7 +25,7 @@ using TCPOS.AspNetCore.DataBind.Implementations.Batches.Concurrency;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
 using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
 using TCPOS.Data.Batches.Payload;
-using TCPOS.EntityFramework.Extensions;
+using TCPOS.Lib.Data.EntityFramework.Extensions;
 
 namespace Framework.Sample.App.WebApplication;
 
