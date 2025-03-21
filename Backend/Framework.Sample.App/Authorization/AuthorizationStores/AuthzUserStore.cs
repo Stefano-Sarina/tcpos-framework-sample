@@ -2,7 +2,7 @@
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB;
 using Microsoft.EntityFrameworkCore;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 

@@ -1,7 +1,7 @@
 ﻿using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Enums;
-using TCPOS.Authorization.Domains;
+using TCPOS.Lib.Authorization.Domains;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Extensions;
 

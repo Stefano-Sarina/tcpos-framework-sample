@@ -1,9 +1,9 @@
 ﻿using System.Data;
 using System.Net;
-using TCPOS.AspNetCore.DataBind.Exceptions;
-using TCPOS.Common.Diagnostics.Extensions;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Exceptions;
+using TCPOS.Lib.Web.DataBind.Exceptions;
+using TCPOS.Lib.Common.Diagnostics.Extensions;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Exceptions;
 
 namespace Framework.Sample.App.WebApplication;
 

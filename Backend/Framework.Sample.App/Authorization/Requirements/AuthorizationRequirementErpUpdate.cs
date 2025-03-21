@@ -1,4 +1,4 @@
-﻿using TCPOS.Authorization.Implementations;
+﻿using TCPOS.Lib.Authorization.Implementations;
 
 namespace Framework.Sample.App.Authorization.Requirements;
 

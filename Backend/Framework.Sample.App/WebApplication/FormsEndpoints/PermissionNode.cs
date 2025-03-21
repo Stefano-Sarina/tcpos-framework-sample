@@ -1,4 +1,4 @@
-﻿using TCPOS.Common.Linq.Extensions;
+﻿using TCPOS.Lib.Common.Linq.Extensions;
 
 namespace Framework.Sample.App.WebApplication.FormsEndpoints;
 

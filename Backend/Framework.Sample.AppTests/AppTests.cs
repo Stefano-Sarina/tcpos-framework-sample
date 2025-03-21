@@ -2,10 +2,11 @@
 using FluentAssertions;
 using Framework.Sample.App.Payloads;
 using Framework.Sample.AppTests.Helpers;
-using Microsoft.AspNetCore.JsonPatch.Operations;
-using TCPOS.Common.Linq.Extensions;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Payload;
+using Json.Patch;
+using Json.Pointer;
+using TCPOS.Lib.Common.Linq.Extensions;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Payload;
 using Xunit;
 
 namespace Framework.Sample.AppTests;
@@ -73,19 +74,14 @@ public partial class AppTests
         concurrencyCode = customers.First().ConcurrencyCode;
 
         // Attempt to update the customer's first name with a wrong concurrency code
-        var payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Mario"
-        };
-        await _httpClient.RunBatch(1, 20000, async batchId =>
+        var payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Mario");
+        await _httpClient.RunBatch(1, 900000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}/wrong-code", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.Conflict);
 
         // Verify the customer's first name was not updated
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
         // Update the customer's first name with the correct concurrency code
@@ -95,23 +91,18 @@ public partial class AppTests
         }, HttpStatusCode.OK);
 
         // Verify the customer's first name was updated
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         // Revert the customer's first name to the original state
-        payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Dario"
-        };
+        payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Dario");
         await _httpClient.RunBatch(1, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/1/Customer/{Operations.Update}/{id}", new[] { payload }, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
 
         // Verify the customer's first name was reverted
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         concurrencyCode = customers.First().ConcurrencyCode;
 
@@ -209,36 +200,26 @@ public partial class AppTests
         concurrencyCode = customers.First().ConcurrencyCode;
 
         // Attempt to patch the customer with a wrong concurrency code
-        var payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Mario"
-        };
+        var payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Mario");
         await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}/wrong-code", new[] { payload }, HttpStatusCode.Conflict);
 
         // Verify the patch failed
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(0);
 
         // Patch the customer with the correct concurrency code
         await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}/{WebUtility.UrlEncode(concurrencyCode)}", new[] { payload }, HttpStatusCode.OK);
 
         // Verify the patch succeeded
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         // Patch the customer without concurrency code
-        payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Dario"
-        };
+        payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Dario");
         await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}", new[] { payload }, HttpStatusCode.OK);
 
         // Verify the patch succeeded
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
         concurrencyCode = customers.First().ConcurrencyCode;
 
@@ -301,12 +282,7 @@ public partial class AppTests
         var id = customers.First().Id;
 
         // Prepare a payload to update the customer's first name
-        var payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Mario"
-        };
+        var payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Mario");
 
         // Update the customer's first name in a batch operation
         await _httpClient.RunBatch(1, 20000, async batchId =>
@@ -315,7 +291,7 @@ public partial class AppTests
         }, HttpStatusCode.OK);
 
         // Verify the customer's first name was updated
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         // Create another customer
@@ -365,16 +341,11 @@ public partial class AppTests
         customers.Should().HaveCount(1);
 
         // Update the customer's first name
-        var payload = new Operation<CustomerIn>
-        {
-            op = "replace",
-            path = "/FirstName",
-            value = "Mario"
-        };
+        var payload = PatchOperation.Replace(JsonPointer.Parse("/FirstName"), "Mario");
         await _httpClient.HttpPatchAsync($"/api/1.0/Customer/{id}", new[] { payload }, HttpStatusCode.OK);
 
         // Verify the customer's first name was updated
-        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.value && v.LastName == customerIn.LastName, HttpStatusCode.OK);
+        customers = await _httpClient.ODataHttpGetAsync<CustomerOut>("/api/1.0/Customer", v => v.FirstName == (string)payload.Value! && v.LastName == customerIn.LastName, HttpStatusCode.OK);
         customers.Should().HaveCount(1);
 
         // Replace the customer with a new one
@@ -450,7 +421,7 @@ public partial class AppTests
         await _httpClient.RunBatch(2, 20000, async batchId =>
         {
             await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/10/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
-            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Remove}/{ValueReference.CreateReference(10).ToRouteValue()}", HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Remove}/{ValueReference<int>.CreateReference(10).ToRouteValue()}", HttpStatusCode.Created);
         }, HttpStatusCode.OK);
     }
 
@@ -492,22 +463,22 @@ public partial class AppTests
             Name = "Product 2",
             Price = 20.0m
         };
-        var orderIn = new OrderIn<ValueReference>
+        var orderIn = new OrderIn<ValueReference<int>>
         {
-            CustomerId = ValueReference.CreateReference(20),
+            CustomerId = ValueReference<int>.CreateReference(20),
             Notes = null,
             OrderDate = DateOnly.FromDateTime(DateTime.Now)
         };
-        var orderDetailIn1 = new OrderDetailIn<ValueReference>
+        var orderDetailIn1 = new OrderDetailIn<ValueReference<int>>
         {
-            OrderId = ValueReference.CreateReference(30),
-            ProductId = ValueReference.CreateReference(10),
+            OrderId = ValueReference<int>.CreateReference(30),
+            ProductId = ValueReference<int>.CreateReference(10),
             Quantity = 5
         };
-        var orderDetailIn2 = new OrderDetailIn<ValueReference>
+        var orderDetailIn2 = new OrderDetailIn<ValueReference<int>>
         {
-            OrderId = ValueReference.CreateReference(30),
-            ProductId = ValueReference.CreateReference(40),
+            OrderId = ValueReference<int>.CreateReference(30),
+            ProductId = ValueReference<int>.CreateReference(40),
             Quantity = 10
         };
         await _httpClient.RunBatch(6, 20000, async batchId =>
@@ -516,12 +487,12 @@ public partial class AppTests
 
             await _httpClient.HttpPostAsync<CustomerIn, string>($"/api/1.0/Batch/{batchId}/20/Customer/{Operations.Insert}", customerIn, HttpStatusCode.Created);
 
-            await _httpClient.HttpPostAsync<OrderIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/30/Order/{Operations.Insert}", orderIn, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderIn<ValueReference<int>>, string>($"/api/1.0/Batch/{batchId}/30/Order/{Operations.Insert}", orderIn, HttpStatusCode.Created);
 
             await _httpClient.HttpPostAsync<ProductIn, string>($"/api/1.0/Batch/{batchId}/40/Product/{Operations.Insert}", productIn2, HttpStatusCode.Created);
 
-            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/50/OrderDetail/{Operations.Insert}", orderDetailIn1, HttpStatusCode.Created);
-            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference>, string>($"/api/1.0/Batch/{batchId}/60/OrderDetail/{Operations.Insert}", orderDetailIn2, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference<int>>, string>($"/api/1.0/Batch/{batchId}/50/OrderDetail/{Operations.Insert}", orderDetailIn1, HttpStatusCode.Created);
+            await _httpClient.HttpPostAsync<OrderDetailIn<ValueReference<int>>, string>($"/api/1.0/Batch/{batchId}/60/OrderDetail/{Operations.Insert}", orderDetailIn2, HttpStatusCode.Created);
         }, HttpStatusCode.OK);
     }
 }

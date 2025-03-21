@@ -1,4 +1,4 @@
-﻿using TCPOS.Data.Batches.Enums;
+﻿using TCPOS.Lib.Data.Batches.Enums;
 
 namespace Framework.Sample.App.Utils.swagger.attributes;
 

@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores;
 

@@ -1,5 +1,5 @@
 ﻿using Framework.Sample.App.Authorization.Requirements;
-using TCPOS.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Enums;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 

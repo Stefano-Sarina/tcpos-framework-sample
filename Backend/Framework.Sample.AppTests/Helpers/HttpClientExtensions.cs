@@ -1,16 +1,23 @@
-﻿using System.Linq.Expressions;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
+using System.Linq.Expressions;
 using System.Net;
 using System.Text;
-using FluentAssertions;
-using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
-using TCPOS.Common.Extensions;
-using TCPOS.Common.Text.Json.Extensions;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using TCPOS.Lib.Common.Extensions;
+using TCPOS.Lib.Common.Text.Json.Extensions;
 
 namespace Framework.Sample.AppTests.Helpers;
 
 internal static class HttpClientExtensions
 {
+    private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions()
+    {
+        WriteIndented = true,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles
+    };
+
     public static async Task RunBatch(this HttpClient httpClient, int numCommands, int ttl, Func<string, Task> commands, HttpStatusCode expectedRunStatusCode)
     {
         var batchId = await httpClient.HttpPostAsync<object, string>($"/api/1.0/Batch/{numCommands}/{ttl}", new object(), HttpStatusCode.Created);
@@ -107,17 +114,11 @@ internal static class HttpClientExtensions
 
     public static StringContent ToStringContent(this object o)
     {
-        return new StringContent(o.ToJson(), Encoding.UTF8, "application/json");
+       return new StringContent(o.ToJson(), Encoding.UTF8, "application/json");
     }
 
     public static string ToJson(this object o)
     {
-        var settings = new JsonSerializerSettings
-        {
-            ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            Formatting = Formatting.Indented
-        };
-
-        return JsonConvert.SerializeObject(o, settings);
+        return JsonSerializer.Serialize(o, serializerOptions);
     }
 }

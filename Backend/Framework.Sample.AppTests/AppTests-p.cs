@@ -4,8 +4,8 @@ using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
-using TCPOS.AspNetCore.DataBind.Implementations.Interfaces;
-using TCPOS.Common.Linq.Extensions;
+using TCPOS.Lib.Web.DataBind.Interfaces;
+using TCPOS.Lib.Common.Linq.Extensions;
 
 namespace Framework.Sample.AppTests;
 
@@ -37,7 +37,7 @@ public partial class AppTests : IDisposable, IAsyncDisposable
     }
 
     private async Task RemoveAll<T>(string entityName)
-        where T : IIDEntity
+        where T : IIDEntity<int>
     {
         var entities = await _httpClient.ODataHttpGetAsync<T>($"/api/1.0/{entityName}", HttpStatusCode.OK);
 

@@ -1,8 +1,8 @@
 ﻿using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Authorization;
-using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Authorization.FeedDatabase.Engine.Abstracts;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 

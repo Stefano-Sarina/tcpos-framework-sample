@@ -1,6 +1,6 @@
 ﻿using Framework.Sample.App.Utils.swagger.attributes;
-using TCPOS.Common.Diagnostics;
-using TCPOS.Data.Batches.Enums;
+using TCPOS.Lib.Common.Diagnostics;
+using TCPOS.Lib.Data.Batches.Enums;
 
 namespace Framework.Sample.App.Utils.swagger;
 

@@ -1,11 +1,12 @@
 using Framework.Sample.App.DB;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Items;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Items;
 
 namespace Framework.Sample.App.WebApplication.Samples;
 
-public class DataPullOutItemCustom<TE, TP>(TElasticClient elasticClient, SampleDbContext sampleDbContext) : DataPullOutItem<TE, TP>
+public class DataPullOutItemCustom<TE, TP, TKey>(TElasticClient elasticClient, SampleDbContext sampleDbContext) : DataPullOutItem<TE, TP, TKey>
     where TE : class
     where TP : class
+    where TKey : struct
 {
     public override string ResultTypeSchema
     {
@@ -32,7 +33,7 @@ public class DataPullOutItemCustom<TE, TP>(TElasticClient elasticClient, SampleD
         get;
     }
 
-    protected override async Task<IQueryable<TE>> GetDataWithKeyFilterExpressionAsync(Task<IQueryable<TE>> queryableTask, int key, CancellationToken cancellationToken = new())
+    protected override Task<IQueryable<TE>> GetDataWithKeyFilterExpressionAsync(Task<IQueryable<TE>> queryableTask, TKey key, CancellationToken cancellationToken = default)
     {
         throw new NotImplementedException();
     }

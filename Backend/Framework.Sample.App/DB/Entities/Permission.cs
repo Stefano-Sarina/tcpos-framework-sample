@@ -2,7 +2,7 @@
 using Framework.Sample.App.DB.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using TCPOS.Data.Batches.Abstracts.Concurrency;
+using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
 using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;

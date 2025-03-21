@@ -3,16 +3,16 @@ using Framework.Sample.App.Authorization.DataPullOuts.Entities;
 using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Configuration;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
-using TCPOS.Common.Linq.Extensions;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Configuration;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.DataPullOut;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.Interfaces;
+using TCPOS.Lib.Common.Linq.Extensions;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Authorization.DataPullOuts;
 
 public class PermissionsCtesDataPullOut(DataPullOutConfiguration configuration, IEdmModelBuilder edmModelBuilder, IStorageProvider storageProvider, IMapper mapper, SampleDbContext dbContext)
-    : DbContextDataPullOutItem<PermissionsCtes, PermissionsCtesOut<int>>(configuration, edmModelBuilder, storageProvider, mapper)
+    : DbContextDataPullOutItem<PermissionsCtes, PermissionsCtesOut<int>, int>(configuration, edmModelBuilder, storageProvider, mapper)
 {
     protected override async Task<IQueryable<PermissionsCtes>> QueryAsync(CancellationToken cancellationToken = default)
     {

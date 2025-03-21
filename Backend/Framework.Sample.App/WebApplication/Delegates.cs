@@ -1,12 +1,11 @@
+using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Delegates;
-using TCPOS.AspNetCore.DataBind.Exceptions;
-using TCPOS.Common.Diagnostics;
-using TCPOS.Data.Batches.Engine.Runners;
-using TCPOS.Data.Batches.Payload;
+using TCPOS.Lib.Common.Diagnostics;
+using TCPOS.Lib.Data.Batches.Engine.Runners;
+using TCPOS.Lib.Data.Batches.Payload;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Delegates;
+using TCPOS.Lib.Web.DataBind.Exceptions;
 
 namespace Framework.Sample.App.WebApplication;
 
@@ -84,47 +83,44 @@ public static class Delegates
 
         var result = await erpInsertRunner.Run(name, versionVer, payload, []);
 
-        return Results.Created($"/api/{version:2}/{name}/{result.Value<int>()}", result.Value<int>());
+        return Results.Created($"/api/{version:2}/{name}/{result.GetValue<int>()}", result.GetValue<int>());
     }
 
     public static async Task<IResult> ErpRemove([FromServices] ErpRemoveRunner erpRemoveRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromRoute] string? concurrencyCode)
     {
-        Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpRemoveRunner.Run(name, versionVer, keyNum, GetAdditionalData(concurrencyCode));
+        await erpRemoveRunner.Run(name, versionVer, key, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
 
     public static async Task<IResult> ErpReplace([FromServices] ErpReplaceRunner erpReplaceRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
-        Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpReplaceRunner.Run(name, versionVer, keyNum, payload, GetAdditionalData(concurrencyCode));
+        await erpReplaceRunner.Run(name, versionVer, key, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
 
     public static async Task<IResult> ErpUpdate([FromServices] ErpUpdateRunner erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key, [FromBody] JsonDocument payload, [FromRoute] string? concurrencyCode)
     {
-        Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
-        await erpUpdateRunner.Run(name, versionVer, keyNum, payload, GetAdditionalData(concurrencyCode));
+        await erpUpdateRunner.Run(name, versionVer, key, payload, GetAdditionalData(concurrencyCode));
 
         return await Task.FromResult(Results.Ok());
     }
 
-    public static async Task<IResult> DataPullOut(HttpContext httpContext, [FromServices] DataPullOutController erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
+    public static async Task<IResult> DataPullOut(HttpContext httpContext, [FromServices] DataPullOutController<int> erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
     {
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
         return await erpUpdateRunner.GetData(httpContext.Request, name, versionVer, []);
     }
 
-    public static async Task<IResult> DataPullOutWithKey(HttpContext httpContext, [FromServices] DataPullOutController erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key)
+    public static async Task<IResult> DataPullOutWithKey(HttpContext httpContext, [FromServices] DataPullOutController<int> erpUpdateRunner, [FromRoute] string name, [FromRoute] string version, [FromRoute] string key)
     {
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
         Safety.Check(int.TryParse(key, out var keyNum), new HttpException(HttpStatusCode.BadRequest, "Invalid Key"));
@@ -132,14 +128,14 @@ public static class Delegates
         return await erpUpdateRunner.GetDataWithKey(httpContext.Request, name, versionVer, keyNum, []);
     }
 
-    public static async Task<IResult> DataPullOutCount(HttpContext httpContext, [FromServices] DataPullOutController erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
+    public static async Task<IResult> DataPullOutCount(HttpContext httpContext, [FromServices] DataPullOutController<int> erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
     {
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 
         return await erpUpdateRunner.GetCount(httpContext.Request, name, versionVer, []);
     }
 
-    public static async Task<IResult> DataPullSchema(HttpContext httpContext, [FromServices] DataPullOutController erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
+    public static async Task<IResult> DataPullSchema(HttpContext httpContext, [FromServices] DataPullOutController<int> erpUpdateRunner, [FromRoute] string name, [FromRoute] string version)
     {
         Safety.Check(Version.TryParse(version, out var versionVer), new HttpException(HttpStatusCode.BadRequest, "Invalid Version"));
 

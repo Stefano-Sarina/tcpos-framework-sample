@@ -5,14 +5,14 @@ using Framework.Sample.App.Authorization.FeedDbBuilders;
 using Framework.Sample.App.Authorization.Implementations;
 using Framework.Sample.App.WebApplication;
 using Microsoft.AspNetCore.Authorization;
-using TCPOS.Authorization.Abstracts;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
-using TCPOS.Authorization.Extensions;
-using TCPOS.Authorization.FeedDatabase;
-using TCPOS.Authorization.FeedDatabase.Engine;
-using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
-using TCPOS.Authorization.Implementations;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Authorization.Abstracts;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Authorization.Extensions;
+using TCPOS.Lib.Authorization.FeedDatabase;
+using TCPOS.Lib.Authorization.FeedDatabase.Engine;
+using TCPOS.Lib.Authorization.FeedDatabase.Engine.Abstracts;
+using TCPOS.Lib.Authorization.Implementations;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.Extensions;
 

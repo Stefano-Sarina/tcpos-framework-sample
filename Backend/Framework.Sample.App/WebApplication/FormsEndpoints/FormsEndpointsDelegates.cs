@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.WebApplication.FormsEndpoints;
 
