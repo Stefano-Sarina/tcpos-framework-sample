@@ -17,15 +17,16 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using TCPOS.AspNetCore.DataBind.Configuration;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Attributes;
-using TCPOS.AspNetCore.DataBind.Extensions;
-using TCPOS.AspNetCore.DataBind.Implementations.Batches;
-using TCPOS.AspNetCore.DataBind.Implementations.Batches.Concurrency;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.DataPullOut;
-using TCPOS.AspNetCore.DataBind.Implementations.OData.Interfaces;
-using TCPOS.Data.Batches.Payload;
-using TCPOS.EntityFramework.Extensions;
+using TCPOS.Lib.Data.Batches.Implementations;
+using TCPOS.Lib.Data.Batches.Payload;
+using TCPOS.Lib.Data.EntityFramework.Extensions;
+using TCPOS.Lib.Web.DataBind.Configuration;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Attributes;
+using TCPOS.Lib.Web.DataBind.Extensions;
+using TCPOS.Lib.Web.DataBind.Implementations.Batches;
+using TCPOS.Lib.Web.DataBind.Implementations.Batches.Concurrency;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.DataPullOut;
+using TCPOS.Lib.Web.DataBind.Implementations.OData.Interfaces;
 
 namespace Framework.Sample.App.WebApplication;
 
@@ -116,7 +117,7 @@ public static class WebApplicationFactory
             c.DefaultModelsExpandDepth(0);
             c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None); // Collapse all
         });
-        webApplication.UseDataBind(batchRouteMapper =>
+        webApplication.UseDataBind<int>(batchRouteMapper =>
         {
             var batchNamePrefix = Constants.Batch;
 
@@ -268,29 +269,29 @@ public static class WebApplicationFactory
 
         services.ConfigureSwagger();
 
-        services.AddDataBind(c =>
+        services.AddDataBind<int>(c =>
         {
             c.AddDataPullOut()
              //Customer
-             .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Customer, CustomerOut, int>>()
              //Order
-             .AddDataPullOutItem<DbContextDataPullOutItem<Order, OrderOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Order, OrderOut<int>, int>>()
              //OrderDetail
-             .AddDataPullOutItem<DbContextDataPullOutItem<OrderDetail, OrderDetailOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<OrderDetail, OrderDetailOut<int>, int>>()
              //Product
-             .AddDataPullOutItem<DbContextDataPullOutItem<Product, ProductOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Product, ProductOut, int>>()
              //User
-             .AddDataPullOutItem<DbContextDataPullOutItem<User, UserOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<User, UserOut, int>>()
              //Group
-             .AddDataPullOutItem<DbContextDataPullOutItem<Group, GroupOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Group, GroupOut, int>>()
              //UserGroup
-             .AddDataPullOutItem<DbContextDataPullOutItem<UserGroup, UserGroupOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<UserGroup, UserGroupOut<int>, int>>()
              //Permission
-             .AddDataPullOutItem<DbContextDataPullOutItem<Permission, PermissionOut>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<Permission, PermissionOut, int>>()
              //GroupPermission
-             .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<GroupPermission, GroupPermissionOut<int>, int>>()
              //UserPermission
-             .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>>>()
+             .AddDataPullOutItem<DbContextDataPullOutItem<UserPermission, UserPermissionOut<int>, int>>()
              //PermissionsOperators
              .AddDataPullOutItem<PermissionsOperatorDataPullOut>()
              //PermissionsOperator
@@ -298,59 +299,59 @@ public static class WebApplicationFactory
              //PermissionsOperator
              .AddDataPullOutItem<PermissionsCtesDataPullOut>()
              //AdWebVersionEntity
-             .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut>>();
+             .AddDataPullOutItem<DbContextDataPullOutItem<AdWebEntityVersion, AdWebEntityVersionOut, int>>();
 
-            c.AddBatches<InMemoryBatchStorage, StorageProvider>()
+            c.AddBatches<InMemoryBatchStorage, StorageProvider, KeyConverter<int>> ()
              //Customer
-             .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Customer, CustomerIn, CustomerIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Customer>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<Customer, CustomerIn, CustomerIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Customer, CustomerIn, CustomerIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Customer, CustomerIn, CustomerIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Customer, int>>()
              //Order
-             .AddBatchItem<DbContextTypedPostBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Order>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Order, OrderIn<int>, OrderIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Order, int>>()
              //OrderDetail
-             .AddBatchItem<DbContextTypedPostBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<OrderDetail>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<OrderDetail, OrderDetailIn<int>, OrderDetailIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<OrderDetail, int>>()
              //Product
-             .AddBatchItem<DbContextTypedPostBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Product, ProductIn, ProductIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Product>>()
-             //User
-             .AddBatchItem<DbContextTypedPostBatchCommand<User, UserIn, UserIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<User, UserIn, UserIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<User, UserIn, UserIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<User>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<Product, ProductIn, ProductIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Product, ProductIn, ProductIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Product, ProductIn, ProductIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Product, int>>()
+             //User 
+             .AddBatchItem<DbContextTypedPostBatchCommand<User, UserIn, UserIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<User, UserIn, UserIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<User, UserIn, UserIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<User, int>>()
              //Group
-             .AddBatchItem<DbContextTypedPostBatchCommand<Group, GroupIn, GroupIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Group, GroupIn, GroupIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Group, GroupIn, GroupIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Group>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<Group, GroupIn, GroupIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Group, GroupIn, GroupIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Group, GroupIn, GroupIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Group, int>>()
              //UserGroup
-             .AddBatchItem<DbContextTypedPostBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserGroup>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserGroup, UserGroupIn<int>, UserGroupIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserGroup, int>>()
              //Permission
-             .AddBatchItem<DbContextTypedPostBatchCommand<Permission, PermissionIn, PermissionIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Permission, PermissionIn, PermissionIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Permission, PermissionIn, PermissionIn>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Permission>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<Permission, PermissionIn, PermissionIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<Permission, PermissionIn, PermissionIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<Permission, PermissionIn, PermissionIn, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<Permission, int>>()
              //GroupPermission
-             .AddBatchItem<DbContextTypedPostBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<GroupPermission>>()
+             .AddBatchItem<DbContextTypedPostBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<GroupPermission, GroupPermissionIn<int>, GroupPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<GroupPermission, int>>()
              //UserPermission
-             .AddBatchItem<DbContextTypedPostBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference>>>()
-             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission>>();
+             .AddBatchItem<DbContextTypedPostBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPutBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedPatchBatchCommand<UserPermission, UserPermissionIn<int>, UserPermissionIn<ValueReference<int>>, int>>()
+             .AddBatchItem<ConcurrencyDbContextTypedDeleteBatchCommand<UserPermission, int>>();
         });
 
         services.AddScoped<FeManager>();

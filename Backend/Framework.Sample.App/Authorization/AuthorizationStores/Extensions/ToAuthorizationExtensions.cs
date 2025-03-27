@@ -1,7 +1,7 @@
 ﻿using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Enums;
-using TCPOS.Authorization.Domains;
+using TCPOS.Lib.Authorization.Domains;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Extensions;
 
@@ -9,57 +9,79 @@ public static class ToAuthorizationExtensions
 {
     public static AuthzUser? ToAuthorizationData(this User? item)
     {
-        return item != null ?
-                   new AuthzUser
-                   {
-                       Id = item.Id
-                   } : null;
+        if (item == null)
+        {
+            return null;
+        }
+
+        return new AuthzUser
+        {
+            Id = item.Id,
+            IsPermissionAdministrator = item.UserName == "Admin" ? 1 : 0
+        };
     }
 
     public static AuthzPermissionValue? ToAuthorizationData(this UserPermission? item)
     {
-        return item != null ?
-                   new AuthzPermissionValue
-                   {
-                       UserId = item.UserId,
-                       PermissionId = item.PermissionId,
-                       Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
-                               item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :
-                               item.PermissionValue == PermissionValue.Inherit ? PermissionValueEnum.Inherit :
-                               PermissionValueEnum.None
-                   } : null;
+        if (item == null)
+        {
+            return null;
+        }
+
+        return new AuthzPermissionValue
+        {
+            UserId = item.UserId,
+            PermissionId = item.PermissionId,
+            Value = GetPermissionValue(item.PermissionValue)
+        };
     }
 
     public static AuthzPermissionValue? ToAuthorizationData(this GroupPermission? item)
     {
-        return item != null ?
-                   new AuthzPermissionValue
-                   {
-                       GroupId = item.GroupId,
-                       PermissionId = item.PermissionId,
-                       Value = item.PermissionValue == PermissionValue.Allow ? PermissionValueEnum.Allow :
-                               item.PermissionValue == PermissionValue.Deny ? PermissionValueEnum.Deny :
-                               item.PermissionValue == PermissionValue.Inherit ? PermissionValueEnum.Inherit :
-                               PermissionValueEnum.None
-                   } : null;
-    }
+        if (item == null)
+        {
+            return null;
+        }
 
+        return new AuthzPermissionValue
+        {
+            GroupId = item.GroupId,
+            PermissionId = item.PermissionId,
+            Value = GetPermissionValue(item.PermissionValue)
+        };
+    }
     public static AuthzGroup? ToAuthorizationData(this Group? item)
     {
-        return item != null ?
-                   new AuthzGroup
-                   {
-                       Id = item.Id
-                   } : null;
+        if (item == null)
+        {
+            return null;
+        }
+
+        return new AuthzGroup { Id = item.Id };
     }
 
     public static AuthzPermission? ToAuthorizationData(this Permission? item)
     {
-        return item != null ?
-                   new AuthzPermission
-                   {
-                       Id = item.Id,
-                       Entity = $"{item.PermissionName}-{item.PermissionType}".ToLower()
-                   } : null;
+        if (item == null)
+        {
+            return null;
+        }
+
+        return new AuthzPermission
+        {
+            Id = item.Id,
+            Entity = $"{item.PermissionName}-{item.PermissionType}".ToLower()
+        };
+    }
+
+    private static PermissionValueEnum GetPermissionValue(PermissionValue permissionValue)
+    {
+        return permissionValue switch
+        {
+            PermissionValue.Allow => PermissionValueEnum.Allow,
+            PermissionValue.Deny => PermissionValueEnum.Deny,
+            PermissionValue.Inherit => PermissionValueEnum.Inherit,
+            _ => PermissionValueEnum.None
+        };
     }
 }

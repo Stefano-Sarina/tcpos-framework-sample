@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using TCPOS.Authorization.Abstracts;
+using TCPOS.Lib.Authorization.Abstracts;
 
 namespace Framework.Sample.App.Authorization.AuthorizationManagers;
 

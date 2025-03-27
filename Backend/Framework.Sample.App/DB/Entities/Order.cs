@@ -1,15 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Framework.Sample.App.DB.Entities.Base;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Framework.Sample.App.DB.Entities.Base;
-using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
 
 namespace Framework.Sample.App.DB.Entities;
 
+[PrimaryKey(nameof(Id))]
 public class Order : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;

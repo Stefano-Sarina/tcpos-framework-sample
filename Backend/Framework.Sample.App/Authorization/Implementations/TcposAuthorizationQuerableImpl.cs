@@ -1,8 +1,8 @@
 ﻿using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Enums;
-using TCPOS.Authorization.Abstracts;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
-using TCPOS.Authorization.Domains;
+using TCPOS.Lib.Authorization.Abstracts;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Authorization.Domains;
 
 namespace Framework.Sample.App.Authorization.Implementations;
 

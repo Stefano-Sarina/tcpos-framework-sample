@@ -1,4 +1,4 @@
-﻿using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
+﻿using TCPOS.Lib.Authorization.FeedDatabase.Engine.Abstracts;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 

@@ -8,22 +8,22 @@
     <StartupObject>Framework.Sample.App.Program</StartupObject>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
-    <PackageReference Include="TCPOS.AspNetCore.DataBind" Version="0.1.*" />
-    <PackageReference Include="TCPOS.AspNetCore.DataBind.Implementations" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Authorization" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Common" Version="0.1.*" />
-    <PackageReference Include="TCPOS.Data.Batches" Version="0.1.*" />
-    <PackageReference Include="TCPOS.EntityFramework" Version="0.1.*" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.10" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.10" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
+		<PackageReference Include="TCPOS.Lib.Web.DataBind" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Web.DataBind.Implementations" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Authorization" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Common" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Data.Batches" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Data.EntityFramework" Version="1.*-*" />
+	</ItemGroup>
 
   <ItemGroup>
     <Content Update="appsettings.json">

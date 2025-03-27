@@ -1,4 +1,4 @@
-﻿using TCPOS.Authorization.Abstracts.AuthorizationStores;
+﻿using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationStores.Models;
 

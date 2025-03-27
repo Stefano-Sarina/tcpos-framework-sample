@@ -3,9 +3,9 @@ using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.Requirements;
 using Framework.Sample.App.DB.Enums;
 using Microsoft.AspNetCore.Authorization;
-using TCPOS.Authorization.Abstracts;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Authorization.Abstracts;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.Authorization.AuthorizationManagers;
 

@@ -3,7 +3,7 @@ using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Enums;
 using Framework.Sample.App.Utils;
 using Microsoft.EntityFrameworkCore;
-using TCPOS.Authorization.FeedDatabase.Engine.Abstracts;
+using TCPOS.Lib.Authorization.FeedDatabase.Engine.Abstracts;
 
 namespace Framework.Sample.App.Authorization.FeedDbBuilders;
 

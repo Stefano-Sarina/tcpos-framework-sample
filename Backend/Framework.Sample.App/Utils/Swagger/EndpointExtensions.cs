@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Routing.Patterns;
 using System.Text.RegularExpressions;
-using TCPOS.Common.Diagnostics;
+using TCPOS.Lib.Common.Diagnostics;
 
 namespace Framework.Sample.App.Utils.swagger;
 

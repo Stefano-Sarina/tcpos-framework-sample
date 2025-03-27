@@ -1,14 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Framework.Sample.App.DB.Entities.Base;
-using TCPOS.Data.Batches.Abstracts.Concurrency;
-using TCPOS.EntityFramework.Attributes;
+﻿using Framework.Sample.App.DB.Entities.Base;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations.Schema;
+using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
+using TCPOS.Lib.Data.EntityFramework.Attributes;
 
 namespace Framework.Sample.App.DB.Entities;
 
+[PrimaryKey(nameof(Id))]
 public class UserGroup : Entity
 {
     [ConcurrencyItem]
-    [PrimaryKeyField]
     public override int Id
     {
         get;
@@ -17,7 +18,7 @@ public class UserGroup : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(User))]
-    [UniqueKeyField]
+    [UniqueIndexField]
     public int UserId
     {
         get;
@@ -26,7 +27,7 @@ public class UserGroup : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Group))]
-    [UniqueKeyField]
+    [UniqueIndexField]
     public int GroupId
     {
         get;

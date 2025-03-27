@@ -1,4 +1,4 @@
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.WebApplication.Samples;
 

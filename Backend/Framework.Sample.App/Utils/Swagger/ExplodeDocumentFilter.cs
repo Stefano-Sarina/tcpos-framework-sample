@@ -10,18 +10,18 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Web;
-using TCPOS.AspNetCore.DataBind.DataPullOut.Items;
-using TCPOS.Common.Diagnostics;
-using TCPOS.Common.Linq.Extensions;
-using TCPOS.Data.Batches.Enums;
-using TCPOS.Data.Batches.Interfaces;
+using TCPOS.Lib.Web.DataBind.DataPullOut.Items;
+using TCPOS.Lib.Common.Diagnostics;
+using TCPOS.Lib.Common.Linq.Extensions;
+using TCPOS.Lib.Data.Batches.Enums;
+using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Utils.swagger;
 
 public class ExplodeDocumentFilter : IDocumentFilter
 {
     private readonly IList<IBatchCommand> _batchCommands;
-    private readonly IList<DataPullOutItem> _dataPullOutItems;
+    private readonly IList<DataPullOutItem<int>> _dataPullOutItems;
     private readonly EndpointDataSource _endpointDataSource;
 
     /// <summary>
@@ -34,7 +34,7 @@ public class ExplodeDocumentFilter : IDocumentFilter
 
         using IServiceScope scope = serviceProvider.CreateScope();
         _batchCommands = scope.ServiceProvider.GetServices<IBatchCommand>().ToEnumerableOrEmpty().ToArray();
-        _dataPullOutItems = scope.ServiceProvider.GetServices<DataPullOutItem>().ToEnumerableOrEmpty().ToArray();
+        _dataPullOutItems = scope.ServiceProvider.GetServices<DataPullOutItem<int>>().ToEnumerableOrEmpty().ToArray();
         _endpointDataSource = scope.ServiceProvider.GetRequiredService<EndpointDataSource>();
     }
 

@@ -2,8 +2,8 @@
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.Requirements;
 using Microsoft.AspNetCore.Authorization;
-using TCPOS.Authorization.Abstracts;
-using TCPOS.Authorization.Abstracts.AuthorizationStores;
+using TCPOS.Lib.Authorization.Abstracts;
+using TCPOS.Lib.Authorization.Abstracts.AuthorizationStores;
 
 namespace Framework.Sample.App.Authorization.AuthorizationManagers;
 
