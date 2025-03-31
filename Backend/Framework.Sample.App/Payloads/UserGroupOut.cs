@@ -1,4 +1,4 @@
-﻿using TCPOS.Lib.Web.DataBind.Interfaces;
+﻿using TCPOS.Lib.Web.Data.Bind.Interfaces;
 using TCPOS.Lib.Data.Batches.Interfaces;
 
 namespace Framework.Sample.App.Payloads;

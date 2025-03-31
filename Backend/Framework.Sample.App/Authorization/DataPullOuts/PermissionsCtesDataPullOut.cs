@@ -3,9 +3,9 @@ using Framework.Sample.App.Authorization.DataPullOuts.Entities;
 using Framework.Sample.App.Authorization.DataPullOuts.Payloads;
 using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
-using TCPOS.Lib.Web.DataBind.DataPullOut.Configuration;
-using TCPOS.Lib.Web.DataBind.Implementations.OData.DataPullOut;
-using TCPOS.Lib.Web.DataBind.Implementations.OData.Interfaces;
+using TCPOS.Lib.Web.Data.Bind.DataPullOut.Configuration;
+using TCPOS.Lib.Web.Data.Bind.Implementations.OData.DataPullOut;
+using TCPOS.Lib.Web.Data.Bind.Implementations.OData.Interfaces;
 using TCPOS.Lib.Common.Linq.Extensions;
 using TCPOS.Lib.Data.Batches.Interfaces;
 

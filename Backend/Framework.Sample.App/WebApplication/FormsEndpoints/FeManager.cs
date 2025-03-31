@@ -3,7 +3,7 @@ using Framework.Sample.App.DB;
 using Framework.Sample.App.DB.Entities;
 using Framework.Sample.App.DB.Enums;
 using Microsoft.EntityFrameworkCore;
-using TCPOS.Lib.Web.DataBind.Exceptions;
+using TCPOS.Lib.Web.Exceptions;
 using TCPOS.Lib.Common.Diagnostics;
 using TCPOS.Lib.Common.Linq.Extensions;
 

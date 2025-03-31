@@ -1,4 +1,4 @@
-﻿using TCPOS.Lib.Web.DataBind.Interfaces;
+﻿using TCPOS.Lib.Web.Data.Bind.Interfaces;
 using TCPOS.Lib.Data.Batches.Abstracts.Concurrency;
 using TCPOS.Lib.Data.Batches.Interfaces;
 

@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using System.Net;
-using TCPOS.Lib.Web.DataBind.Exceptions;
+using TCPOS.Lib.Web.Exceptions;
 using TCPOS.Lib.Common.Diagnostics.Extensions;
 using TCPOS.Lib.Data.Batches.Enums;
 using TCPOS.Lib.Data.Batches.Exceptions;
