@@ -25,8 +25,12 @@ using TCPOS.Lib.Web.Data.Bind.DataPullOut.Attributes;
 using TCPOS.Lib.Web.Data.Bind.Extensions;
 using TCPOS.Lib.Web.Data.Bind.Implementations.Batches;
 using TCPOS.Lib.Web.Data.Bind.Implementations.Batches.Concurrency;
+using TCPOS.Lib.Web.Data.Bind.Implementations.Batches.Exceptions;
 using TCPOS.Lib.Web.Data.Bind.Implementations.OData.DataPullOut;
 using TCPOS.Lib.Web.Data.Bind.Implementations.OData.Interfaces;
+using TCPOS.Lib.Web.Data.Exceptions;
+using TCPOS.Lib.Web.Exceptions;
+using TCPOS.Lib.Web.Exceptions.Implementations;
 
 namespace Framework.Sample.App.WebApplication;
 
@@ -106,7 +110,7 @@ public static class WebApplicationFactory
 
     private static void ConfigureApplication(Microsoft.AspNetCore.Builder.WebApplication webApplication)
     {
-        webApplication.UseMiddleware<ExceptionMiddleware>();
+        webApplication.UseExceptionManager();
 
         webApplication.UseAuthentication();
 
@@ -356,6 +360,16 @@ public static class WebApplicationFactory
 
         services.AddScoped<FeManager>();
         services.AddTcposAuthorization(webApplicationFactoryOptions);
+
+        // exception handler
+        services.AddExceptionManager(opt =>
+        {
+            opt.AddHandler<BatchExceptionHandler>();
+            opt.AddHandler<SqlExceptionHandler>();
+            opt.AddHandler<PostgresExceptionHandler>();
+            opt.AddHandler<OracleExceptionHandler>();
+            opt.AddHandler<HttpExceptionHandler>();
+        });
     }
 
     private static IServiceCollection ConfigureSwagger(this IServiceCollection services)

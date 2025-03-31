@@ -17,6 +17,7 @@
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
+		<PackageReference Include="TCPOS.Lib.Web.Data" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Web.Data.Bind" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Web.Data.Bind.Implementations" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Authorization" Version="1.*-*" />
