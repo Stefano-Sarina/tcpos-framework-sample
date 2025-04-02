@@ -1,4 +1,4 @@
-import { ALocalizationService, PublicInjectable } from "@tcpos/common-core";
+import { ALocalizationService, PublicInjectable, type IInterfaceBuilderModel } from "@tcpos/common-core";
 import {
     DailyPublicRegistrationContainer, ABaseApiController,
     CommonObjectController, ADailyConfigService
@@ -6,13 +6,12 @@ import {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { IBatchCommand, IUiComponentPermissionAccess, IUserPermission } from "@tcpos/backoffice-core";
 import type {I18n} from "../services/intl";
-import type {IExternalObjectData} from "@tcpos/backoffice-core";
-import type { ITaxObjectModel, TaxObjectDataType, TaxObjectExternalDataType } from "./objectControllerModels/ITaxObjectModel";
+import type { ITaxObjectModel, TaxObjectDataType } from "./objectControllerModels/ITaxObjectModel";
 import { getPermissions } from "../../core/common/getPermissions";
 
 @PublicInjectable()
 export class TaxObjectController extends
-        CommonObjectController<TaxObjectDataType, TaxObjectDataType, TaxObjectExternalDataType, I18n> {
+        CommonObjectController<TaxObjectDataType, TaxObjectDataType, I18n> {
 
     constructor(
                 @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
@@ -23,16 +22,12 @@ export class TaxObjectController extends
 
     }
 
-    init(mainId: string) {
+    init(mainId: string, objectName: string, interfaceConfig: IInterfaceBuilderModel) {
         this.mainId = mainId;
         this.mainEntity = "Taxes";
         this.objectDescription = "Taxes";
-        this.entityList = [
-            {
-                entityName: "Tax",
-                id: Number(mainId),
-            },
-        ];
+        this.objectName = objectName;
+        super.init(mainId, this.objectName, interfaceConfig);
     }
 
     deleteObject = async (data: ITaxObjectModel): Promise<number | {error: string} | undefined> => {
@@ -47,10 +42,9 @@ export class TaxObjectController extends
         return this.apiController.saveData(commands, commands.length);
     };
 
-    externalData: IExternalObjectData<TaxObjectDataType, TaxObjectExternalDataType>[] = [];
 
     getPermissions = async (applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> => {
-        return getPermissions<TaxObjectDataType, TaxObjectDataType, TaxObjectExternalDataType, I18n>(applicationName, objectName, objectDescription, this);
+        return getPermissions<TaxObjectDataType, TaxObjectDataType, I18n>(applicationName, objectName, objectDescription, this);
     }
     
 }

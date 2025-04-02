@@ -22,7 +22,12 @@
                   "fieldName": "Name",
                   "label": "Name",
                   "xs" : 12,
-                  "lg" : 12
+                  "lg" : 12,
+                  "gridView": {
+                    "defaultVisible": true,
+                    "position": 1,
+                    "width": 200
+                  }
                 },
                 {
                   "componentName": "Price",
@@ -31,47 +36,17 @@
                   "label": "Price",
                   "decimalplaces": 2,
                   "xs" : 12,
-                  "lg" : 6
+                  "lg" : 6,
+                  "gridView": {
+                    "defaultVisible": true,
+                    "position": 2,
+                    "width": 200
+                  }
                 }
               ]
             }
           ]
         }
       ]
-    },
-    "defaultGridView": {
-      "label": "Products",
-      "editInline": false,
-      "layout" : [
-        {
-          "columnName" : "Id",
-          "sourceName" : "Id",
-          "label" : "Id",
-          "width" : 200,
-          "visible": true,
-          "indexPosition": 1,
-          "type": "number"
-        },
-        {
-          "columnName" : "Name",
-          "sourceName" : "Name",
-          "label" : "Name",
-          "width" : 200,
-          "visible": true,
-          "indexPosition": 2,
-          "type": "string"
-        },
-        {
-          "columnName" : "Price",
-          "sourceName" : "Price",
-          "label" : "Price",
-          "width" : 200,
-          "visible": true,
-          "indexPosition": 3,
-          "decimalplaces": 2,
-          "type": "string"
-        }
-      ],
-      "quickOps": []
     }
   }

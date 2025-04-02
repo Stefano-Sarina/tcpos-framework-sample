@@ -13,6 +13,3 @@ export type CustomerObjectExtendedDataType = [CustomerExtendedEntityType];
 
 export type ICustomerObjectModel = IEntityDataMainObject<CustomerObjectExtendedDataType>;
 
-export type CustomerObjectExternalDataType = [
-];
-

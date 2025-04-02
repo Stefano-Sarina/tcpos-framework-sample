@@ -40,7 +40,8 @@ import {
     WD_DailyActionToolbarProgressBar,
     WD_DailyActionToolbarSeparator,
     WD_DailyActionToolbarTextBox,
-    WD_Section
+    WD_Section,
+    WDHidden
 } from "@tcpos/backoffice-components";
 
 /**
@@ -79,6 +80,8 @@ export function registerDailyDefaultComponent(): void {
         createRegistrationEntry({_registrationName: DailyComponents.wdSection, component: WD_Section}));
     DailyPublicRegistrationContainer.registerEntry("uiComponents",
         createRegistrationEntry({_registrationName: DailyComponents.wdDatePicker, component: WD_BoundDatePicker}));
+    DailyPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: DailyComponents.wdHidden, component: WDHidden}));
     DailyPublicRegistrationContainer.registerEntry("uiComponents",
         createRegistrationEntry({_registrationName: DailyComponents.wdTimePicker, component: WD_BoundTimePicker}));
     DailyPublicRegistrationContainer.registerEntry("uiComponents",

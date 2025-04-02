@@ -22,7 +22,12 @@
                   "fieldName": "Code",
                   "label": "Code",
                   "xs" : 12,
-                  "lg" : 12
+                  "lg" : 12,
+                  "gridView": {
+                    "defaultVisible": true,
+                    "position": 1,
+                    "width": 200
+                  }
                 },
                 {
                   "componentName": "Description",
@@ -30,7 +35,12 @@
                   "fieldName": "Description",
                   "label": "Description",
                   "xs" : 12,
-                  "lg" : 12
+                  "lg" : 12,
+                  "gridView": {
+                    "defaultVisible": true,
+                    "position": 1,
+                    "width": 200
+                  }
                 },
                 {
                   "componentName": "Tax",
@@ -39,7 +49,12 @@
                   "label": "Tax",
                   "decimalplaces": 2,
                   "xs" : 12,
-                  "lg" : 12
+                  "lg" : 12,
+                  "gridView": {
+                    "defaultVisible": true,
+                    "position": 1,
+                    "width": 200
+                  }
                 }
               ]
             }

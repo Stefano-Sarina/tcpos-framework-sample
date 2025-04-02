@@ -171,7 +171,7 @@ export const EntityGridViewUrlWrapper = () => {
                         ? DailyPublicRegistrationContainer.resolveEntry("objectControllers", entityName).controller
                         : undefined;
                 const objectController = objectControllerRegistration
-                    ? DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[], ISingleExternalDataList<never>[], IDynamicDataList<never, EntityType[]>[]>
+                    ? DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[]>
                     : undefined;
                 setGridViewParams({
                     entityName: entityName,

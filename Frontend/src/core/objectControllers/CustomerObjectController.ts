@@ -1,4 +1,4 @@
-import { ALocalizationService, PublicInjectable, type IEntityDataError, type IEntityDataMainObject, type IEntityFieldError } from "@tcpos/common-core";
+import { ALocalizationService, PublicInjectable, type IEntityDataError, type IEntityDataMainObject, type IEntityFieldError, type IInterfaceBuilderModel } from "@tcpos/common-core";
 import {
     DailyPublicRegistrationContainer, ABaseApiController,
     CommonObjectController, ADailyConfigService,
@@ -12,18 +12,15 @@ import type {
     CustomerObjectExtendedDataType,
     ICustomerExtendedPayload,
     ICustomerObjectModel,
-    CustomerObjectExternalDataType,
-    CustomerExtendedEntityType
 } from "./objectControllerModels/ICustomerObjectModel";
 import type {I18n} from "../services/intl";
-import type {IExternalObjectData} from "@tcpos/backoffice-core";
 import type { ICustomerPayload } from "../apiModels/ICustomerPayload";
 import type { IPermissionsOperatorPayload } from "../../core/apiModels/IPermissionsOperatorPayload";
 import { getPermissions } from "../../core/common/getPermissions";
 
 @PublicInjectable()
 export class CustomerObjectController extends
-        CommonObjectController<CustomerObjectDataType, CustomerObjectExtendedDataType, CustomerObjectExternalDataType, I18n> {
+        CommonObjectController<CustomerObjectDataType, CustomerObjectExtendedDataType, I18n> {
 
     constructor(
                 @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
@@ -35,17 +32,12 @@ export class CustomerObjectController extends
     }
     apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
 
-    init(mainId: string) {
+    init(mainId: string, objectName: string, interfaceConfig: IInterfaceBuilderModel) {
         this.mainId = mainId;
         this.mainEntity = "Customer";
         this.objectDescription = "Customers";
-        this.entityList = [
-            {
-                entityName: "Customer",
-                id: Number(mainId),
-                addedFields: ['FullName'] as unknown as (keyof CustomerExtendedEntityType)[] 
-            },
-        ];
+        this.objectName = objectName;
+        super.init(mainId, this.objectName, interfaceConfig);
     }
 
     async onUpdate(data: ICustomerObjectModel): Promise<ICustomerObjectModel | undefined> {
@@ -114,8 +106,6 @@ export class CustomerObjectController extends
 
     };
 
-    externalData: IExternalObjectData<CustomerObjectExtendedDataType, CustomerObjectExternalDataType>[] = [];
-
     gridViewFieldConverter = [
         {
             newFieldName: "FullName",
@@ -135,7 +125,7 @@ export class CustomerObjectController extends
     }
 
     getPermissions = async (applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> => {
-        return getPermissions<CustomerObjectDataType, CustomerObjectExtendedDataType, CustomerObjectExternalDataType, I18n>(applicationName, objectName, objectDescription, this);
+        return getPermissions<CustomerObjectDataType, CustomerObjectExtendedDataType, I18n>(applicationName, objectName, objectDescription, this);
      }
 
 

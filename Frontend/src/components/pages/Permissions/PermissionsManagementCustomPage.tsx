@@ -655,13 +655,13 @@ export const PermissionsManagementCustomPage = () => {
             if (selectedUserProfile.type === 'User') {
                 assignedPermissions =
                     await userPermissionDataController.dataListLoad<IPermissionsOperatorPayload>(
-                        filters, [], [], undefined, undefined, undefined, abortSignal,
+                        filters, [], [], undefined, undefined, abortSignal,
                         true
                     );
             } else {
                 assignedPermissions =
                     await groupPermissionDataController.dataListLoad<IPermissionsOperatorPayload>(
-                        filters, [], [], undefined, undefined, undefined, abortSignal,
+                        filters, [], [], undefined, undefined, abortSignal,
                         true
                     );
             }
@@ -755,7 +755,7 @@ export const PermissionsManagementCustomPage = () => {
 
     const getUsers = async (abortSignal: AbortSignal): Promise<void> => {
         const opList = await userDataController.dataListLoad([], [],
-            undefined, undefined, undefined, undefined, abortSignal, true);
+            undefined, undefined, undefined, abortSignal, true);
         if (Array.isArray(opList)) {
             setUserList(opList?.map(el => {
                 return {value: el.Id, label: String(el.UserName)};
@@ -767,7 +767,7 @@ export const PermissionsManagementCustomPage = () => {
 
     const getUserGroups = async (abortSignal: AbortSignal): Promise<void> => {
         const opList = await userGroupDataController.dataListLoad([], [],
-            undefined, undefined, undefined, undefined, abortSignal);
+            undefined, undefined, undefined, abortSignal);
         if (Array.isArray(opList)) {
             setUserGroupList(opList?.map(el => {
                 return {value: el.Id, label: String(el.Code) + ' - ' + String(el.Description)};
@@ -1140,7 +1140,7 @@ export const PermissionsManagementCustomPage = () => {
                                 values: [selectedUserProfile.id],
                                 embedded: false, operator: "oneOf"
                             }
-                        ], [], [], undefined, undefined, undefined, abortSignal);
+                        ], [], [], undefined, undefined, abortSignal);
                     // Add the existing data to the list
                     if (Array.isArray(existingUserData)) {
                         existingUserData.forEach(el => {
@@ -1164,7 +1164,7 @@ export const PermissionsManagementCustomPage = () => {
                             id: 3, parentId: 1, type: 'filter', field: 'GroupId',
                             values: [selectedUserProfile.id], embedded: false, operator: "oneOf"
                         },
-                    ], [], [], undefined, undefined, undefined, abortSignal);
+                    ], [], [], undefined, undefined, abortSignal);
                     if (Array.isArray(existingGroupData)) {
                         existingGroupData.forEach(el => {
                             existingDataList.push({

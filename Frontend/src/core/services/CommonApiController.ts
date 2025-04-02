@@ -74,7 +74,7 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
     };
 
     dataListCount = async (apiEntityName: string, filter: (IDataFilterGroup | IDataFilter)[] | string,
-                    visibilityFilter?: number, abortSignal?: GenericAbortSignal,
+                    abortSignal?: GenericAbortSignal,
                     params?: Record<string, string>): Promise<number | undefined | IApiError> => {
         let rowCount = -1;
         try {
@@ -82,7 +82,6 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
                 return await this.apiGet<number>(
                     `${this.getApiUrl()}/${apiEntityName}/count`, filter,
                     {
-                        visibility: visibilityFilter ?? undefined,
                         ...(params ?? {})
                     },
                     true, [], abortSignal);
@@ -104,14 +103,14 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
     };
 
     dataListLoad = async <T>(apiEntityName: string, filter: (IDataFilterGroup | IDataFilter)[] | string, fieldList: string[],
-                             sort?: string[], top?: number, skip?: number, visibilityFilter?: number, abortSignal?: GenericAbortSignal,
+                             sort?: string[], top?: number, skip?: number, abortSignal?: GenericAbortSignal,
                              all?: boolean, params?: Record<string, string>):
         Promise<T[] | undefined | IApiError> => {
         let rowCount = -1;
         if (all) {
             try {
                 const getRowCount = await this.dataListCount(
-                    apiEntityName, filter, visibilityFilter, abortSignal, params
+                    apiEntityName, filter, abortSignal, params
                 );
                 if (!(getRowCount as IApiError).type) {
                     rowCount = Number(getRowCount);
@@ -139,7 +138,6 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
                     return await this.apiGet<T[]>(
                         `${this.getApiUrl()}/${apiEntityName}`, filter,
                         {
-                            visibility: visibilityFilter ?? undefined,
                             '$orderby': sort && sort.length ? sort.join(",") : undefined,
                             '$top': top ?? (!all ? 50 : undefined),
                             '$skip': skip,

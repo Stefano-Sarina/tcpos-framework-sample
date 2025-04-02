@@ -9,7 +9,8 @@ import type {IUiTree} from "@tcpos/backoffice-core";
 import type {
     IInterfaceBuilderSubForm,
     IInterfaceBuilderComponent,
-    IInterfaceBuilderSubFormFields, IInterfaceBuilderComboBox, ICustomComponentPermissionTree
+    IInterfaceBuilderSubFormFields, IInterfaceBuilderComboBox, ICustomComponentPermissionTree,
+    IInterfaceBuilderModel
 } from "@tcpos/common-core";
 import type { IPermissionsOperatorPayload } from "../../apiModels/IPermissionsOperatorPayload";
 
@@ -63,8 +64,7 @@ export class PermissionLogic {
         const apiUrl = store.getState().interfaceConfig.apiUrl;
         try {
             const res = await  DailyPublicRegistrationContainer.resolve(ABaseApiController)
-                .dataListLoad(`adWebEntityVersion`, [], [], undefined, undefined,
-                    undefined, undefined, undefined, true);
+                .dataListLoad(`adWebEntityVersion`, [], [], undefined, undefined, undefined, undefined, true);
             if (!(res as IApiError).message) {
                 return res as unknown as IRemoteVersion[];
             }
@@ -177,7 +177,7 @@ export class PermissionLogic {
         return res;
     };
 
-    public static getUIPermissionTree = async  () => {
+    public static getUIPermissionTree = async  (objectInterfaceConfig: IInterfaceBuilderModel[]) => {
         const interfaceConfig: IViewConfigModel<string> = await DailyPublicRegistrationContainer.resolve(ADailyConfigService)
             .getInterfaceConfig();
         const menuGroups = interfaceConfig.menuGroups; // store.getState().interfaceConfig.menuGroups;
@@ -188,9 +188,10 @@ export class PermissionLogic {
                 if (DailyPublicRegistrationContainer.isBound("objectControllers", obj.entityId)) {
                     const controllerRegistration = DailyPublicRegistrationContainer
                         .resolveEntry("objectControllers", obj.entityId).controller;
-                    if (controllerRegistration) {
+                    const currentObjectConfig = objectInterfaceConfig.find(el => el.objectName === obj.entityId);
+                    if (controllerRegistration && currentObjectConfig) {
                         const controller = DailyPublicRegistrationContainer.resolveConstructor(controllerRegistration);
-                        controller.init("-1", obj.entityId);
+                        controller.init("-1", obj.entityId, currentObjectConfig);
                         controllerList.push({registrationKey: obj.entityId, controller: controller as AERObjectController<any, any>});
                     }
                 } else if (obj.category === 'webReporting') {
@@ -224,7 +225,8 @@ export class PermissionLogic {
         }
     };
 
-    public static async getPermissions(applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> {
+    public static async getPermissions(applicationName: string, objectController: AERObjectController<any, any>, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> {
+        const objectName = objectController.objectName;
         if (!permissionData) {
             const dataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers",
                 'PermissionsOperator').controller;
@@ -238,9 +240,9 @@ export class PermissionLogic {
             let endExtraction = false;
             while (!endExtraction) {
                 partialResult = await currentDataController.dataListLoad<IPermissionsOperatorPayload>([
-                    {id: 1, parentId: 0, type: 'filterGroup', mode: 'AND'},
-                    {id: 2, parentId: 1, embedded: false, type: 'filter', field: 'KeyCode', operator: "String.startsWith", values: [objectName]},
-                    {id: 3, parentId: 1, embedded: false, type: 'filter', field: 'Type', operator: "String.equals", values: [applicationName]}
+                    //{id: 1, parentId: 0, type: 'filterGroup', mode: 'AND'},
+                    //{id: 2, parentId: 1, embedded: false, type: 'filter', field: 'KeyCode', operator: "String.startsWith", values: [objectName]},
+                    //{id: 3, parentId: 1, embedded: false, type: 'filter', field: 'Type', operator: "String.equals", values: [applicationName]}
                 ], [], [], size, skip);
                 /*
                             if (Array.isArray(partialResult)) {
@@ -278,7 +280,7 @@ export class PermissionLogic {
                 const calculatePermissionAccess = (node: IUiTree) => {
                     let component = permissionData.find(el =>
                         String(el.code).toLowerCase() === (node.component + "-" + applicationName + "-" + "write").toLowerCase()
-                        && el.permissionValue === 2
+                        && el.permissionValue === 1
                     );
                     if (component) {
                         componentPermissions.push({
@@ -292,7 +294,7 @@ export class PermissionLogic {
                         if (component) {
                             componentPermissions.push({
                                 componentName: node.component,
-                                access: component.permissionValue === 2 ? 'Read' : "NoAccess",
+                                access: component.permissionValue === 1 ? 'Read' : "NoAccess",
                             });
                         } else {
                             // Not Set

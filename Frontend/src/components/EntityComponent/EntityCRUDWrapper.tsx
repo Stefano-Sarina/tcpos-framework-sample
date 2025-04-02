@@ -1,12 +1,13 @@
-import React, {useEffect, useMemo, useState} from "react";
-import type {AERObjectController} from "@tcpos/backoffice-core";
+import React, {useEffect, useMemo, useRef, useState} from "react";
 import {
-    DailyPublicRegistrationContainer,
+    DailyPublicRegistrationContainer, setLists,
     setMultipleObject,
     setNewObject,
+    setSingleComponentList, setSingleList
 } from "@tcpos/backoffice-core";
-import {RawCRUDWrapper, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
+import type {AERObjectController} from "@tcpos/backoffice-core";
 import type {CRUDWrapperProps} from "@tcpos/backoffice-components";
+import {RawCRUDWrapper, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
 import {
     DataConflictAutoMergesStates,
     DataConflictStoreEntities,
@@ -14,14 +15,12 @@ import {
 import {EntityMainComponent} from "./EntityMainComponent";
 import {enqueueSnackbar} from "notistack";
 import {useIntl} from "react-intl";
-import {
-    type EntityType,
-    type IEntityDataMainObject,
-    type IEntityDataObjectAdditionalAttributes,
-    rwModes
-} from "@tcpos/common-core";
+import {type IInterfaceBuilderModel, rwModes} from "@tcpos/common-core";
+import type {IEntityExternalList} from "@tcpos/common-core";
+import type {EntityType, IEntityDataMainObject, IEntityDataObjectAdditionalAttributes} from "@tcpos/common-core";
 import {useNavigate, useParams} from "react-router-dom";
-import { PermissionLogic } from "../../core/businessLogic/permissions/PermissionLogic";
+import {v4 as uuidv4} from "uuid";
+import {PermissionLogic} from "../../core/businessLogic/permissions/PermissionLogic";
 
 /**
  * the standard wrapper to bind webdaily entity fields to the context
@@ -36,24 +35,21 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
     // entityDataContext used in case of single editing
     const entityDataContext = useAppSelector(state =>
         state.dataObjectSlice.objects.find(el => el.objectName === objectName && el.objectId === objectId));
-    const applicationName = useAppSelector(state => state.interfaceConfig.applicationName);
-    const apiUrl = useAppSelector(state => state.interfaceConfig.apiUrl);
 
     // multiEditingId used in case of multiple editing
     const [multiEditing, setMultiEditing] = useState<boolean>(false);
+
+    const interfaceConfig = useAppSelector(state =>
+            state.interfaceConfig.objectDetails?.find(el => el.objectName === objectName));
+    const applicationName = useAppSelector(state => state.interfaceConfig.applicationName);
 
     const intl = useIntl();
     if (!DailyPublicRegistrationContainer.isBound( "objectControllers", objectName)) {
         throw (intl.formatMessage({id: `No registration found for '${objectName}' object controller`}));
     }
 
-/*
-    const objectController1 = useMemo(() => {
-        return DailyPublicRegistrationContainer.isBound(objectName + "ObjectController")
-            ? DailyPublicRegistrationContainer.resolveObjectController(objectName)
-            : undefined;
-    }, [objectName]);
-*/
+    const operatorPermissions = useAppSelector(state => state.user.permissions);
+
     const objectControllerRegistration = useMemo(() => {
         return DailyPublicRegistrationContainer.isBound( "objectControllers", objectName)
             ? DailyPublicRegistrationContainer.resolveEntry("objectControllers",  objectName).controller
@@ -78,36 +74,14 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
     if (!objectController) {
         throw 'Error: no data controller found for this entity';
     }
-    const navigate = useNavigate();
-
-/*
-    const accessPermission = useAppSelector(state =>
-        state.dataObjectSlice.objects.find(el => el.objectName === objectName && el.objectId === objectId)?.componentPermissions?.find(el =>
-            el.componentName === "MainObject"
-        )
-    );
-
+    
     useEffect(() => {
-        if (accessPermission?.access === 'Read' && rwMode === rwModes.W) {
-            navigate(`/${lang}/entities/${objectName}/detail/${objectId}?mode=R`);
+        if (interfaceConfig) {
+            objectController.init(objectId, objectName, interfaceConfig);
         }
-    }, [accessPermission]);
-*/
-
-
-
-
-/*
-    useEffect(() => {
-        const getUiPermission = async () => {
-            const uiPermissions = await objectController.getPermissions( 'webdaily', objectName);
-            dispatch(setPermissions(uiPermissions.map(el => ({code: el.componentName, type: el.access}))));
-
-        };
-        getUiPermission();
-    }, []);
-*/
-
+    }, [objectId, objectName, interfaceConfig]);
+    
+    const navigate = useNavigate();
 
     const Renderer = useMemo(() => {
         /**
@@ -115,7 +89,8 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
          */
         return standardRenderer ?? EntityMainComponent;
 /*
-        const CustomPage = DailyPublicRegistrationContainer.isBound(objectName + "CustomPage") && dailyIocContainer.resolve<React.FC>(objectName + "CustomPage");
+        const CustomPage = DailyPublicRegistrationContainer.isBound(objectName + "CustomPage")
+                && dailyIocContainer.resolve<React.FC>(objectName + "CustomPage");
         return !CustomPage
                 ? (standardRenderer ?? EntityMainComponent)
                 : () => <div><CustomPage/></div>;
@@ -127,6 +102,8 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
         setLoading(activate);
     };
 
+    const [objectGuid, setObjectGuid] = useState<string>('');
+
     useEffect(() => {
         if (objectController) {
             const getData = async () => {
@@ -134,8 +111,8 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                 if (objectId.indexOf('|') === -1) {
                     // Single (normal) editing
                     const newObject = Number(objectId) > 0
-                            ? await objectController.getObject(objectName, objectId) as IEntityDataMainObject<EntityType[]>
-                            : await objectController.newObject(objectName, '-1');
+                            ? await objectController.getObject(objectName, objectId, false, true) as IEntityDataMainObject<EntityType[]>
+                            : await objectController.newObject(objectName, '-1', true);
                     if (newObject) {
                         if (entityDataContext) {
                             // If this is a reload after a save operation with automatic conflicts fixing,
@@ -169,8 +146,11 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                             }
                         }
                         newObject.rwMode = rwMode;
-                        newObject.componentPermissions = await PermissionLogic.getPermissions(applicationName.toLowerCase(), objectName,
-                                objectController.objectDescription ?? objectName);
+                        newObject.componentPermissions = await PermissionLogic.getPermissions(applicationName, objectController,
+                                operatorPermissions);
+                        const newGuid: string = uuidv4();
+                        setObjectGuid(newGuid);
+                        newObject.guid = newGuid;
                         dispatch(setNewObject(newObject));
                         setReadOnly(userReadOnlyVisibilities.indexOf(
                                 Number(((newObject.objectData[0].data ?? {}) as Record<string, unknown>).VisibilityCriteriaId ?? -1)) !== -1);
@@ -179,7 +159,7 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                     }
                 } else {
                     const newObject =
-                            await objectController.getObject(objectName, objectId, true);
+                            await objectController.getObject(objectName, objectId, true, rwMode === rwModes.R);
                     let editPermissions = true;
                     newObject.objectData.forEach(currentObject => {
                         if (userReadOnlyVisibilities.indexOf(
@@ -202,6 +182,7 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
                     setReadOnly(!editPermissions);
                     const multiEditKey = Date.now();
                     dispatch(setMultipleObject(newObject));
+                    const externalList = newObject.lists;
                     setMultiEditing(true);
                 }
                 setLoading(false);
@@ -226,7 +207,29 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
             getValidators();
 
         }
-    }, [objectName, objectId, rwMode, intl.locale, objectController, ver]);
+    }, [objectName, objectId, rwMode, intl.locale, ver, objectController, operatorPermissions, lang]);
+
+    /**
+     *  Triggered after the object data is loaded in the store. Used to download lists asynchronously
+     */
+    useEffect(() => {
+        if (objectId && entityDataContext?.objectId === objectId && rwMode === rwModes.W) {
+            (async () => {
+                const externalDataList = objectController.externalData;
+                for (const el of (externalDataList ?? [])) {
+                    const newData = await objectController.listInitialization(el.listFieldName, 50);
+                    const newList: IEntityExternalList = {
+                        data: newData.data,
+                        name: el.listFieldName,
+                        dynamicReload: newData.dynamicReload,
+                        dataBinding: [],
+                        generalName: el.listFieldName
+                    }
+                    dispatch(setSingleList({list: newList, objectName, objectId, embedInPreviousEdit: true}));
+                }
+            })();
+        }
+    }, [objectGuid]);
 
     const readPermission = useAppSelector(state =>
         state.dataObjectSlice.objects.find(el => el.objectName === objectName && el.objectId === objectId)?.componentPermissions?.find(el =>
@@ -238,6 +241,25 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
             el.componentName === "MainObject" && el.access === 'Write'
         )
     );
+
+    const getExternalList = async (componentId: string, listName: string) => {
+        if (entityDataContext && rwMode === rwModes.W) {
+            const currentList = entityDataContext.lists.find(el => el.name === listName);
+            if (currentList) {
+                if (currentList.dynamicReload === 'yes') {
+                    if (!currentList.dataBinding?.find(el => el.componentId === componentId)) {
+                        dispatch(setSingleComponentList({
+                            objectId: objectId,
+                            objectName: objectName,
+                            listName: listName,
+                            componentId: componentId,
+                            data: currentList.data ?? []
+                        }));
+                    }
+                }
+            }
+        }
+    };
 
     return <RawCRUDWrapper
         loading={!validatorLoaded || loading}
@@ -252,6 +274,7 @@ export const EntityCRUDWrapper = React.memo(({objectName, objectId, rwMode, ver,
         readOnly={readOnly}
         Renderer={Renderer}
         multiEditing={multiEditing}
+        getExternalList={getExternalList}
     />;
 });
 

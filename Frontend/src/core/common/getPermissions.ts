@@ -1,9 +1,9 @@
 import { ADailyApiClient, DailyPublicRegistrationContainer, store } from "@tcpos/backoffice-core";
 import type { CommonObjectController, EntityType, IUiComponentPermissionAccess, IUserPermission } from "@tcpos/backoffice-core";
 
-export const getPermissions = async <OBJECT_DATA_TYPE extends EntityType[], OBJECT_EXTENDED_DATA_TYPE extends EntityType[], OBJECT_EXTERNAL_DATA_TYPE extends EntityType[], I18N>(
+export const getPermissions = async <OBJECT_DATA_TYPE extends EntityType[], OBJECT_EXTENDED_DATA_TYPE extends EntityType[], I18N>(
                                     applicationName: string, objectName: string, objectDescription: string, 
-                                    objectController: CommonObjectController<OBJECT_DATA_TYPE, OBJECT_EXTENDED_DATA_TYPE, OBJECT_EXTERNAL_DATA_TYPE, I18N>, 
+                                    objectController: CommonObjectController<OBJECT_DATA_TYPE, OBJECT_EXTENDED_DATA_TYPE, I18N>, 
                                     permissionData?: IUserPermission[]
                                 ): Promise<IUiComponentPermissionAccess[]> => {
         const apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);

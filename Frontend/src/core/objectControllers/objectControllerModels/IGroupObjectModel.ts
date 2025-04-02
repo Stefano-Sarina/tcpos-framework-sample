@@ -6,7 +6,3 @@ export type GroupObjectDataType = [GroupEntityType,
     ...Array<UserGroupEntityType>];
 
 export type IGroupObjectModel = IEntityDataMainObject<GroupObjectDataType>;
-
-export type GroupObjectExternalDataType = [
-    UserGroupEntityType
-];

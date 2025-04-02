@@ -22,7 +22,11 @@
                 "fieldName" : "GroupName",
                 "label" : "GroupName",
                 "xs": 12,
-                "lg": 6
+                "gridView": {
+                  "defaultVisible": true,
+                  "position": 1,
+                  "width": 200
+                }
               }
             ]
           },
@@ -41,6 +45,7 @@
                 "pagination": false,
                 "xs": 12,
                 "lg": 12,
+                "fieldName": "GroupId",
                 "subFields": [
                   {
                     "colId": "UserId",
@@ -55,8 +60,13 @@
                       "fieldName": "UserId",
                       "label": "User",
                       "multiSelect": false,
-                      "listName": "User_List",
-                      "dynamicReload": true
+                      "externalDataInfo": {
+                        "apiCallInfo" : {
+                          "apiSuffix" : "User",
+                          "descriptionField" : "Description",
+                          "foreignIdField" : "Id"
+                        }
+                      }
                     }
                   }
                 ]
@@ -65,24 +75,6 @@
           }
         ]
       }
-    ]
-  },
-  "defaultGridView": {
-    "label": "Groups",
-    "editInline": false,
-    "layout" : [
-      {
-        "columnName" : "GroupName",
-        "sourceName" : "GroupName",
-        "sourceType" : "Field",
-        "label" : "GroupName",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 1,
-        "type": "string"
-      }
-    ],
-    "quickOps": [
     ]
   }
 }
