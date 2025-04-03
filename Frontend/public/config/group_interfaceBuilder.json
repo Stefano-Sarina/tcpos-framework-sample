@@ -1,0 +1,80 @@
+{
+  "objectName" : "group",
+  "toolbar": [],
+  "detailView" : {
+    "titleField": "GroupName",
+    "label": "Group",
+    "entityName": "Group",
+    "layoutGroups" : [
+      {
+        "groupName" : "main_definitions",
+        "label" : "Main definitions",
+        "sections": [
+          {
+            "xs" : 12,
+            "lg" : 12,
+            "sectionName": "MainDefinitions",
+            "label": "",
+            "components" : [
+              {
+                "componentName" : "GroupName",
+                "componentType" : "wdStringTextField",
+                "fieldName" : "GroupName",
+                "label" : "GroupName",
+                "xs": 12,
+                "gridView": {
+                  "defaultVisible": true,
+                  "position": 1,
+                  "width": 200
+                }
+              }
+            ]
+          },
+          {
+            "sectionName": "UserGroup",
+            "label": "Group components",
+            "xs" : 12,
+            "lg" : 12,
+            "components": [
+              {
+                "componentName": "UserGroupSubForm",
+                "entityName": "UserGroup",
+                "label": "Components",
+                "componentType": "wdSubForm",
+                "minHeight": "300px",
+                "pagination": false,
+                "xs": 12,
+                "lg": 12,
+                "fieldName": "GroupId",
+                "subFields": [
+                  {
+                    "colId": "UserId",
+                    "sortable": false,
+                    "filter": false,
+                    "lockPinned": null,
+                    "flex": 1,
+                    "minWidth": 300,
+                    "cellRenderer": {
+                      "componentName": "UserId",
+                      "componentType": "wdCombobox",
+                      "fieldName": "UserId",
+                      "label": "User",
+                      "multiSelect": false,
+                      "externalDataInfo": {
+                        "apiCallInfo" : {
+                          "apiSuffix" : "User",
+                          "descriptionField" : "Description",
+                          "foreignIdField" : "Id"
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

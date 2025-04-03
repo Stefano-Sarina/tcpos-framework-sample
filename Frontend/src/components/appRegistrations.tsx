@@ -1,11 +1,11 @@
 import {activatePlugins, registerCoreServices} from "../core/registerCoreServices";
-import {registerDailyDefaultComponent} from "./registerDailyDefaultComponent";
+import {registerAppDefaultComponent} from "./registerAppDefaultComponent";
 import {RegisterCustomInterface} from "./registerCustomInterface";
 
 /**
  * Startup registrations:
  * - Core services: {@link registerCoreService}
- * - Default UI components {@link registerDailyDefaultComponent}
+ * - Default UI components {@link registerAppDefaultComponent}
  * - Custom UI components {@link RegisterCustomInterface}
  * - Plugins
  *
@@ -17,7 +17,7 @@ import {RegisterCustomInterface} from "./registerCustomInterface";
 export const appRegistrations = () => {
     registerCoreServices();
 
-    registerDailyDefaultComponent();
+    registerAppDefaultComponent();
 
     RegisterCustomInterface();
 

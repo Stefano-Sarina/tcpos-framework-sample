@@ -624,9 +624,9 @@ export const EntityMainComponent = (props: CRUDWrapperRendererProps) => {
 
     const sectionElements = useMemo(() => {
         if (currentGroupsList.layoutGroups) {
-            return currentGroupsList.layoutGroups //.filter(group => !!uiPermissions?.find(el =>
-                    //el.componentName === props.entityName + '.' + group.groupName &&
-                    //el.access !== "NoAccess"))
+            return currentGroupsList.layoutGroups.filter(group => !!uiPermissions?.find(el =>
+                    el.componentName === props.entityName + '.' + group.groupName &&
+                    el.access !== "NoAccess"))
                     .map((group, index) => {
                         let tabPanel: React.ReactElement<IWDBoundComponentCommonProperties>;
                         if (!group.customComponent) {
@@ -634,17 +634,17 @@ export const EntityMainComponent = (props: CRUDWrapperRendererProps) => {
                                     <Grid container spacing={3}>
                                         {group.sections.map((section, sectionIndex) => {
                                             let currentRwMode: rwModes = props.rwMode;
-                                            const currentPermission = true // uiPermissions?.filter(el =>
-                                                    //el.componentName === props.entityName + "." + group.groupName + "." + section.sectionName
-                                            //);
+                                            const currentPermission = uiPermissions?.filter(el =>
+                                                    el.componentName === props.entityName + "." + group.groupName + "." + section.sectionName
+                                            );
                                             let assignedPermission = "";
                                             if (currentPermission) {
-                                                assignedPermission = "Write" //currentPermission.find(el => el.access === 'Write')
-                                                        //? "Write"
-                                                        //: (currentPermission.find(el => el.access === 'Read')
-                                                        //        ? "Read"
-                                                        //        : (currentPermission.find(el => el.access === 'NoAccess')
-                                                        //                ? "NoAccess" : ""));
+                                                assignedPermission = currentPermission.find(el => el.access === 'Write')
+                                                        ? "Write"
+                                                        : (currentPermission.find(el => el.access === 'Read')
+                                                                ? "Read"
+                                                                : (currentPermission.find(el => el.access === 'NoAccess')
+                                                                        ? "NoAccess" : ""));
                                                 if (props.rwMode === rwModes.W && assignedPermission === 'Read') {
                                                     currentRwMode = rwModes.R;
                                                 }

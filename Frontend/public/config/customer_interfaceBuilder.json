@@ -17,10 +17,23 @@
             "lg" : 12,
             "components": [
               {
+                "componentName": "FullName",
+                "componentType": "wdHidden",
+                "fieldName": "FullName",
+                "label": "Full name",
+                "xs" : 12,
+                "lg" : 12,
+                "gridView": {
+                  "defaultVisible": true,
+                  "position": 1,
+                  "width": 200
+                }
+              },
+              {
                 "componentName": "FirstName",
                 "componentType": "wdStringTextField",
                 "fieldName": "FirstName",
-                "label": "FirstName",
+                "label": "First name",
                 "xs" : 12,
                 "lg" : 12
               },
@@ -37,30 +50,5 @@
         ]
       }
     ]
-  },
-  "defaultGridView": {
-    "label": "Customers",
-    "editInline": false,
-    "layout" : [
-      {
-        "columnName" : "Id",
-        "sourceName" : "Id",
-        "label" : "Id",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 1,
-        "type": "number"
-      },
-      {
-        "columnName" : "FullName",
-        "sourceName" : "FullName",
-        "label" : "FullName",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 2,
-        "type": "string"
-      }
-    ],
-    "quickOps": []
   }
 }

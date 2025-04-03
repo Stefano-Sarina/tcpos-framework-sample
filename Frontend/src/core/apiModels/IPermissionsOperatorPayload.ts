@@ -5,6 +5,7 @@ export type PermissionsOperatorEntityType = EntityType<IPermissionsOperatorPaylo
 
 export interface IPermissionsOperatorPayload extends IPayloadBase {
     Id: number;
+    ConcurrencyCode: string;
     OperatorId: number | null; // Mandatory
     OperatorCode: string | null; // Mandatory
     OperatorGroupId: number | null; // Mandatory
@@ -12,4 +13,5 @@ export interface IPermissionsOperatorPayload extends IPayloadBase {
     PermissionId: number | null; // Mandatory
     PermissionName: string | null; // Mandatory
     PermissionValue: number | null; // Mandatory
+    PermissionType: number | null; // Mandatory
 }

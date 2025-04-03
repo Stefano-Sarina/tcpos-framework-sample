@@ -17,13 +17,23 @@
             "label": "Header",
             "components" : [
               {
-                "componentName": "CustomerId",
+                "componentName": "Customer",
                 "componentType": "wdCombobox",
                 "fieldName" : "CustomerId",
-                "displayFieldName": "Customer",
                 "label" : "Customer",
                 "multiSelect" : false,
-                "listName": "Customer_List",
+                "externalDataInfo": {
+                  "apiCallInfo" : {
+                    "apiSuffix" : "Customer",
+                    "descriptionField" : "FirstName, LastName",
+                    "foreignIdField" : "Id"
+                  }
+                },
+                "gridView": {
+                  "defaultVisible": true,
+                  "position": 1,
+                  "width": 200
+                },
                 "xs": 12,
                 "lg": 6
               },
@@ -34,7 +44,11 @@
                 "label" : "Order date",
                 "xs": 12,
                 "lg": 6,
-                "type": "date"
+                "gridView": {
+                  "defaultVisible": true,
+                  "position": 2,
+                  "width": 200
+                }
               },
               {
                 "componentName" : "Notes",
@@ -59,6 +73,7 @@
                 "componentType": "wdSubForm",
                 "minHeight" : "300px",
                 "pagination" : false,
+                "fieldName": "OrderId",
                 "xs" : 12,
                 "lg" : 12,
                 "subFields": [
@@ -73,10 +88,15 @@
                       "componentName": "ProductId",
                       "componentType": "wdCombobox",
                       "fieldName": "ProductId",
-                      "displayFieldName": "Product",
                       "label": "Product",
                       "multiSelect": false,
-                      "listName": "Product_List"
+                      "externalDataInfo": {
+                        "apiCallInfo" : {
+                          "apiSuffix" : "Product",
+                          "descriptionField" : "Name",
+                          "foreignIdField" : "Id"
+                        }
+                      }
                     }
                   },
                   {
@@ -100,31 +120,5 @@
         ]
       } 
     ]
-  },
-  "defaultGridView": {
-    "label": "Orders",
-    "editInline": false,
-    "layout" : [
-      {
-        "columnName" : "Customer",
-        "sourceName" : "Customer",
-        "label" : "Customer",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 1,
-        "type": "string"
-      },
-      {
-        "columnName" : "OrderDate",
-        "sourceName" : "OrderDate",
-        "sourceType" : "Field",
-        "label" : "Date",
-        "width" : 200,
-        "visible": true,
-        "indexPosition": 2,
-        "type": "date"
-      }
-    ],
-    "quickOps": []
   }
 }

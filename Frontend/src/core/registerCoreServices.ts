@@ -26,6 +26,7 @@ import {
     OrderDataController,
     OrderDetailDataController,
     PermissionDataController,
+    PermissionsCtesDataController,
     ProductDataController,
     UserPermissionDataController
 } from "./dataControllers";
@@ -40,6 +41,9 @@ import { UserDataController } from "./dataControllers/UserDataController";
 import { UserGroupDataController } from "./dataControllers/UserGroupDataController";
 import { TaxDataController } from "./dataControllers/TaxDataController";
 import { TaxObjectController } from "./objectControllers/TaxObjectController";
+import { GroupDataController } from "./dataControllers/GroupDataController";
+import { GroupObjectController } from "./objectControllers/GroupObjectController";
+import { PermissionsOperatorDataController } from "./dataControllers/PermissionsOperatorDataController";
 
 /**
  * Registration of core services:
@@ -78,18 +82,26 @@ export function registerCoreServices() {
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserGroup", controller: UserGroupDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+        _registrationName: "Group", controller: GroupDataController}));
+    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Permission", controller: PermissionDataController}));
+    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+        _registrationName: "PermissionsCtes", controller: PermissionsCtesDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserPermission", controller: UserPermissionDataController}));
     DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "GroupPermission", controller: GroupPermissionDataController}));
-                    
+    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+        _registrationName: "PermissionsOperator", controller: PermissionsOperatorDataController}));
+    
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "tax", controller: TaxObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "customer", controller: CustomerObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "product", controller: ProductObjectController}));
+    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+        {_registrationName: "group", controller: GroupObjectController}));
     DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "order", controller: OrderObjectController}));
 

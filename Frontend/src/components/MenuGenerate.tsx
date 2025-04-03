@@ -15,7 +15,6 @@ import type  {
     IPluginEntitiesMenuCustomization,
     IPluginGroupsMenuCustomization,
     IViewConfigModel,
-    IOperatorPayload
 } from "@tcpos/backoffice-core";
 import {useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
 
@@ -105,16 +104,18 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                     }
                 });
             });
-            /*response = await apiClient.get(apiUrl + `/PermissionsOperator?$filter=Type eq '${interfaceConfig.applicationName.toLowerCase()}' and ` +
-                "((KeyCode in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-read").join("','") + "')) or " +
-                "(KeyCode in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-write").join("','") + "')))",
+            response = await apiClient.get(apiUrl + `/PermissionsOperator?$filter=contains(PermissionName, '-${interfaceConfig.applicationName.toLowerCase()}-') and ` +
+                "((PermissionName in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-read").join("','") + "')) or " +
+                "(PermissionName in ('" + menuEntityList.map(ent => ent.toLowerCase() + "-" + interfaceConfig.applicationName.toLowerCase() + "-write").join("','") + "')))",
                 {}, false, true);
             const permissions: {code: string, type: string}[] =
-                response.filter((row: Record<string, unknown>) => row.PermissionValue === 2)
-                    .map((row: Record<string, unknown>) => {
-                        return {code: row.KeyCode, type: row.SubType};
-                    });*/
-            const permissions: {code: string, type: string, permissionValue?: number}[] = [
+                Array.isArray(response) ?
+                    response.filter((row: Record<string, unknown>) => row.PermissionValue === 1)
+                        .map((row: Record<string, unknown>) => {
+                            return {code: String(row.PermissionName), type: String(row.PermissionName).split('-').slice(String(row.PermissionName).split('-').length -1)[0]};
+                        })
+                        : [];
+/*             const permissions: {code: string, type: string, permissionValue?: number}[] = [
                 {
                     code: "customer-backofficesample-read",
                     type: 'read'
@@ -168,16 +169,17 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                     permissionValue: 2
                 },
             ]
+ */            
             dispatch(setPermissions(permissions));
-            /*pluginList.forEach(p => {
+            pluginList.forEach(p => {
                 if (DailyPublicRegistrationContainer.isRegisteredPluginMenuCustomization(p.toLowerCase())) {
                     const customization = DailyPublicRegistrationContainer.resolvePluginMenuCustomization(p.toLowerCase());
                     localInterfaceConfig.menuGroups = customizeMenuGroups(localInterfaceConfig.menuGroups, customization.groups ?? [],
                         customization.entities ?? []);
                 }
-            });*/
+            });
             const inactiveObjects: string[] = [];
-            /*localInterfaceConfig.menuGroups.forEach(m => {
+            localInterfaceConfig.menuGroups.forEach(m => {
                 const activeMenus = m.entities.filter(ent => ent.active);
                 activeMenus.forEach(ent => {
                     if (!permissions.find(el =>
@@ -187,11 +189,11 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                         inactiveObjects.push(ent.entityId);
                     }
                 });
-            });*/
+            });
             let permissionAdministrator = false;
-            /*try {
-                const response: any = await apiClient.get('/connect/userinfo', {}, false, true);
-                if (response?.Subject) {
+            try {
+/*                const response: any = await apiClient.get('/connect/userinfo', {}, false, true);
+                 if (response?.Subject) {
                     const operatorDataControllerRegistration =
                             DailyPublicRegistrationContainer.resolveEntry("dataControllers", "Operators").controller;
                     const operatorDataController =
@@ -207,13 +209,15 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                         }
                     }
                 }
+ */         
+                permissionAdministrator = userName === 'Admin';
             } catch {
                 // No permissions to get user data
-            }*/
+            }
             const activeItems = localInterfaceConfig.menuGroups.map(m => {
                 return {...m, entities: m.entities.filter(ent =>
                         inactiveObjects.indexOf(ent.entityId) === -1 ||
-                        ent.entityId === 'dashboard' ||
+                        ent.entityId === 'dashboard' || ent.entityId === 'jsonRenderer' ||
                         (permissionAdministrator && ent.entityId === 'prmPermission'))};
             });
             dispatch(loadInterfaceMenu(activeItems /*{...localInterfaceConfig, menuGroups: activeItems }*/));

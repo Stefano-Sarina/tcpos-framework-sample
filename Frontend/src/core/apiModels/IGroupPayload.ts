@@ -1,11 +1,10 @@
 import type {EntityType,IPayloadBase} from "@tcpos/common-core";
 
 
-export type GroupEntityType = EntityType<IGroupPayload, "Groups">;
+export type GroupEntityType = EntityType<IGroupPayload, "Group">;
 
 export interface IGroupPayload  extends IPayloadBase {
     Id: number
-    Code: string | null // mandatory
-    Description: string | null // mandatory
+    GroupName: string | null // mandatory
 }
 

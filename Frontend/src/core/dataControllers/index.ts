@@ -3,6 +3,7 @@ export * from "./OrderDataController";
 export * from "./OrderDetailDataController";
 export * from "./CustomerDataController";
 export * from "./PermissionDataController";
+export * from "./PermissionsCtesDataController";
 export * from "./UserPermissionDataController";
 export * from "./PrmOperatorPermAssocDataController";
 export * from "./GroupPermissionDataController";

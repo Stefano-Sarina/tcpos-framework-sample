@@ -10,6 +10,7 @@ import {Link} from "react-router-dom";
 import _ from 'underscore';
 import {useAppSelector, TCIcon} from "@tcpos/backoffice-components";
 import {useIntl} from "react-intl";
+import { useAbortableEffect } from "@tcpos/common-components";
 
 interface ISearchResults {
     header: string,
@@ -32,53 +33,50 @@ export const SearchResults = () => {
     const [searchEntities, setSearchEntities] = useState<IEntitySearchResult[]>([]);
 
     const intl = useIntl();
-    const search = () => {
+    const search = (textSearch: string, abortSignal: AbortSignal) => {
         const allSearches: IEntitySearchResult[] = [];
         if (entityList) {
             entityList.map(e => {
                 const getDataEndPoint = e.endpoints?.gridReadOp;
                 if (getDataEndPoint) {
-                    let filter = "contains(" + getDataEndPoint.mainFieldSearch + "," + "%27" + query + "%27)";
+                    let filter = "contains(" + getDataEndPoint.mainFieldSearch + "," + "'" + query + "')";
                     if (getDataEndPoint.secondaryFieldsSearch) {
                         getDataEndPoint.secondaryFieldsSearch.map(f => {
-                            filter += " or " + "contains(" + f.field + "," + "%27" + query + "%27)";
+                            filter += " or " + "contains(" + f.field + "," + "'" + query + "')";
                         });
                     }
                     const fetchData = async () => {
                         const response = await DailyPublicRegistrationContainer.resolve(ABaseApiController)
-                                .apiGet(getDataEndPoint.endpoint, [], {filter: filter}, true) as Record<string, string>[];
-
-/*
-                                .apiCallobs(getDataEndPoint.endpoint + "?$filter=" + filter,
-                                        {}, {}, "GET", false);
-*/
+                                .getData(getDataEndPoint.endpoint, false)
+                                .apiCall({queryParams: {}, noCache: true, filter: filter, select: [], abortSignal}) as Record<string, string>[];
                         const nextResponse: ISearchResults[] = response.map((el: Record<string, string>) => {
                             return {
                                 header: el[getDataEndPoint.mainFieldSearch ?? ""] ?? "",
                                 detail: (getDataEndPoint.secondaryFieldsSearch?.map(
                                         s => s.label + ": " + (el[s.field] ?? "")).join(" - ")) ?? "",
-                                id: el[getDataEndPoint.idFieldSearch ?? ""] ?? ""
+                                id: el[getDataEndPoint.idFieldSearch ?? "Id"] ?? ""
                             };
                         });
                         allSearches.push({
                             entity: e.entityId,
                             label: e.label,
                             icon: e.icon,
-                            idField: getDataEndPoint.idFieldSearch ?? "",
+                            idField: getDataEndPoint.idFieldSearch ?? "Id",
                             results: nextResponse
                         });
+                        setSearchEntities(allSearches);
                     };
                     fetchData();
                 }
             });
-            setSearchEntities(allSearches);
         }
     };
 
-    useEffect(() => {
-                search();
-            }, [query]
-    );
+    useAbortableEffect((abortSignal) => {
+        if (query) {
+            search(query, abortSignal);
+        }
+    }, [query]);
 
     return (
             <MainCard title={'Search results'}>

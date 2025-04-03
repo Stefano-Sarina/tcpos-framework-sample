@@ -199,7 +199,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                         .map((el, index) => (
                             <IconButton
                                 key={'treeActionButton' + index + "_" + props.id}
-                                onClick={el.action}
+                                onClick={() => el.action(props.id)}
                                 size={"small"}
                             >
                                 <TCIcon
@@ -237,7 +237,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                                     visible={true}
                                     label={el.label}
                                     tooltip={el.label}
-                                    onEvent={el.action}
+                                    onEvent={() => el.action(props.id)}
                                     icon={el.icon}
                                     displayStyle={"ICON_ONLY"}
                                     moreItemsMenuCloseOnEvent={true}

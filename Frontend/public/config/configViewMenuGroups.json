@@ -7,7 +7,7 @@
     "loginWithGoogle": false
   },
   "apiUrl": "/api/1.0",
-  "uiVersion": "1.0.4",
+  "uiVersion": "1.0.0",
   "defaultLang": "en-US",
   "applicationName": "BackOfficeSample",
   "menuGroups" : [
@@ -32,13 +32,14 @@
           "entityId" : "customer",
           "label" : "Customers",
           "icon" : "account-cash",
-          "active": true
-        },
-        {
-          "entityId" : "tax",
-          "label" : "Taxes",
-          "icon" : "account-cash",
-          "active": true
+          "active": true,
+          "endpoints": {
+            "gridReadOp": {
+              "endpoint": "Customer",
+              "mainFieldSearch": "LastName",
+              "secondaryFieldsSearch": [{"field": "FirstName", "label": "First name"}]
+            }
+          }
         },
         {
           "entityId" : "product",
@@ -47,7 +48,7 @@
           "active": true
         },
         {
-          "entityId" : "userGroup",
+          "entityId" : "group",
           "label" : "User groups",
           "icon" : "account-group",
           "active": true
@@ -69,6 +70,18 @@
           "entityId": "order",
           "label": "Orders",
           "icon": "book-edit-outline",
+          "active": true
+        }
+      ]
+    },
+    {
+      "id": "Config",
+      "label": "Config",
+      "entities": [
+        {
+          "entityId": "jsonRenderer",
+          "label": "UI Simulator",
+          "url": "/jsonrenderer",
           "active": true
         }
       ]

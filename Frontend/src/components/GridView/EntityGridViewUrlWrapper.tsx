@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {ABaseObjectController, ALocalizationService, type EntityType, type IGridViewModel} from "@tcpos/common-core";
+import {ABaseObjectController, ALocalizationService, type EntityType, type IGridViewLayoutModel, type IGridViewModel} from "@tcpos/common-core";
 import type {
     AERObjectController, IDynamicDataList, ISingleExternalDataList,
 } from "@tcpos/backoffice-core";
@@ -126,6 +126,51 @@ export const EntityGridViewUrlWrapper = () => {
     const currentEntityGridViewModel: IGridViewModel | undefined = useAppSelector((state) => {
         return state.interfaceConfig?.objectDetails?.find(el => el.objectName === entityName)?.defaultGridView;
     });
+    const currentEntityViewModel = useAppSelector((state) => {
+        return state.interfaceConfig?.objectDetails?.find(el => el.objectName === entityName)?.detailView;
+    });
+    const [columnSettings, setColumnSettings] = useState<IGridViewLayoutModel[]>([]);
+    const [gridViewModel, setGridViewModel] = useState<IGridViewModel | undefined>(undefined);
+    useEffect(() => {
+        const columns: IGridViewLayoutModel[] = [];
+        if (currentEntityViewModel) {
+            const layoutGroups = currentEntityViewModel.layoutGroups;
+            layoutGroups.forEach(group => {
+                group.sections.forEach(section => {
+                    section.components.forEach(component => {
+                        if (component.gridView) {
+                            columns.push({
+                                columnName: component.componentName,
+                                sourceName: component.fieldName ?? "",
+                                sourceNameEdit: component.fieldName ?? "",
+                                displayFieldName: (component.fieldName ?? "") + "_descr",
+                                label: component.label,
+                                width: component.gridView.width,
+                                minWidth: component.gridView.minWidth ?? 150,
+                                indexPosition: component.gridView.position,
+                                type: component.componentType === 'wdNumberTextField' ? 'number' : (
+                                        component.componentType === 'wdCheckBox' ? 'boolean' : (
+                                                component.componentType === 'wdDateTextField' || component.componentType === 'wdDatePicker'
+                                                        ? 'date'
+                                                        : (component.componentType === 'wdCombobox' ? 'enum' : 'string')
+                                        )
+                                ),
+                                componentType: component.componentType,
+                                listName: component.fieldName + "_list",
+                                textAlign: component.gridView.textAlignment,
+                                sorting: null,
+                                sortPriority: null,
+                                filterable: component.gridView.filterable,
+                                visible: component.gridView.defaultVisible,
+                                decimalplaces: component.decimalplaces,
+                            });
+                        }
+                    });
+                });
+            });
+        }
+        setColumnSettings(columns);
+    }, [currentEntityViewModel]);
 
     /**
      * If the entity name and the interface configuration are available, sets the base parameters for the grid view
@@ -135,7 +180,7 @@ export const EntityGridViewUrlWrapper = () => {
      * EntityGridView inner component and saves the last settings in the store.
      */
     useEffect(() => {
-        if (entityName && entityName !== "" && currentEntityGridViewModel) { // Mandatory data
+        if (entityName && entityName !== "" && columnSettings.length > 0) { // Mandatory data
             if ((!startFilter && startFilter !== "") || (!sortParams && sortParams !== "") ||
                     (!visibleFields && visibleFields !== "")) {
                 // Missing url params: check last settings in the store and redirect
@@ -149,7 +194,7 @@ export const EntityGridViewUrlWrapper = () => {
                 if (uiStateSlice && uiStateSlice.lastVisibleFields) {
                     visibleFieldsString = uiStateSlice.lastVisibleFields;
                 } else {
-                    visibleFieldsString = currentEntityGridViewModel.layout.filter(el => el.indexPosition)
+                    visibleFieldsString = columnSettings.filter(el => el.indexPosition)
                             .sort((a, b) =>
                                     (a.indexPosition ?? - 1) - (b.indexPosition ?? - 1))
                             .map(el => el.sourceName + '|' + (el.width ?? (el.minWidth ?? 150)))
@@ -157,7 +202,7 @@ export const EntityGridViewUrlWrapper = () => {
                 }
                 navigate(`/${lang}/entities/${entityName}/list?vis=${visibleFieldsString}` +
                         `&filter=${filterString}&sort=${sortString}&page=1&rowsPerPage=${rowsPerPage}`);
-            } else {
+            } else if (gridViewModel) {
                 dispatch(setUiStateSearchParameters({
                     entityName: entityName,
                     lastVisibleFields: visibleFields,
@@ -171,7 +216,7 @@ export const EntityGridViewUrlWrapper = () => {
                         ? DailyPublicRegistrationContainer.resolveEntry("objectControllers", entityName).controller
                         : undefined;
                 const objectController = objectControllerRegistration
-                    ? DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[], ISingleExternalDataList<never>[], IDynamicDataList<never, EntityType[]>[]>
+                    ? DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[]>
                     : undefined;
                 setGridViewParams({
                     entityName: entityName,
@@ -181,7 +226,7 @@ export const EntityGridViewUrlWrapper = () => {
                     sortParams: sortParams,
                     page: currentPage,
                     rowsPerPage: rowsPerPage,
-                    gridViewModel: currentEntityGridViewModel,
+                    gridViewModel: gridViewModel,
                     updateData: updateData,
                     navigateToDetailView: navigateToDetailView,
                     objectController: objectController,
@@ -190,7 +235,19 @@ export const EntityGridViewUrlWrapper = () => {
                 setUrlProcessed(true);
             }
         }
-    }, [startFilter, sortParams, visibleFields, entityName, lang, currentPage, rowsPerPage, currentEntityGridViewModel]);
+    }, [startFilter, sortParams, visibleFields, entityName, lang, currentPage, rowsPerPage, gridViewModel]);
+
+    useEffect(() => {
+        if (currentEntityViewModel) {
+            setGridViewModel({
+                layout: columnSettings,
+                editInline: !!currentEntityViewModel.editInline,
+                disableNewEntity: currentEntityViewModel.disableNewEntity,
+                label: currentEntityViewModel.label,
+                quickOps: []
+            });
+        }
+    }, [columnSettings, currentEntityViewModel])
 
     return <>
         {urlProcessed && gridViewParams.gridViewModel &&

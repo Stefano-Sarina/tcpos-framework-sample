@@ -5,6 +5,3 @@ export type ProductObjectDataType = [ProductEntityType];
 
 export type IProductObjectModel = IEntityDataMainObject<ProductObjectDataType>;
 
-export type ProductObjectExternalDataType = [
-];
-

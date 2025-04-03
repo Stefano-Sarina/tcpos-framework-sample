@@ -63,37 +63,31 @@ const AfterLoginVerification = () => {
         const getUserinfo = async () => {
             try {
                 response = await apiClient.get('/connect/userinfo', {}, false, true);
-                dispatch(setLogged({logged: true, name: response.Subject ?? ""})); // This function also sets initialized = true
+                dispatch(setLogged({logged: true, name: response ?? ""})); // This function also sets initialized = true
             } catch {
                 dispatch(setLogged({logged: false})); // This function also sets initialized = true
-            }
-            try {
-                response = await apiClient.get(`${apiUrl}/readonlyvisibilities`, {}, false,     true);
-                if (response.fullAccessVisibilities) {
-                    dispatch(setVisibilities(response));
-                } else {
-                    dispatch(setVisibilities({fullAccessVisibilities: [], readOnlyVisibilities: []}));
-                }
-            } catch {
-                dispatch(setVisibilities({fullAccessVisibilities: [], readOnlyVisibilities: []}));
             }
         };
         getUserinfo();
     }, []);
 
     useEffect(() => {
-        const getPermissionTree = async () => {
-            return await PermissionLogic.getUIPermissionTree();
-        };
-        const updatePermissionTree = async () => {
-            const permissionTree = await getPermissionTree(); // PermissionLogic.getUIPermissionTree();
-            await apiClient.post(`${apiUrl}/FormsEndpoints`, permissionTree);
-        };
-        if (uiState === uiStateEnum.startingVersionUpdate) {
-            dispatch(setUIGenericState({sender: senderName, data: {state: uiStateEnum.versionUpdateStarted}}));
-            updatePermissionTree();
+        if (interfaceConfig && interfaceConfig.objectDetails !== undefined) {
+            const getPermissionTree = async () => {
+                if (interfaceConfig && interfaceConfig.objectDetails !== undefined) {
+                    return await PermissionLogic.getUIPermissionTree(interfaceConfig.objectDetails);
+                }
+            };
+            const updatePermissionTree = async () => {
+                const permissionTree = await getPermissionTree(); // PermissionLogic.getUIPermissionTree();
+                await apiClient.post(`${apiUrl}/FormsEndpoints`, permissionTree);
+            };
+            if (uiState === uiStateEnum.startingVersionUpdate) {
+                dispatch(setUIGenericState({sender: senderName, data: {state: uiStateEnum.versionUpdateStarted}}));
+                updatePermissionTree();
+            }    
         }
-    }, [apiClient, apiUrl, dispatch, uiState]);
+    }, [apiClient, apiUrl, dispatch, uiState, interfaceConfig]);
 
     useEffect(() => {
         if (initialized && uiState && (
