@@ -55,7 +55,7 @@ import {
  *
  * This function uses methods provided by the {@link DailyPublicRegistrationContainer} class.
  */
-export function registerDailyDefaultComponent(): void {
+export function registerAppDefaultComponent(): void {
     DailyPublicRegistrationContainer.registerEntry("uiComponents",
         createRegistrationEntry({_registrationName: DailyComponents.wdStringTextField, component: WD_BoundTextFieldString}));
     DailyPublicRegistrationContainer.registerEntry("uiComponents",

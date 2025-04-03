@@ -56,7 +56,7 @@ When starting, this component loads a json file containing the main configuratio
 wrappers:
 - ThemeCustomization wrapper: it defines the theme configuration
 - RTLLayout wrapper: it manages the theme mode ('LTR' or 'RTL')
-- DailyThemeOverrides wrapper: specific UI customization
+- AppThemeOverrides wrapper: specific UI customization
 - WD_Snackbar: component which provides a snackbar for the whole application
 - WD_ErrorBoundary: application errors management
 - Locales: provides localization

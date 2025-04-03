@@ -44,7 +44,6 @@
                 "label" : "Order date",
                 "xs": 12,
                 "lg": 6,
-                "type": "date",
                 "gridView": {
                   "defaultVisible": true,
                   "position": 2,

@@ -1,5 +1,5 @@
 import {appRegistrations} from "./appRegistrations";
 
-export * from "./WebDailyFullApp";
+export * from "./FullApp";
 
 appRegistrations();

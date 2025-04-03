@@ -280,10 +280,10 @@ export class JsonConverter {
                 };
             case "cellRenderer":
                 return {
-                    mandatoryProps: ["componentName", "label", "componentType"],
+                    mandatoryProps: ["componentName", "label", "fieldName", "componentType"],
                     optionalProps: [
                         ...(type === "wdNumberTextField" ? ["decimalplaces"] : []),
-                        ...(type === "wdCombobox" ? ["displayFieldName", "multiSelect", "listName"] : []),
+                        ...(type === "wdCombobox" ? ["multiSelect", "externalDataInfo"] : []),
                         ...(type === "wdButton" ? ["action", "activeOnRMode", "activeOnWMode"] : []),
                     ],
                     arrayProps: []

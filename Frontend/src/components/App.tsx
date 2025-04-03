@@ -15,7 +15,7 @@ import {ConfigProvider} from "./themeComponents/ConfigContext";
 import ScrollTop from "./themeComponents/ScrollTop";
 import ThemeCustomization from "./themeComponents/ThemeCustomization";
 import "./scss/app.scss";
-import {DailyThemeOverrides} from "./DailyThemeOverrides";
+import {AppThemeOverrides} from "./AppThemeOverrides";
 /*
 import type {FallbackProps} from "react-error-boundary";
 import {Button, Dialog, DialogActions, DialogContent, DialogTitle} from "@mui/material";
@@ -48,12 +48,12 @@ declare module 'notistack' {
 */
 
 /**
- * This is the starting point of the WebDaily application; it provides all the needed wrappers.
+ * This is the starting point of the application; it provides all the needed wrappers.
  * The main component provides the following wrappers:
  * - {@link ConfigProvider}
  * - RouterProvider: it uses a _router_ component created by the __createBrowserRouter__ function; the
  * BrowserRouter, from react-router version 6, allows to manage navigation and navigation blocks within the application.
- * - StoreProvider: it creates a context for the store provided by webdaily-core package
+ * - StoreProvider: it creates a context for the store provided by backoffice-core package
  * The other wrappers are provided by the {@link AppInner} component
  * @param children
  * @category Components
@@ -175,7 +175,7 @@ export const AppInner = () => {
     return (
         <ThemeCustomization>
             <RTLLayout themeDirection={themeDirection}>
-                <DailyThemeOverrides>
+                <AppThemeOverrides>
                     <WD_Snackbar>
                         <WD_ErrorBoundary>
                             <Locales i18n={i18n} themeDirection={themeDirection}
@@ -204,7 +204,7 @@ export const AppInner = () => {
                             </Locales>
                         </WD_ErrorBoundary>
                     </WD_Snackbar>
-                </DailyThemeOverrides>
+                </AppThemeOverrides>
 
             </RTLLayout>
         </ThemeCustomization>

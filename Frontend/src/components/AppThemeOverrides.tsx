@@ -29,7 +29,7 @@ function getGlobalCssVars(value: unknown,
 /**
  * Provide UI customization for this app
  */
-export const DailyThemeOverrides = ({children}: { children: ReactNode }) => {
+export const AppThemeOverrides = ({children}: { children: ReactNode }) => {
     const mantisTheme = useTheme();
     useEffect(() => {
         window.document.querySelector("html")?.classList.toggle("dark", mantisTheme.palette.mode == "dark");

@@ -252,6 +252,7 @@ export class JsonTreeRenderer extends JsonConverter {
             const gridViewNode = treeData.find(node => node.id === id);
             if (gridViewNode) {
                 gridViewNode.droppable = true;
+                gridViewNode.data!.nodeType = NodeType.Object;
                 const newPropertyLeaf = this.addProperty(result.treeData,
                     id, {key: p.key, defaultValue: p.defaultValue, override: false,
                         notRemovable: true});
@@ -355,8 +356,14 @@ export class JsonTreeRenderer extends JsonConverter {
                     el.data && 'key' in el.data && el.data?.key === 'cellRenderer' && result.newNodeId.includes(el.id));
                 if (cellRendererNode) {
                     cellRendererNode.droppable = true;
+                    (cellRendererNode.data! as IJsonTreeDataArrayElement).optionalSubProperties = [
+                        {key: "multiSelect", defaultValue: false},
+                        {key: "externalDataInfo", defaultValue: ""},
+                        {key: "decimalplaces", defaultValue: 2}
+                    ];
                     [{key: 'componentName', defaultValue: fieldName}, {key: 'componentType', defaultValue: componentType.componentType},
-                        {key: 'label', defaultValue: fieldName}].forEach(p => {
+                        {key: 'label', defaultValue: fieldName}, {key: 'fieldName', defaultValue: fieldName}
+                    ].forEach(p => {
                             const newPropertyLeaf = this.addProperty(result.treeData,
                                 cellRendererNode.id, {key: p.key, defaultValue: p.defaultValue, override: false,
                                     notRemovable: true});
@@ -375,8 +382,14 @@ export class JsonTreeRenderer extends JsonConverter {
                     {key: 'md', defaultValue: 12, removable: true},
                     {key: 'lg', defaultValue: 12, removable: true},
                     {key: 'xl', defaultValue: 12, removable: true},
-                    {key: 'gridView', defaultValue: '', removable: true, propertyIsObject: true},
+                    {key: 'gridView', defaultValue: '', removable: true, propertyIsObject: true, defaultAdd: true},
                 ], insertPosition, NodeSubType.LayoutGroupSectionElementComponent);
+                const gridViewNode = result.treeData.find(el =>
+                    el.data && 'key' in el.data && el.data?.key === 'gridView' && result.newNodeId.includes(el.id));
+                if (gridViewNode) {
+                    gridViewNode.droppable = true;
+                    result.treeData = this.addGridViewProperties(result.treeData, gridViewNode.id).treeData;
+                }
             }
             return {
                 treeData: result.treeData,

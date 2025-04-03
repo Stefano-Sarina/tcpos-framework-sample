@@ -1,7 +1,7 @@
 import React from "react";
 
 import {createRoot} from 'react-dom/client';
-import {WebDailyFullApp} from "./components";
+import {FullApp} from "./components";
 
 const renderPage = () => {
     const container:Element|null = document.getElementById('root');
@@ -13,7 +13,7 @@ const renderPage = () => {
     const StrictComp = strict? React.StrictMode:React.Fragment;
     root.render(
             <StrictComp>
-                <WebDailyFullApp />
+                <FullApp />
             </StrictComp>
     );
 };
