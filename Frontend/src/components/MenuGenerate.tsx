@@ -217,7 +217,7 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
             const activeItems = localInterfaceConfig.menuGroups.map(m => {
                 return {...m, entities: m.entities.filter(ent =>
                         inactiveObjects.indexOf(ent.entityId) === -1 ||
-                        ent.entityId === 'dashboard' ||
+                        ent.entityId === 'dashboard' || ent.entityId === 'jsonRenderer' ||
                         (permissionAdministrator && ent.entityId === 'prmPermission'))};
             });
             dispatch(loadInterfaceMenu(activeItems /*{...localInterfaceConfig, menuGroups: activeItems }*/));

@@ -524,26 +524,30 @@ export const PermissionsManagementCustomPage = () => {
 
     const getParentPermissions = (permissionId: number, onlySamePermissionType: boolean, onlySamePermissionAccess: boolean): IPermissionsCtesPayload[] => {
         let result: IPermissionsCtesPayload[] = [];
-        const parentNode = permissionTree.find(el =>
-            el.ChildPermissionId === permissionId && (String(el.ParentPermissionType) === String(el.ChildPermissionType) || !onlySamePermissionType)
-            && (el.ChildPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] ===
-                el.ParentPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] || !onlySamePermissionAccess)
-            && el.Level! === 1
-        );
-        if (parentNode) {
-            result = [...result, 
-                {
-                    Id: 0, 
-                    ChildPermissionId: parentNode.ChildPermissionId!,
-                    ChildPermissionName: parentNode.ChildPermissionName,
-                    ChildPermissionType: parentNode.ChildPermissionType,
-                    ParentPermissionId: parentNode.ParentPermissionId!,
-                    ParentPermissionName: parentNode.ParentPermissionName,
-                    ParentPermissionType: parentNode.ParentPermissionType,
-                    Level: parentNode.Level
-                },
-                ...getParentPermissions(parentNode.ParentPermissionId!, onlySamePermissionType, onlySamePermissionAccess)
-            ];
+        const currentNode = permissionTree.find(el => el.Id === permissionId);
+        if (currentNode) {
+            result.push(currentNode);
+            const parentNode = permissionTree.find(el =>
+                el.ChildPermissionId === permissionId && (String(el.ParentPermissionType) === String(el.ChildPermissionType) || !onlySamePermissionType)
+                && (el.ChildPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] ===
+                    el.ParentPermissionName!.split('-').slice(el.ChildPermissionName!.split('-').length -1)[0] || !onlySamePermissionAccess)
+                && el.Level! === 1
+            );
+            if (parentNode) {
+                result = [...result, 
+                    {
+                        Id: 0, 
+                        ChildPermissionId: parentNode.ChildPermissionId!,
+                        ChildPermissionName: parentNode.ChildPermissionName,
+                        ChildPermissionType: parentNode.ChildPermissionType,
+                        ParentPermissionId: parentNode.ParentPermissionId!,
+                        ParentPermissionName: parentNode.ParentPermissionName,
+                        ParentPermissionType: parentNode.ParentPermissionType,
+                        Level: parentNode.Level
+                    },
+                    ...getParentPermissions(parentNode.ParentPermissionId!, onlySamePermissionType, onlySamePermissionAccess)
+                ];
+            }    
         }
         return result;
     };

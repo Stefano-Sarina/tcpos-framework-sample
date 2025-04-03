@@ -20,9 +20,15 @@
                 "componentName": "Customer",
                 "componentType": "wdCombobox",
                 "fieldName" : "CustomerId",
-                "displayFieldName": "Customer",
                 "label" : "Customer",
                 "multiSelect" : false,
+                "externalDataInfo": {
+                  "apiCallInfo" : {
+                    "apiSuffix" : "Customer",
+                    "descriptionField" : "FirstName, LastName",
+                    "foreignIdField" : "Id"
+                  }
+                },
                 "gridView": {
                   "defaultVisible": true,
                   "position": 1,

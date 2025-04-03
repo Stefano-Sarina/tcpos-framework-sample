@@ -27,6 +27,7 @@ import UserTabPersonal from "../pages/TabPersonal";
 import UserProfile from "../pages/UserProfile";
 import UserTabPassword from "../pages/TabPassword";
 import UserTabSettings from "../pages/TabSettings";
+import { JsonRenderer } from '../../components/pages/UiConfigHelper/JsonRenderer';
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -174,6 +175,15 @@ const MainRoutes = {
             path: ":lang/searchResults/:query",
             element: <SearchResults/>
         },
+        {
+            path: ":lang/jsonrenderer/*",
+            element: <AuthGuard>
+                <PageWrapper pageRegistrationName={'jsonRenderer'}>
+                    <JsonRenderer/>
+                </PageWrapper>
+            </AuthGuard>
+        },
+
     ]
 };
 

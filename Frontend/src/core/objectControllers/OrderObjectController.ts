@@ -61,11 +61,12 @@ export class OrderObjectController extends CommonObjectController<OrderObjectDat
     }
 
     saveObject(data: IEntityDataMainObject<[OrderEntityType, ...OrderDetailEntityType[]]>, objectName?: string): Promise<IBatchSavedReturnValue> {
-        const newData = data.objectData.find(el => el.entityName === 'Order')?.data as unknown as Record<string, unknown>;
+        let newData = data.objectData.find(el => el.entityName === 'Order')?.data as unknown as Record<string, unknown>;
         if (newData) {
             newData.OrderDate = String(newData.OrderDate).substring(0, 10); 
         }
-        return super.saveObject(data, objectName);    
+        newData = {...newData, "CustomerId_descr": undefined};
+        return super.saveObject(data, objectName);
     }
 
     getPermissions = async (applicationName: string, objectName: string, objectDescription: string, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> => {

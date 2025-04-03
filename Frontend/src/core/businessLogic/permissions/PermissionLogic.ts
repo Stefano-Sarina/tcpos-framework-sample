@@ -227,7 +227,7 @@ export class PermissionLogic {
 
     public static async getPermissions(applicationName: string, objectController: AERObjectController<any, any>, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> {
         const objectName = objectController.objectName;
-        if (!permissionData) {
+        //if (!permissionData) {
             const dataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers",
                 'PermissionsOperator').controller;
             const currentDataController = DailyPublicRegistrationContainer.resolveConstructor(dataControllerRegistration);
@@ -267,14 +267,14 @@ export class PermissionLogic {
             permissionData = result.map(row => ({
                 code: row.PermissionName!, type: String(row.PermissionType!), permissionValue: row.PermissionValue!
             }));
-        }
+        //}
         if (permissionData) {
             const componentPermissions: IUiComponentPermissionAccess[] = [];
             const controllerRegistration = DailyPublicRegistrationContainer.resolveEntry("objectControllers", objectName)
                 .controller;
             if (controllerRegistration) {
                 const controller = DailyPublicRegistrationContainer.resolveConstructor(controllerRegistration);
-                controller.init("-1", objectName);
+                //controller.init("-1", objectName);
                 const controllerInstance: IControllerInstance = {registrationKey: objectName, controller: controller as AERObjectController<any, any>};
                 const uiTree = await this.getDependencyTree(controllerInstance, applicationName);
                 const calculatePermissionAccess = (node: IUiTree) => {

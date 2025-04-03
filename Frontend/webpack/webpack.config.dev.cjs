@@ -76,14 +76,14 @@ module.exports = {
     proxy: [
       {
         context: ['/api'],
-        target: 'http://localhost:50000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
 
       },
       {
         context: [ '/connect', '/Account', '/callback'],
-        target: 'http://localhost:50000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
         hostRewrite: 'localhost:8080',

@@ -1,0 +1,1 @@
+export type JsonElementsType = 'Group' | 'Section' | 'Component' | 'Property' | 'SubForm';

@@ -73,6 +73,18 @@
           "active": true
         }
       ]
+    },
+    {
+      "id": "Config",
+      "label": "Config",
+      "entities": [
+        {
+          "entityId": "jsonRenderer",
+          "label": "UI Simulator",
+          "url": "/jsonrenderer",
+          "active": true
+        }
+      ]
     }
   ]
 }
