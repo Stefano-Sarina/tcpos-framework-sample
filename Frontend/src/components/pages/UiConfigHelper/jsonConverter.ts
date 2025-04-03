@@ -258,11 +258,11 @@ export class JsonConverter {
                 };
             case 'components':
                 return {
-                    mandatoryProps: [...["componentName", "label", "componentType", "xs", "gridView"],
+                    mandatoryProps: [...["componentName", "label", "componentType", "xs"],
                         ...(type === "wdCombobox" ? ["multiSelect", "externalDataInfo"] : []),
                         ...(type !== "wdSubForm" && type !== "wdButton" ? ["fieldName"] : []),
                     ],
-                    optionalProps: [...["sm", "md", "lg", "xl"],
+                    optionalProps: [...["sm", "md", "lg", "xl", "gridView"],
                         ...(type === "wdNumberTextField" ? ["decimalplaces"] : []),
                         ...(type === "wdButton" ? ["action", "activeOnRMode", "activeOnWMode"] : []),
                         ...(type === "wdSubForm" ? ["minHeight", "pagination", "subFields", "entityName", "fieldName"] : []),

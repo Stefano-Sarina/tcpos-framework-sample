@@ -391,17 +391,17 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
                     }
 */
                     if (partialCommandList[idx].payload[f.fieldName] !== null) { // Null fields are not changed
-                        if (f.indexRef > 0 && Number(partialCommandList[idx].payload[f.fieldName]) < cnt) {
+                        if (f.indexRef > 0) {
                             partialCommandList[idx].payload[f.fieldName] = {
-                                Value: apiResponses[Number(partialCommandList[idx].payload[f.fieldName]) - 1],
-                                ValueType: 0,
-                                ValueReference: 0
+                                Value: 0, //apiResponses[Number(partialCommandList[idx].payload[f.fieldName]) - 1],
+                                ValueType: 1,
+                                Reference: f.indexRef >= 0 ? f.indexRef : 0
                             } as T[keyof T]; // TODO check cast
                         } else {
                             partialCommandList[idx].payload[f.fieldName] = {
                                 Value: partialCommandList[idx].payload[f.fieldName],
-                                ValueType: 1,
-                                ValueReference: f.indexRef >= 0 ? f.indexRef : 0
+                                ValueType: 0,
+                                Reference: 0
                             } as T[keyof T]; // TODO check cast
                         }
                     }

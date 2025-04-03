@@ -213,7 +213,7 @@ export class JsonTreeRenderer extends JsonConverter {
      */
     addComponentElement(treeData: NodeModel<IJsonTreeData>[], id: number | string):
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addArrayElement(treeData, id, [
+        let result = this.addArrayElement(treeData, id, [
             {key: 'componentName', defaultValue: 'New_Component{index}', propertyIsArray: false, defaultAdd: true},
             {key: 'componentType', defaultValue: 'wdStringTextField', propertyIsArray: false, defaultAdd: true},
             {key: 'fieldName', defaultValue: 'Field_Name', propertyIsArray: false, defaultAdd: true, removable: true},
@@ -229,26 +229,37 @@ export class JsonTreeRenderer extends JsonConverter {
             el.data && 'key' in el.data && el.data?.key === 'gridView' && result.newNodeId.includes(el.id));
         if (gridViewNode) {
             gridViewNode.droppable = true;
-            [
-                {key: 'defaultVisible', defaultValue: 'true', defaultAdd: true},
-                {key: 'textAlignment', defaultValue: 'left', defaultAdd: false},
-                {key: 'position', defaultValue: '1', defaultAdd: false},
-                {key: 'width', defaultValue: '200', defaultAdd: false},
-                {key: 'minWidth', defaultValue: '150', defaultAdd: false},
-                {key: 'filterable', defaultValue: 'true', defaultAdd: false},
-            ].forEach(p => {
-                const newPropertyLeaf = this.addProperty(result.treeData,
-                    gridViewNode.id, {key: p.key, defaultValue: p.defaultValue, override: false,
-                        notRemovable: true});
-                result.treeData = newPropertyLeaf.treeData;
-                result.newNodeId = [...result.newNodeId, ...newPropertyLeaf.newNodeId];
-            });
+            result = this.addGridViewProperties(result.treeData, gridViewNode.id);
         }
 
         return {
             treeData: result.treeData,
             newNodeId: result.newNodeId
         };
+    }
+
+    addGridViewProperties(treeData: NodeModel<IJsonTreeData>[], id: number | string): 
+                                    {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
+        const result = {treeData: [...treeData], newNodeId: [] as (number | string)[]};
+        [
+            {key: 'defaultVisible', defaultValue: 'true', defaultAdd: true},
+            {key: 'textAlignment', defaultValue: 'left', defaultAdd: false},
+            {key: 'position', defaultValue: '1', defaultAdd: false},
+            {key: 'width', defaultValue: '200', defaultAdd: false},
+            {key: 'minWidth', defaultValue: '150', defaultAdd: false},
+            {key: 'filterable', defaultValue: 'true', defaultAdd: false},
+        ].forEach(p => {
+            const gridViewNode = treeData.find(node => node.id === id);
+            if (gridViewNode) {
+                gridViewNode.droppable = true;
+                const newPropertyLeaf = this.addProperty(result.treeData,
+                    id, {key: p.key, defaultValue: p.defaultValue, override: false,
+                        notRemovable: true});
+                result.treeData = newPropertyLeaf.treeData;
+                result.newNodeId = [...result.newNodeId, ...newPropertyLeaf.newNodeId];    
+            }
+        });
+        return result;
     }
 
     /**
@@ -364,6 +375,7 @@ export class JsonTreeRenderer extends JsonConverter {
                     {key: 'md', defaultValue: 12, removable: true},
                     {key: 'lg', defaultValue: 12, removable: true},
                     {key: 'xl', defaultValue: 12, removable: true},
+                    {key: 'gridView', defaultValue: '', removable: true, propertyIsObject: true},
                 ], insertPosition, NodeSubType.LayoutGroupSectionElementComponent);
             }
             return {
@@ -490,8 +502,12 @@ export class JsonTreeRenderer extends JsonConverter {
                                 key: property.key,
                             }
                     });
+        let resultTreeData = [...treeData, ...this.addTreeDataParams([newNode], undefined)];
+        if (property.key === 'gridView') {
+            resultTreeData = this.addGridViewProperties(resultTreeData, newNode.id).treeData;
+        }
         return {
-            treeData: [...treeData, ...this.addTreeDataParams([newNode], undefined)],
+            treeData: resultTreeData,
             newNodeId: [id, newNode.id]
         };
     }
@@ -1082,7 +1098,7 @@ export class JsonTreeRenderer extends JsonConverter {
                             allowedValues: [
                                 "wdStringTextField", "wdPasswordTextField", "wdNumberTextField", "wdDateTextField",
                                 "wdBooleanTextField", "wdTextArea", "wdHidden", "wdCheckbox", "wdCombobox",
-                                "wdButton", "wdDatePicker", "wdTimePicker", "wdLabel", "wdLink",
+                                "wdButton", "wdHidden", "wdDatePicker", "wdTimePicker", "wdLabel", "wdLink",
                                 "wdImage", "wdTree"
                             ]
                         }
