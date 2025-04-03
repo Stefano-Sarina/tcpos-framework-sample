@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using TCPOS.Lib.Data.Batches.Interfaces;
 
-namespace Framework.Sample.App.DataBind;
+namespace Framework.Sample.App.Data.Bind;
 
 public class StorageProvider(SampleDbContext dbContext) : IStorageProvider, IDisposable, IAsyncDisposable
 {

@@ -1,5 +1,5 @@
 using Framework.Sample.App.DB;
-using TCPOS.Lib.Web.DataBind.DataPullOut.Items;
+using TCPOS.Lib.Web.Data.Bind.DataPullOut.Items;
 
 namespace Framework.Sample.App.WebApplication.Samples;
 

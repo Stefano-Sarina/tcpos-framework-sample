@@ -10,7 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Web;
-using TCPOS.Lib.Web.DataBind.DataPullOut.Items;
+using TCPOS.Lib.Web.Data.Bind.DataPullOut.Items;
 using TCPOS.Lib.Common.Diagnostics;
 using TCPOS.Lib.Common.Linq.Extensions;
 using TCPOS.Lib.Data.Batches.Enums;

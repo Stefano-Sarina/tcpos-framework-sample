@@ -4,7 +4,7 @@ using Framework.Sample.AppTests.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
-using TCPOS.Lib.Web.DataBind.Interfaces;
+using TCPOS.Lib.Web.Data.Bind.Interfaces;
 using TCPOS.Lib.Common.Linq.Extensions;
 
 namespace Framework.Sample.AppTests;

@@ -4,8 +4,8 @@ using System.Text.Json;
 using TCPOS.Lib.Common.Diagnostics;
 using TCPOS.Lib.Data.Batches.Engine.Runners;
 using TCPOS.Lib.Data.Batches.Payload;
-using TCPOS.Lib.Web.DataBind.DataPullOut.Delegates;
-using TCPOS.Lib.Web.DataBind.Exceptions;
+using TCPOS.Lib.Web.Data.Bind.DataPullOut.Delegates;
+using TCPOS.Lib.Web.Exceptions;
 
 namespace Framework.Sample.App.WebApplication;
 
