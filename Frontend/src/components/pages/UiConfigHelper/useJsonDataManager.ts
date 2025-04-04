@@ -237,14 +237,14 @@ export const useJsonDataManager = (
      * Add apiCallInfo property to a combobox node
      * @param nodeId
      */
-    const addApiCallInfoProperty = (nodeId: number | string) => {
+/*     const addApiCallInfoProperty = (nodeId: number | string) => {
         const result = jsonTreeRenderer.addApiCallInfoProperty(jsonData.baseData, nodeId);
         updateData({
             jsonData: result.treeData,
             openNodes: [...jsonData.openNodes, ...result.newNodeId]
         });
     }
-
+ */
     /************************************************************************
         Combo box properties
     *************************************************************************/
@@ -252,19 +252,19 @@ export const useJsonDataManager = (
      * Add externalDataInfo property to a combobox node
      * @param nodeId
      */
-    const addExternalDataInfoProperty = (nodeId: number | string) => {
+/*     const addExternalDataInfoProperty = (nodeId: number | string) => {
         const result = jsonTreeRenderer.addExternalDataInfoProperty(jsonData.baseData, nodeId);
         updateData({
             jsonData: result.treeData,
             openNodes: [...jsonData.openNodes, ...result.newNodeId]
         });
     }
-    /**
+ */    /**
      * Add externalDataInfo subproperty to an externalDataInfo property node
      * @param nodeId
      * @param property
      */
-    const addExternalDataInfoSubProperty = (nodeId: number | string, property: 'apiCallInfo' | 'customList') => {
+/*     const addExternalDataInfoSubProperty = (nodeId: number | string, property: 'apiCallInfo' | 'customList') => {
         let result: {treeData: NodeModel<IJsonTreeData>[], newNodeId: (string | number)[]};
         if (property === 'apiCallInfo') {
             result = jsonTreeRenderer.addApiCallInfoProperty(jsonData.baseData, nodeId);
@@ -276,17 +276,17 @@ export const useJsonDataManager = (
             openNodes: [...jsonData.openNodes, ...result.newNodeId]
         });
     }
-    /**
+ */    /**
      * Add a dictionary item to a custom list property
      */
-    const addCustomListElement = (nodeId: number | string) => {
+/*     const addCustomListElement = (nodeId: number | string) => {
         const result = jsonTreeRenderer.addCustomListElement(jsonData.baseData, nodeId);
         updateData({
             jsonData: result.treeData,
             openNodes: [...jsonData.openNodes, ...result.newNodeId]
         });
     }
-
+ */
     /**
      * Adds all the not yet used field in the first components node of the json tree
      * @param entityName
@@ -410,9 +410,6 @@ export const useJsonDataManager = (
         addMissingFields,
         addDataSchema,
         addSubForm,
-        addExternalDataInfoProperty,
-        addExternalDataInfoSubProperty,
-        addCustomListElement,
         getEntityComponent,
         getNodeName,
         validateJson

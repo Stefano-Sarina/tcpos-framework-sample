@@ -235,7 +235,7 @@ export class JsonConverter {
         return "";
     }
 
-    private jsonProperties(prop: string, type?: string):
+    jsonProperties(prop: string, type?: string):
             {mandatoryProps: string[], optionalProps: string[], arrayProps: {key: string, nameProp: string}[], objectProps?: string[]} {
         switch (prop) {
             case 'detailView':
@@ -290,7 +290,7 @@ export class JsonConverter {
                 };
             case "gridView":
                 return {
-                    mandatoryProps: ["defaultVisible"],
+                    mandatoryProps: ["defaultVisible"], 
                     optionalProps: ["textAlignment", "position", "width", "minWidth", "filterable"],
                     arrayProps: []
                 };

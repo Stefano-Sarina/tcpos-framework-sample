@@ -259,15 +259,6 @@ export const JsonRenderer = () => {
                 case 'locateComponent':
                     locateComponent(jsonTreeActions.params.nodeId);
                     break;
-                case 'addExternalDataInfoProperty':
-                    jsonDataManager.addExternalDataInfoProperty(jsonTreeActions.params.nodeId);
-                    break;
-                case 'addExternalDataInfoSubProperty':
-                    jsonDataManager.addExternalDataInfoSubProperty(jsonTreeActions.params.nodeId, jsonTreeActions.params.key);
-                    break;
-                case 'addCustomListElement':
-                    jsonDataManager.addCustomListElement(jsonTreeActions.params.nodeId);
-                    break;
                 default:
                     break;
             }
