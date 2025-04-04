@@ -83,6 +83,7 @@
     "@ant-design/colors": "~7.1.0",
     "@formatjs/cli": "~6.0.4",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.9",
+    "@tcpos/common-module-federation-automapper": "^2.0.2",
     "@types/lodash": "^4.14.202",
     "@types/node": "~18.0.3",
     "@types/prop-types": "~15.7.11",
