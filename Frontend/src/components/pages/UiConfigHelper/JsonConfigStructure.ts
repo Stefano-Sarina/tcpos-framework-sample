@@ -49,7 +49,6 @@ export interface IJsonConfigStructure {
  * It is also used to generate the UI for the JSON config file.
  * !!! Important !!! propertyName + parentProperty must be unique in the structure.
  * !!! Important !!! propertyName must be unique in the structure for object and array types.
- * !!! Important !!! the parent property type of a leaf must be object.
  */
 export const jsonConfigStructure: IJsonConfigStructure[] = [
     {

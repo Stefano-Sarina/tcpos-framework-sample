@@ -203,7 +203,7 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param dontTraverseArray if true, the function does not traverse the array (used for inner array elements)
      */
     addSubJsonElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, property: string,
-                            value?: Record<string, string | number | boolean>, isArrayElement?: boolean) {
+                            value?: Record<string, string | number | boolean>, isArrayElement?: boolean, insertPosition?: number) {
         const currentNode = treeData.find(node => node.id === id);
         if (!currentNode) {
             throw new Error('Node not found');
@@ -249,7 +249,7 @@ export class JsonTreeRenderer extends JsonConverter {
             ))
         );
         if (element.type === 'array' && isArrayElement) {
-            let partialResult = this.addArrayElement(treeData, id);
+            let partialResult = this.addArrayElement(treeData, id, insertPosition);
             //let partialResult = this.addProperty(newTreeData, id, {key: property, defaultValue: '', notRemovable: !element.optional}, false, true); // TODO override?
             result.treeData = partialResult.treeData;
             result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
@@ -284,12 +284,12 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param isArrayElement if true, an element of property (which must be an array) is being added
      */
     addJsonElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, property: string,
-            value?: Record<string, string | number | boolean>, isArrayElement?: boolean) {
+            value?: Record<string, string | number | boolean>, isArrayElement?: boolean, insertPosition?: number) {
         const currentNode = treeData.find(node => node.id === id);
         if (!currentNode) {
             throw new Error('Node not found');
         }
-        return this.addSubJsonElement(treeData, id, property, value, isArrayElement);
+        return this.addSubJsonElement(treeData, id, property, value, isArrayElement, insertPosition);
     }
 
     /**
@@ -301,9 +301,9 @@ export class JsonTreeRenderer extends JsonConverter {
      * @returns 
      */
     addClassElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, arrayClass: 'layoutGroups' | 'sections' | 'components' | 'subFields', 
-                                    value?: Record<string, string>): 
+                                    value?: Record<string, string>, insertPosition?: number): 
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        return this.addJsonElement(treeData, id, arrayClass, value, true);
+        return this.addJsonElement(treeData, id, arrayClass, value, true, insertPosition);
     }
 
     /**
@@ -447,7 +447,7 @@ export class JsonTreeRenderer extends JsonConverter {
                 const properties = jsonConfigStructure.filter(el => el.parentProperty === 'subFields').map(el => el.propertyName);
                 return this.addClassElement(treeData, componentsNodeid, 'subFields', 
                     {colId: fieldName, fieldName: fieldName, component: fieldName, label: fieldName, 
-                        componentType: componentType.componentType});
+                        componentType: componentType.componentType}, insertPosition);
                 /* result = this.addArrayElement(treeData, componentsNodeid, [
                     {key: 'colId', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true},
                     {key: 'sortable', defaultValue: false, propertyIsArray: false, defaultAdd: true},
@@ -479,7 +479,7 @@ export class JsonTreeRenderer extends JsonConverter {
             } else {
                 return this.addClassElement(treeData, componentsNodeid, 'components', 
                     {componentName: fieldName, fieldName: fieldName, component: fieldName, label: fieldName, 
-                        componentType: componentType.componentType});
+                        componentType: componentType.componentType}, insertPosition);
 
 /*                 result = this.addArrayElement(treeData, componentsNodeid, [
                     {key: 'componentName', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true},
@@ -878,6 +878,7 @@ export class JsonTreeRenderer extends JsonConverter {
         const openNodes = baseData.filter(el =>
             el.data?.nodeType !== NodeType.CloseNode && el.data?.nodeSubType !== 'toolbar'
         ).map(el => el.id);
+        baseData = this.updateTreeDataValueLists({treeData: baseData, newNodeId: openNodes}, dataSchema);
         return {
             baseData: baseData,
             treeData: this.finalNodeRendering({jsonData: baseData, openNodes}),
@@ -939,12 +940,12 @@ export class JsonTreeRenderer extends JsonConverter {
         if (currentNode && currentNode.data?.nodeType === NodeType.Leaf && currentNode.data.key === 'componentType' && parentNode) {
             componentTypeModified = true;
             const currentPropertyNodes = treeData.filter(node => node.parent === parentNode.id);
-            const parentType = this.getParentProperty(treeData, currentNode.id);
+            const parentType = this.getParentProperty(treeData, parentNode.id);
             const newProperties = jsonConfigStructure
-                .filter(el => el.parentProperty === parentType && !el.conditionalProperty || (
+                .filter(el => el.parentProperty === parentType && el.defaultAdd && (!el.conditionalProperty || (
                     el.conditionalProperty === 'componentType' && 
                         ((el.conditionalValue && el.conditionalValue.includes(newValue)) || 
-                            (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(newValue))))
+                            (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(newValue)))))
                 ).map(el => el.propertyName);
             currentPropertyNodes.forEach(node => {
                 if (node.data && 'key' in node.data) {
@@ -975,6 +976,7 @@ export class JsonTreeRenderer extends JsonConverter {
             }
         });
         propertiesToAdd.forEach(el => {
+            //newTreeData = this.addProperty(newTreeData, parentNode!.id, {key: el, defaultValue: '', override: false}).treeData;
             newTreeData = this.addJsonElement(newTreeData, parentNode?.id, el).treeData;
         });
         return this.addTreeDataParams(newTreeData);
