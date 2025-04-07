@@ -219,11 +219,8 @@ export const JsonRenderer = () => {
                 case 'addProperty':
                     jsonDataManager.addElementToJson('Property', jsonTreeActions.params.nodeId, jsonTreeActions.params);
                     break;
-                case 'removeArrayElement':
-                    jsonDataManager.removeArrayElement(jsonTreeActions.params.nodeId);
-                    break;
-                case 'removeProperty':
-                    jsonDataManager.removeProperty(jsonTreeActions.params.nodeId);
+                case 'removeTreeElement':
+                    jsonDataManager.removeTreeElement(jsonTreeActions.params.nodeId);
                     break;
                 case 'reorderArray':
                     jsonDataManager.arrayReorder(jsonTreeActions.params.newTreeData, jsonTreeActions.params.arrayNodes);

@@ -251,13 +251,6 @@ export class JsonConverter {
 
     jsonSubValidation = (subObject: any, property: string, nav: string) => {
         const propertyInfo = jsonConfigStructure.find(el => el.propertyName === property);
-        const subProperties: IJsonConfigStructure[] = jsonConfigStructure.filter(el => el.parentProperty === property &&
-            (!el.conditionalProperty || (
-                el.conditionalProperty && subObject[el.conditionalProperty] && 
-                    ((el.conditionalValue && el.conditionalValue.includes(subObject[el.conditionalProperty])) || 
-                        (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(subObject[el.conditionalProperty])))))
-            )
-            ?? [];
         let errors: string[] = [];
         if (propertyInfo?.type === "array") {
             if (!Array.isArray(subObject)) {
@@ -283,6 +276,11 @@ export class JsonConverter {
             }
             const {mandatoryProps, optionalProps} = this.getProperties(subObject, property);
             const currentErrors = this.checkObjectProperties(subObject, mandatoryProps, optionalProps, `${nav}`);
+            if (property === "externalDataInfo") {
+                if (Object.keys(subObject).length !== 1) {
+                    return [`${nav} property must have exactly one property ('apiCallInfo' or 'customList).`];
+                }
+            }
             if (currentErrors !== "") {
                 errors = [...errors, currentErrors];
             } else {

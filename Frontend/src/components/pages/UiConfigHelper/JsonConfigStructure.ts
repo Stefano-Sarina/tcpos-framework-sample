@@ -352,7 +352,7 @@ export const jsonConfigStructure: IJsonConfigStructure[] = [
         conditionalProperty: "componentType",
         conditionalValueExclusion: ["wdButton"],
         type: 'leaf',
-        optional: false,
+        optional: true,
         defaultAdd: true, 
         unique: false,
         defaultValue: 'fieldName'

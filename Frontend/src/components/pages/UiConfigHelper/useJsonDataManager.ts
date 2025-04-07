@@ -96,7 +96,7 @@ export const useJsonDataManager = (
             },
             {type: 'Property',
                 function: (treeData, id, property: IOptionalProperties) =>
-                    jsonTreeRenderer.addProperty(treeData, id, property)
+                    jsonTreeRenderer.addJsonElement(treeData, id, property.key, {[property.key]: property.defaultValue})
             },
         ]
     };
@@ -234,60 +234,6 @@ export const useJsonDataManager = (
     };
 
     /**
-     * Add apiCallInfo property to a combobox node
-     * @param nodeId
-     */
-/*     const addApiCallInfoProperty = (nodeId: number | string) => {
-        const result = jsonTreeRenderer.addApiCallInfoProperty(jsonData.baseData, nodeId);
-        updateData({
-            jsonData: result.treeData,
-            openNodes: [...jsonData.openNodes, ...result.newNodeId]
-        });
-    }
- */
-    /************************************************************************
-        Combo box properties
-    *************************************************************************/
-    /**
-     * Add externalDataInfo property to a combobox node
-     * @param nodeId
-     */
-/*     const addExternalDataInfoProperty = (nodeId: number | string) => {
-        const result = jsonTreeRenderer.addExternalDataInfoProperty(jsonData.baseData, nodeId);
-        updateData({
-            jsonData: result.treeData,
-            openNodes: [...jsonData.openNodes, ...result.newNodeId]
-        });
-    }
- */    /**
-     * Add externalDataInfo subproperty to an externalDataInfo property node
-     * @param nodeId
-     * @param property
-     */
-/*     const addExternalDataInfoSubProperty = (nodeId: number | string, property: 'apiCallInfo' | 'customList') => {
-        let result: {treeData: NodeModel<IJsonTreeData>[], newNodeId: (string | number)[]};
-        if (property === 'apiCallInfo') {
-            result = jsonTreeRenderer.addApiCallInfoProperty(jsonData.baseData, nodeId);
-        } else {
-            result = jsonTreeRenderer.addCustomListProperty(jsonData.baseData, nodeId);
-        }
-        updateData({
-            jsonData: result.treeData,
-            openNodes: [...jsonData.openNodes, ...result.newNodeId]
-        });
-    }
- */    /**
-     * Add a dictionary item to a custom list property
-     */
-/*     const addCustomListElement = (nodeId: number | string) => {
-        const result = jsonTreeRenderer.addCustomListElement(jsonData.baseData, nodeId);
-        updateData({
-            jsonData: result.treeData,
-            openNodes: [...jsonData.openNodes, ...result.newNodeId]
-        });
-    }
- */
-    /**
      * Adds all the not yet used field in the first components node of the json tree
      * @param entityName
      */
@@ -317,43 +263,14 @@ export const useJsonDataManager = (
     const getEntityComponent = (nodeId: number | string) => {
         return jsonTreeRenderer.getEntityName(jsonData.baseData, nodeId);
     };
-/*
-    const addComponentsFromJsonSchema = (entityName: string, schema: IDataSchema, baseJsonData: NodeModel<IJsonTreeData>[], id: number | string) => {
-        const schemaProperties = schema.schema.properties;
-        Object.keys(schemaProperties).forEach(property => {
-            if (!excludedFieldNames.includes(property)) {
-                const nodeExists = baseJsonData.find(el =>
-                    el.data && 'key' in el.data && el.data.key === 'fieldName' && el.data.params?.value === property &&
-                    jsonTreeRenderer.getEntityName(baseJsonData, el.id) === entityName
-                );
-                if (!nodeExists) {
-                    baseJsonData = jsonTreeRenderer.addComponentFromField(baseJsonData, baseJsonData, id,
-                        entityName, property, [schema]).treeData;
-                }
-            }
-        });
-        return baseJsonData;
-    };
-*/
-
-    /**
-     * Remove a property from the json data
-     * @param nodeId
-     */
-    const removeProperty = (nodeId: string | number) => {
-        updateData({
-            jsonData: jsonTreeRenderer.removeProperty(jsonData.baseData, nodeId),
-            openNodes: jsonData.openNodes
-        });
-    }
 
     /**
      * Removes an array element from the json data
      * @param nodeId
      */
-    const removeArrayElement = (nodeId: string | number) => {
+    const removeTreeElement = (nodeId: string | number) => {
         updateData({
-            jsonData: jsonTreeRenderer.removeArrayElement(jsonData.baseData, nodeId),
+            jsonData: jsonTreeRenderer.removeTreeElement(jsonData.baseData, nodeId),
             openNodes: jsonData.openNodes
         });
     }
@@ -403,8 +320,7 @@ export const useJsonDataManager = (
         enterEditMode,
         exitEditMode,
         addElementToJson,
-        removeProperty,
-        removeArrayElement,
+        removeTreeElement,
         arrayReorder,
         addComponentFromField,
         addMissingFields,
