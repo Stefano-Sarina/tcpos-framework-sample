@@ -410,7 +410,7 @@ export const jsonConfigStructure: IJsonConfigStructure[] = [
         optional: false,
         defaultAdd: true, 
         unique: false,
-        defaultValue: 300
+        defaultValue: '300px'
     },
     {
         propertyName: 'pagination',

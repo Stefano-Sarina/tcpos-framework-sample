@@ -94,6 +94,10 @@ export const useJsonDataManager = (
                 function: (treeData, id) =>
                     jsonTreeRenderer.addComponentElement(treeData, id)
             },
+            {type: 'CustomListElement',
+                function: (treeData, id) =>
+                    jsonTreeRenderer.addCustomListElement(treeData, id)
+            },
             {type: 'Property',
                 function: (treeData, id, property: IOptionalProperties) =>
                     jsonTreeRenderer.addJsonElement(treeData, id, property.key, {[property.key]: property.defaultValue})

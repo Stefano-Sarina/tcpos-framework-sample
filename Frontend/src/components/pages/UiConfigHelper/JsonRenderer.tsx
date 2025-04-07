@@ -216,6 +216,9 @@ export const JsonRenderer = () => {
                 case 'addComponent':
                     jsonDataManager.addElementToJson('Component', jsonTreeActions.params.nodeId);
                     break;
+                case 'addCustomListElement':
+                    jsonDataManager.addElementToJson('CustomListElement', jsonTreeActions.params.nodeId);
+                    break;
                 case 'addProperty':
                     jsonDataManager.addElementToJson('Property', jsonTreeActions.params.nodeId, jsonTreeActions.params);
                     break;
@@ -275,8 +278,8 @@ export const JsonRenderer = () => {
         const componentName = jsonDataManager.getNodeName(nodeId);
         const componentType = jsonDataManager.jsonData.treeData
                 .filter(el => el.parent === nodeId)
-                .find(el => 'key' in el && el.key === 'componentType');
-        if (componentType && 'value' in componentType && componentType.value === "wdSubForm") {
+                .find(el => el.data && 'key' in el.data && el.data.key === 'componentType');
+        if (componentType?.data && 'value' in componentType.data && componentType.data.value === "wdSubForm") {
             let parent = jsonDataManager.jsonData.treeData.find(el => el.id === nodeId)?.parent;
             let parentNode = jsonDataManager.jsonData.treeData.find(el => el.id === parent);
             while (parentNode && parentNode.id !== 0 && parentNode.data?.nodeSubType !== "layoutGroups") {
