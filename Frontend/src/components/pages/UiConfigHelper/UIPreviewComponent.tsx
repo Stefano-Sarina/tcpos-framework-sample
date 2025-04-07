@@ -193,7 +193,7 @@ export const UIPreviewComponent = (props: IUIPreviewComponentProps) => {
                                                                                 currentGroupsList={jsonModel.detailView}
                                                                                 entityName={props.objectName || defaultObjectName}
                                                                                 entityId={'0'}
-                                                                                rwMode={viewMode === 'edit' ? rwModes.W : rwModes.R}
+                                                                                rwMode={props.readWriteModeOverride ?? (viewMode === 'edit' ? rwModes.W : rwModes.R)}
                                                                                 tabsValue={props.tabsValue}
                                                                                 onChange={handleChange}
                                                                                 onAddSubRow={() => {

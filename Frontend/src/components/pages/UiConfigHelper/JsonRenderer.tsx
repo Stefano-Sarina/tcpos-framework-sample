@@ -44,6 +44,7 @@ import type {IJsonTreeActions, JsonTreeActionType} from "./IJsonTreeActions";
 import {UIPreviewComponentWrapper} from "./UIPreviewComponentWrapper";
 import {UploadJsonButton} from "./UploadJsonButton";
 import {ImportJsonDialog} from "./ImportJsonDialog";
+import { enqueueSnackbar } from "notistack";
 
 export const JsonRenderer = () => {
 
@@ -415,7 +416,9 @@ export const JsonRenderer = () => {
                 setEntityDialogProps({...entityDialogProps, error: `${intl.formatMessage({id: "Json schema error"})}`});
             }
         } catch (err) {
-            console.log(err);
+            enqueueSnackbar(String(err), {
+                variant: 'error',
+            });
             setEntityDialogProps({...entityDialogProps, error: `${intl.formatMessage({id: "Json schema error"})}: ${err}`});
         }
     };
@@ -528,15 +531,27 @@ export const JsonRenderer = () => {
      * Downloads the generated json
      */
     const downloadJson = () => {
+        const currentJson = jsonDataManager.convertTreeData2Json();
         const hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(json, null, 2));
+        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(currentJson, null, 2));
         hiddenElement.target = '_blank';
         hiddenElement.download = `${objectName ?? 'noName'}.json`;
         hiddenElement.click();
     };
 
-    const uploadJson = (json: string) => {
+    const uploadJson = async (json: string) => {
+        const jsonData = JSON.parse(json);
+        if ((jsonData.detailView.entityName ?? "") !== "") {
+            try {
+                await onEntityDialogOk(jsonData.detailView.entityName);
+            } catch (err) {
+                enqueueSnackbar(String(err), {
+                                        variant: 'error',
+                                    });
+            }
+        }
         jsonDataManager.createJson(JSON.parse(json));
+        setTriggerOpenNodes(!triggerOpenNodes);
     };
 
     const [documentObject, setDocumentObject] = useState<Document>(document);
@@ -646,9 +661,9 @@ export const JsonRenderer = () => {
                                                         <Typography variant={'body1'} sx={{fontFamily: 'Monospace'}}>
                                                             <WD_TreeContainer
                                                                     treeData={jsonDataManager.jsonData.treeData}
-                                                                    initialOpen={jsonDataManager.jsonData.openNodes.length === 0
-                                                                            ? "all"
-                                                                            : jsonDataManager.jsonData.openNodes.map(el => Number(el))}
+                                                                    initialOpen={/* jsonDataManager.jsonData.openNodes.length === 0
+                                                                            ? "all" 
+                                                                            : */jsonDataManager.jsonData.openNodes.map(el => Number(el))}
                                                                     componentName={'jsonTree'}
                                                                     bindingGuid={''}
                                                                     groupName={''}
@@ -660,7 +675,7 @@ export const JsonRenderer = () => {
                                                                     triggerOpenNodes={false}
                                                                     triggerCloseNodes={false}
                                                                     triggerOpenAllNodes={false}
-                                                                    triggerCloseAllNodes={false}
+                                                                    triggerCloseAllNodes={triggerOpenNodes}
                                                                     triggerResetOpenNodes={triggerOpenNodes}
                                                                     treeClasses={{
                                                                         root: "json-renderer-tree",
@@ -761,6 +776,22 @@ export const JsonRenderer = () => {
                     tabsValue={tabsValue}
                     handleTabsValueChange={handleTabsValueChange}
                     error={jsonError}
+                    readWriteModeOverride={rwModes.W}
+            />
+        </div>
+        <div style={{display: 'none'}}>
+            <UIPreviewComponentWrapper
+                    json={json}
+                    classes={{
+                        gridItem: 'grid-item',
+                        detailView: {gridContainer: 'main-component-preview'}
+                    }}
+                    isInMainWindow={false}
+                    objectName={objectName}
+                    tabsValue={tabsValue}
+                    handleTabsValueChange={handleTabsValueChange}
+                    error={jsonError}
+                    readWriteModeOverride={rwModes.R}
             />
         </div>
     </EntityTranslationContextProvider>;

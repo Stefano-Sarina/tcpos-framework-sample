@@ -304,10 +304,25 @@ export const useJsonDataManager = (
     };
 
     const createJson = (jsonObject: any) => {
-        const newJson = jsonTreeRenderer.buildTreeData(jsonObject);
+        let maxId = 1;
+        if (jsonData.baseData.length > 0) {
+            jsonData.baseData.forEach(el => {
+                if (Number(el.id) > maxId) {
+                    maxId = Number(el.id);
+                }
+            });
+        }
+        maxId++;
+        const newJson = jsonTreeRenderer.addTreeDataParams(jsonTreeRenderer.buildTreeData(jsonObject, maxId));
+        const openNodes: (number | string)[] = [];
+        /* newJson.forEach((el, index) => {
+            if (el.data && 'droppable' in el.data && el.data.droppable) {
+                openNodes.push(el.id);
+            }
+        }); */
         updateData({
-            jsonData: newJson,
-            openNodes: jsonData.openNodes
+            jsonData: jsonTreeRenderer.updateTreeDataValueLists({treeData: newJson, newNodeId: []}, dataSchema),
+            openNodes: openNodes
         });
     };
 

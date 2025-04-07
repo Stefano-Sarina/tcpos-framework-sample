@@ -109,7 +109,7 @@ export function registerAppDefaultComponent(): void {
         createRegistrationEntry({_registrationName: DailyComponents.wdToolbarSeparator, component: WD_DailyActionToolbarSeparator}));
     DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
         createRegistrationEntry({_registrationName: DailyComponents.wdToolbarTextBox, component: WD_DailyActionToolbarTextBox}));
-
+    
     DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName: '_all__newObject', component: NewObjectToolbarButton}));
     DailyPublicRegistrationContainer.registerEntry("uiActionComponents",

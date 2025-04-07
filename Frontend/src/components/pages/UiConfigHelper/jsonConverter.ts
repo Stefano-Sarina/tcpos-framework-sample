@@ -138,7 +138,7 @@ export class JsonConverter {
         return newTreeData;
     }
 
-    buildTreeData(jsonObject: Object): NodeModel<IJsonTreeData>[] {
+    buildTreeData(jsonObject: Object, offset?: number): NodeModel<IJsonTreeData>[] { 
         const json = jsonObject as Record<string, any>;
         let newTreeData: NodeModel<IJsonTreeData>[] = [
             {
@@ -153,7 +153,7 @@ export class JsonConverter {
                     nodeType: NodeType.RootNode,
                 }
             },
-            ...this.convertNodeIds(this.addSubtreeData(json, 1), 2),
+            ...this.convertNodeIds(this.addSubtreeData(json, 1), offset ?? 2),
             {
                 id: 2,
                 parent: 0,
