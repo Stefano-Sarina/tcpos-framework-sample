@@ -1,3 +1,5 @@
+import type { rwModes } from "@tcpos/common-core"
+
 export interface IUIPreviewComponentProps {
     json: any
     containerWidth?: number
@@ -10,6 +12,7 @@ export interface IUIPreviewComponentProps {
     objectName?: string
     tabsValue: number
     handleTabsValueChange: (newValue: number) => void
+    readWriteModeOverride?: rwModes
 }
 
 export interface IUIPreviewComponentWrapperProps extends IUIPreviewComponentProps {

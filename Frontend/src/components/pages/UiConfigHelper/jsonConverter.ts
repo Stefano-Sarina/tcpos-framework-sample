@@ -2,6 +2,7 @@ import type {NodeModel} from "@minoru/react-dnd-treeview";
 import _, {isNumber} from "underscore";
 import { NodeType} from "./IJsonTreeData";
 import type {IJsonTreeData} from "./IJsonTreeData";
+import { jsonConfigStructure, type IJsonConfigStructure } from "./JsonConfigStructure";
 
 export class JsonConverter {
     private addSubtreeData(partialJson: Record<string, any>, parentId: number | string) {
@@ -137,7 +138,7 @@ export class JsonConverter {
         return newTreeData;
     }
 
-    buildTreeData(jsonObject: Object): NodeModel<IJsonTreeData>[] {
+    buildTreeData(jsonObject: Object, offset?: number): NodeModel<IJsonTreeData>[] { 
         const json = jsonObject as Record<string, any>;
         let newTreeData: NodeModel<IJsonTreeData>[] = [
             {
@@ -152,7 +153,7 @@ export class JsonConverter {
                     nodeType: NodeType.RootNode,
                 }
             },
-            ...this.convertNodeIds(this.addSubtreeData(json, 1), 2),
+            ...this.convertNodeIds(this.addSubtreeData(json, 1), offset ?? 2),
             {
                 id: 2,
                 parent: 0,
@@ -223,7 +224,7 @@ export class JsonConverter {
             }
         });
         if (missingProperties.length > 0 || wrongProperties.length > 0) {
-            error = `Wrong properties in ${objectDescription}. `;
+            error = `Wrong properties in ${objectDescription}: `;
             if (missingProperties.length > 0) {
                 error += "Properties [" + missingProperties.join(", ") + "] missing. ";
             }
@@ -235,120 +236,66 @@ export class JsonConverter {
         return "";
     }
 
-    private jsonProperties(prop: string, type?: string):
-            {mandatoryProps: string[], optionalProps: string[], arrayProps: {key: string, nameProp: string}[], objectProps?: string[]} {
-        switch (prop) {
-            case 'detailView':
-                return {
-                    mandatoryProps: ["titleField", "label", "entityName", "layoutGroups"],
-                    optionalProps: [],
-                    arrayProps: [{key: "layoutGroups", nameProp: "groupName"}],
-                }
-            case 'layoutGroups':
-                return {
-                    mandatoryProps: ["groupName", "label", "sections"],
-                    optionalProps: [],
-                    arrayProps: [{key: "sections", nameProp: "sectionName"}]
-                };
-            case 'sections':
-                return {
-                    mandatoryProps: ["sectionName", "label", "components", "xs"],
-                    optionalProps: ["sm", "md", "lg", "xl"],
-                    arrayProps: [{key: "components", nameProp: "componentName"}]
-                };
-            case 'components':
-                return {
-                    mandatoryProps: [...["componentName", "label", "componentType", "xs"],
-                        ...(type === "wdCombobox" ? ["multiSelect", "externalDataInfo"] : []),
-                        ...(type !== "wdSubForm" && type !== "wdButton" ? ["fieldName"] : []),
-                    ],
-                    optionalProps: [...["sm", "md", "lg", "xl", "gridView"],
-                        ...(type === "wdNumberTextField" ? ["decimalplaces"] : []),
-                        ...(type === "wdButton" ? ["action", "activeOnRMode", "activeOnWMode"] : []),
-                        ...(type === "wdSubForm" ? ["minHeight", "pagination", "subFields", "entityName", "fieldName"] : []),
-                    ],
-                    arrayProps: type === "wdSubForm"
-                        ? [{key: "subFields", nameProp: "colId"}, {key: "subFields", nameProp: "cellRenderer.componentName"}]
-                        : []
-                };
-            case "subFields":
-                return {
-                    mandatoryProps: ["colId", "sortable", "filter", "lockPinned", "flex", "minWidth", "cellRenderer"],
-                    optionalProps: ["sm", "md", "lg", "xl"],
-                    arrayProps: [],
-                    objectProps: ["cellRenderer"]
-                };
-            case "cellRenderer":
-                return {
-                    mandatoryProps: ["componentName", "label", "fieldName", "componentType"],
-                    optionalProps: [
-                        ...(type === "wdNumberTextField" ? ["decimalplaces"] : []),
-                        ...(type === "wdCombobox" ? ["multiSelect", "externalDataInfo"] : []),
-                        ...(type === "wdButton" ? ["action", "activeOnRMode", "activeOnWMode"] : []),
-                    ],
-                    arrayProps: []
-                };
-            case "gridView":
-                return {
-                    mandatoryProps: ["defaultVisible"],
-                    optionalProps: ["textAlignment", "position", "width", "minWidth", "filterable"],
-                    arrayProps: []
-                };
-            case "externalDataInfo":
-                return {
-                    mandatoryProps: [],
-                    optionalProps: ["apiCallInfo", "customList"],
-                    arrayProps: [{key: "customList", nameProp: "value"}, {key: "customList", nameProp: "label"}]
-                };
-            case "apiCallInfo":
-                return {
-                    mandatoryProps: ["apiSuffix", "descriptionField", "foreignIdField"],
-                    optionalProps: [],
-                    arrayProps: []
-                };
-            default:
-                return {
-                    mandatoryProps: [],
-                    optionalProps: [],
-                    arrayProps: []
-                };
-        }
-    };
+    getProperties = (jsonObject: any, property: string): {mandatoryProps: string[], optionalProps: string[]} => {
+        const subProperties: IJsonConfigStructure[] = jsonConfigStructure.filter(el => el.parentProperty === property &&
+            (!el.conditionalProperty || (
+                el.conditionalProperty && jsonObject[el.conditionalProperty] && 
+                    ((el.conditionalValue && el.conditionalValue.includes(jsonObject[el.conditionalProperty])) || 
+                        (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(jsonObject[el.conditionalProperty])))))
+            )
+            ?? [];
+        const mandatoryProps = subProperties.filter(el => !el.optional).map(el => el.propertyName);
+        const optionalProps = subProperties.filter(el => !!el.optional).map(el => el.propertyName);
+        return {mandatoryProps, optionalProps};
+    }
 
     jsonSubValidation = (subObject: any, property: string, nav: string) => {
-        // Check sub properties
-        const {mandatoryProps, optionalProps, arrayProps, objectProps} =
-            this.jsonProperties(property, subObject.componentType);
-        let errors = [this.checkObjectProperties(subObject, mandatoryProps, optionalProps, `${nav}`)];
-        // Check array sub properties
-        arrayProps.forEach(prop => {
-            if (Object.keys(subObject).includes(prop.key)) {
-                if (!Array.isArray(subObject[prop.key])) {
-                    errors.push(`${prop} property must be an array.`);
+        const propertyInfo = jsonConfigStructure.find(el => el.propertyName === property);
+        let errors: string[] = [];
+        if (propertyInfo?.type === "array") {
+            if (!Array.isArray(subObject)) {
+                return [`${nav} property must be an array.`];
+            }
+            subObject.forEach((el: any, index: number) => {
+                const {mandatoryProps, optionalProps} = this.getProperties(el, property);
+                const currentErrors = this.checkObjectProperties(el, mandatoryProps, optionalProps, `${nav}/${property}[${index}]`);
+                if (currentErrors !== "") {
+                    errors = [...errors, currentErrors];
                 } else {
-                    // Check name duplications
-                    const names: string[] = subObject[prop.key].map((el: any) => prop.nameProp.indexOf('.') === -1 ?
-                        el[prop.nameProp] : el[prop.nameProp.split('.')[0]][prop.nameProp.split('.')[1]]).sort();
-                    const duplications: string[] = [];
-                    names.forEach((name, index) => {
-                        if (index > 0 && name === names[index - 1]) {
-                            duplications.push(name);
+                    Object.keys(el).forEach(key => {
+                        const currentErrors = this.jsonSubValidation(el[key], key, `${nav}/${property}[${index}]`);
+                        if (currentErrors.length > 0) {
+                            errors = [...errors, ...currentErrors];
                         }
                     });
-                    if (duplications.length > 0) {
-                        errors = [...errors, `Duplicated names in ${nav}/${prop.key}: ${duplications.join(", ")}`];
-                    }
-                    // Check array element sub properties
-                    subObject[prop.key].forEach((el: any, index: number) => {
-                        errors = [...errors, ...this.jsonSubValidation(el, prop.key, nav + `/${prop.key}[${index}]`)];
-                    });
+                }
+            });
+        } else if (propertyInfo?.type === "object") {
+            if (typeof subObject !== 'object' || subObject === null || Array.isArray(subObject)) {
+                return [`${property} property must be an object.`];
+            }
+            const {mandatoryProps, optionalProps} = this.getProperties(subObject, property);
+            const currentErrors = this.checkObjectProperties(subObject, mandatoryProps, optionalProps, `${nav}`);
+            if (property === "externalDataInfo") {
+                if (Object.keys(subObject).length !== 1) {
+                    return [`${nav} property must have exactly one property ('apiCallInfo' or 'customList).`];
                 }
             }
-        });
-        // Check object sub properties
-        objectProps?.forEach(prop => {
-            errors = [...errors, ...this.jsonSubValidation(subObject[prop], prop, nav + `/${prop}`)];
-        });
+            if (currentErrors !== "") {
+                errors = [...errors, currentErrors];
+            } else {
+                Object.keys(subObject).forEach((el) => {
+                    const currentErrors = this.jsonSubValidation(subObject[el], el, `${nav}/${el}`);
+                    if (currentErrors.length > 0) {
+                        errors = [...errors, ...currentErrors];
+                    }
+                });
+            }
+        } else { // leaf
+            if (subObject === null || typeof subObject === 'object' || Array.isArray(subObject)) { 
+                return [`${property} property must not be an object or an array.`];
+            }
+        }
         return [...errors];
     }
 
@@ -360,55 +307,6 @@ export class JsonConverter {
             // Check detailView properties and sub properties
             const detailView = (jsonObject as Record<string, any>).detailView;
             error = [...error, ...this.jsonSubValidation(detailView, "detailView", "detailView")];
-            // Check combo box properties
-            const layoutGroups: Record<string, unknown>[] = Array.isArray(detailView.layoutGroups) ? detailView.layoutGroups : [];
-            layoutGroups.forEach((layoutGroup: Record<string, unknown>, groupIndex: number) => {
-                const sections: Record<string, unknown>[] = Array.isArray(layoutGroup.sections) ? layoutGroup.sections : [];
-                sections.forEach((section: Record<string, unknown>, sectionIndex: number) => {
-                    const components: Record<string, unknown>[] = Array.isArray(section.components) ? section.components : [];
-                    components.forEach((component: Record<string, unknown>, index: number) => {
-                        if (component.componentType === "wdCombobox") {
-                            if ((component.externalDataInfo as Record<string, unknown>)?.apiCallInfo &&
-                                (component.externalDataInfo as Record<string, unknown>)?.customList) {
-                                error = [...error, "An externalDataInfo property of a combobox component cannot have both apiCallInfo and customList properties. Error in " +
-                                    `detailView/layoutGroups[${groupIndex}]/sections[${sectionIndex}]/components[${index}]`];
-                            }
-                            if (!(component.externalDataInfo as Record<string, unknown>)?.apiCallInfo &&
-                                !(component.externalDataInfo as Record<string, unknown>)?.customList) {
-                                error = [...error, "An externalDataInfo property of a combobox component must have an apiCallInfo or a customList property. Error in " +
-                                    `detailView/layoutGroups[${groupIndex}]/sections[${sectionIndex}]/components[${index}]`];
-                            }
-                            const valueDuplications: string[] = [];
-                            const labelDuplications: string[] = [];
-                            if ((component.externalDataInfo as Record<string, unknown>)?.customList) {
-                                const customList = (component.externalDataInfo as Record<string, unknown>)?.customList;
-                                const values = (customList as {value: unknown, label: string}[])
-                                    .map(el => el.value).sort();
-                                values.forEach((value, index) => {
-                                    if (index > 0 && value === values[index - 1]) {
-                                        valueDuplications.push(String(value));
-                                    }
-                                });
-                                const labels = (customList as {value: unknown, label: string}[])
-                                    .map(el => el.label).sort();
-                                labels.forEach((label, index) => {
-                                    if (index > 0 && label === labels[index - 1]) {
-                                        labelDuplications.push(String(label));
-                                    }
-                                });
-                                if (valueDuplications.length > 0) {
-                                    error = [...error, "Duplicated values in custom list: [" + valueDuplications.join(", ") + "]. Error in " +
-                                        `detailView/layoutGroups[${groupIndex}]/sections[${sectionIndex}]/components[${index}]`];
-                                }
-                                if (labelDuplications.length > 0) {
-                                    error = [...error, "Duplicated labels in custom list: [" + labelDuplications.join(", ") + "]. Error in " +
-                                        `detailView/layoutGroups[${groupIndex}]/sections[${sectionIndex}]/components[${index}]`];
-                                }
-                            }
-                        }
-                    });
-                });
-            })
         }
 
         if (error.filter(el => el !== "").length > 0) {

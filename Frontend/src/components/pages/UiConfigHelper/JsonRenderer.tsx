@@ -44,6 +44,7 @@ import type {IJsonTreeActions, JsonTreeActionType} from "./IJsonTreeActions";
 import {UIPreviewComponentWrapper} from "./UIPreviewComponentWrapper";
 import {UploadJsonButton} from "./UploadJsonButton";
 import {ImportJsonDialog} from "./ImportJsonDialog";
+import { enqueueSnackbar } from "notistack";
 
 export const JsonRenderer = () => {
 
@@ -216,14 +217,14 @@ export const JsonRenderer = () => {
                 case 'addComponent':
                     jsonDataManager.addElementToJson('Component', jsonTreeActions.params.nodeId);
                     break;
+                case 'addCustomListElement':
+                    jsonDataManager.addElementToJson('CustomListElement', jsonTreeActions.params.nodeId);
+                    break;
                 case 'addProperty':
                     jsonDataManager.addElementToJson('Property', jsonTreeActions.params.nodeId, jsonTreeActions.params);
                     break;
-                case 'removeArrayElement':
-                    jsonDataManager.removeArrayElement(jsonTreeActions.params.nodeId);
-                    break;
-                case 'removeProperty':
-                    jsonDataManager.removeProperty(jsonTreeActions.params.nodeId);
+                case 'removeTreeElement':
+                    jsonDataManager.removeTreeElement(jsonTreeActions.params.nodeId);
                     break;
                 case 'reorderArray':
                     jsonDataManager.arrayReorder(jsonTreeActions.params.newTreeData, jsonTreeActions.params.arrayNodes);
@@ -259,15 +260,6 @@ export const JsonRenderer = () => {
                 case 'locateComponent':
                     locateComponent(jsonTreeActions.params.nodeId);
                     break;
-                case 'addExternalDataInfoProperty':
-                    jsonDataManager.addExternalDataInfoProperty(jsonTreeActions.params.nodeId);
-                    break;
-                case 'addExternalDataInfoSubProperty':
-                    jsonDataManager.addExternalDataInfoSubProperty(jsonTreeActions.params.nodeId, jsonTreeActions.params.key);
-                    break;
-                case 'addCustomListElement':
-                    jsonDataManager.addCustomListElement(jsonTreeActions.params.nodeId);
-                    break;
                 default:
                     break;
             }
@@ -287,8 +279,8 @@ export const JsonRenderer = () => {
         const componentName = jsonDataManager.getNodeName(nodeId);
         const componentType = jsonDataManager.jsonData.treeData
                 .filter(el => el.parent === nodeId)
-                .find(el => 'key' in el && el.key === 'componentType');
-        if (componentType && 'value' in componentType && componentType.value === "wdSubForm") {
+                .find(el => el.data && 'key' in el.data && el.data.key === 'componentType');
+        if (componentType?.data && 'value' in componentType.data && componentType.data.value === "wdSubForm") {
             let parent = jsonDataManager.jsonData.treeData.find(el => el.id === nodeId)?.parent;
             let parentNode = jsonDataManager.jsonData.treeData.find(el => el.id === parent);
             while (parentNode && parentNode.id !== 0 && parentNode.data?.nodeSubType !== "layoutGroups") {
@@ -424,7 +416,9 @@ export const JsonRenderer = () => {
                 setEntityDialogProps({...entityDialogProps, error: `${intl.formatMessage({id: "Json schema error"})}`});
             }
         } catch (err) {
-            console.log(err);
+            enqueueSnackbar(String(err), {
+                variant: 'error',
+            });
             setEntityDialogProps({...entityDialogProps, error: `${intl.formatMessage({id: "Json schema error"})}: ${err}`});
         }
     };
@@ -537,15 +531,27 @@ export const JsonRenderer = () => {
      * Downloads the generated json
      */
     const downloadJson = () => {
+        const currentJson = jsonDataManager.convertTreeData2Json();
         const hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(json, null, 2));
+        hiddenElement.href = 'data:attachment/text,' + encodeURI(JSON.stringify(currentJson, null, 2));
         hiddenElement.target = '_blank';
         hiddenElement.download = `${objectName ?? 'noName'}.json`;
         hiddenElement.click();
     };
 
-    const uploadJson = (json: string) => {
+    const uploadJson = async (json: string) => {
+        const jsonData = JSON.parse(json);
+        if ((jsonData.detailView.entityName ?? "") !== "") {
+            try {
+                await onEntityDialogOk(jsonData.detailView.entityName);
+            } catch (err) {
+                enqueueSnackbar(String(err), {
+                                        variant: 'error',
+                                    });
+            }
+        }
         jsonDataManager.createJson(JSON.parse(json));
+        setTriggerOpenNodes(!triggerOpenNodes);
     };
 
     const [documentObject, setDocumentObject] = useState<Document>(document);
@@ -655,9 +661,9 @@ export const JsonRenderer = () => {
                                                         <Typography variant={'body1'} sx={{fontFamily: 'Monospace'}}>
                                                             <WD_TreeContainer
                                                                     treeData={jsonDataManager.jsonData.treeData}
-                                                                    initialOpen={jsonDataManager.jsonData.openNodes.length === 0
-                                                                            ? "all"
-                                                                            : jsonDataManager.jsonData.openNodes.map(el => Number(el))}
+                                                                    initialOpen={/* jsonDataManager.jsonData.openNodes.length === 0
+                                                                            ? "all" 
+                                                                            : */jsonDataManager.jsonData.openNodes.map(el => Number(el))}
                                                                     componentName={'jsonTree'}
                                                                     bindingGuid={''}
                                                                     groupName={''}
@@ -669,7 +675,7 @@ export const JsonRenderer = () => {
                                                                     triggerOpenNodes={false}
                                                                     triggerCloseNodes={false}
                                                                     triggerOpenAllNodes={false}
-                                                                    triggerCloseAllNodes={false}
+                                                                    triggerCloseAllNodes={triggerOpenNodes}
                                                                     triggerResetOpenNodes={triggerOpenNodes}
                                                                     treeClasses={{
                                                                         root: "json-renderer-tree",
@@ -770,6 +776,22 @@ export const JsonRenderer = () => {
                     tabsValue={tabsValue}
                     handleTabsValueChange={handleTabsValueChange}
                     error={jsonError}
+                    readWriteModeOverride={rwModes.W}
+            />
+        </div>
+        <div style={{display: 'none'}}>
+            <UIPreviewComponentWrapper
+                    json={json}
+                    classes={{
+                        gridItem: 'grid-item',
+                        detailView: {gridContainer: 'main-component-preview'}
+                    }}
+                    isInMainWindow={false}
+                    objectName={objectName}
+                    tabsValue={tabsValue}
+                    handleTabsValueChange={handleTabsValueChange}
+                    error={jsonError}
+                    readWriteModeOverride={rwModes.R}
             />
         </div>
     </EntityTranslationContextProvider>;

@@ -1,1 +1,1 @@
-export type JsonElementsType = 'Group' | 'Section' | 'Component' | 'Property' | 'SubForm';
+export type JsonElementsType = 'Group' | 'Section' | 'Component' | 'CustomListElement' | 'Property' | 'SubForm';

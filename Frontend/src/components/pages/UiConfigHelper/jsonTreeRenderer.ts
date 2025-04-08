@@ -12,6 +12,7 @@ import type {IDataSchema} from "./IDataSchema";
 import type {ITreeElementProperties} from "./ITreeElementProperties";
 import type {JsonTreeActionType} from "./IJsonTreeActions";
 import {excludedFieldNames} from "./excludedFieldNames";
+import { jsonConfigStructure } from "./JsonConfigStructure";
 
 /**
  * This class contains the logics to render the JSON tree
@@ -36,7 +37,7 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param insertPosition If set, the new element is inserted in the specified position
      * @param mainNodeSubType Sets the subtype of the array element. SubTypes are used to assign the available functions to the element
      */
-    addArrayElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, properties: ITreeElementProperties[],
+    addArrayElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, /* properties: ITreeElementProperties[], */
                     insertPosition?: number, mainNodeSubType?: NodeSubType):
                                             {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
         const arrayNode = treeData.find(el => el.id === id);
@@ -58,63 +59,7 @@ export class JsonTreeRenderer extends JsonConverter {
                 text2TypographyProps: {variant: 'h6'},
                 nodeType: NodeType.ArrayElement,
                 key: newElementId,
-                optionalSubProperties: properties.filter(el => !el.defaultAdd)
-                    .map(el => ({key: el.key, defaultValue: el.defaultValue ?? ""})),
                 nodeSubType: mainNodeSubType
-            }
-        });
-        properties.filter(el => el.defaultAdd).forEach((el) => {
-            if (!el.propertyIsArray && !el.propertyIsObject) {
-                nextNodeId++;
-                newNodes.push({
-                    id: nextNodeId,
-                    parent: newNodeId,
-                    droppable: false,
-                    text: el.key + ":",
-                    data: {
-                        typographyProps: {
-                            variant: 'body1' as OverridableStringUnion<Variant | "inherit", TypographyPropsVariantOverrides>
-                        },
-                        text2: String(el.defaultValue ?? "").replace('{index}', String(nextNodeId)),
-                        editable: el.key !== 'entityName',
-                        removable: !!el.removable,
-                        nodeType: NodeType.Leaf,
-                        key: el.key,
-                        value: String(el.defaultValue ?? "").replace('{index}', String(nextNodeId)),
-                    }
-                });
-            } else if (el.propertyIsArray) {
-                nextNodeId++;
-                newNodes.push({
-                    id: nextNodeId,
-                    parent: newNodeId,
-                    droppable: true,
-                    text: el.key + ":",
-                    data: {
-                        typographyProps: {variant: 'body1'},
-                        text2: "",
-                        text2TypographyProps: {variant: 'h6'},
-                        nodeType: NodeType.Array,
-                        key: el.key,
-                    }
-                });
-            } else { // propertyIsObject = true
-                nextNodeId++;
-                newNodes.push({
-                    id: nextNodeId,
-                    parent: newNodeId,
-                    droppable: false,
-                    text: el.key + ":",
-                    data: {
-                        typographyProps: {
-                            variant: 'body1' as OverridableStringUnion<Variant | "inherit", TypographyPropsVariantOverrides>
-                        },
-                        text2: "{",
-                        removable: !!el.removable,
-                        nodeType: NodeType.Object,
-                        key: el.key,
-                    }
-                });
             }
         });
         if (insertPosition !== undefined) {
@@ -144,7 +89,7 @@ export class JsonTreeRenderer extends JsonConverter {
                 }
             }
 
-            treeData.splice(nodePosition, 0, ...this.addTreeDataParams(newNodes, arrayNode.data?.nodeSubType));
+            treeData.splice(nodePosition, 0, ...newNodes);
             treeData.filter(node => node.parent === id)
                 .forEach((node, index) => {
                     const currentNode = treeData.find(
@@ -153,9 +98,9 @@ export class JsonTreeRenderer extends JsonConverter {
                     currentNode!.data!.key = index;
                 });
         } else {
-            treeData = [...treeData, ...this.addTreeDataParams(newNodes, arrayNode.data?.nodeSubType)];
+            treeData = [...treeData, ...newNodes];
         }
-
+        treeData = this.addTreeDataParams(treeData);
         return {
             treeData: treeData, //[...treeData, ...this.addTreeDataParams(newNodes, arrayNode.data?.nodeSubType)],
             newNodeId: newNodes.map(el => el.id)
@@ -163,105 +108,197 @@ export class JsonTreeRenderer extends JsonConverter {
     }
 
     /**
+     * Looks for the parent property of the node with the specified id; if the parent node is an array element, 
+     *  looks for the parent property of the array element
+     * @param treeData 
+     * @param id 
+     */
+    getParentProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string): string {
+        let isArrayElement = true;
+        let currentNode = treeData.find(node => node.id === id);
+        while (isArrayElement) {
+            if (!currentNode) {
+                throw new Error('Parent node not found');
+            }
+            if (currentNode?.data?.nodeType !== NodeType.ArrayElement) {
+                isArrayElement = false;
+                if (currentNode?.data && 'key' in currentNode.data) {
+                    return currentNode?.data?.key;
+                } else {
+                    throw new Error('Parent node key not found');
+                }
+            } else {
+                const currentParent = treeData.find(node => node.id === currentNode!.parent);
+                if (!currentParent || currentParent.id === 0) {
+                    throw new Error('Parent node not found');
+                }
+            }
+            currentNode = treeData.find(node => node.id === currentNode!.parent);
+        }
+        throw new Error('Parent node not found');
+    }
+
+    /**
+     * Add a generic element to the tree (recursively)
+     * @param treeData 
+     * @param id parent node id
+     * @param property property to add
+     * @param value property values
+     * @param dontTraverseArray if true, the function does not traverse the array (used for inner array elements)
+     */
+    addSubJsonElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, property: string,
+                            value?: Record<string, string | number | boolean>, isArrayElement?: boolean, insertPosition?: number) {
+        const currentNode = treeData.find(node => node.id === id);
+        if (!currentNode) {
+            throw new Error('Node not found');
+        }
+        let parentProperty = "";
+        if (currentNode.data?.nodeType === NodeType.Array && isArrayElement) {
+            parentProperty = this.getParentProperty(treeData, currentNode.parent);
+        } else {
+            parentProperty = this.getParentProperty(treeData, id);
+        }
+        if (parentProperty === '') {
+            throw new Error('Parent key not found');
+        }
+        const element = jsonConfigStructure.find(el => el.propertyName === property && el.parentProperty === parentProperty);
+        if (!element) {
+            throw new Error('Element type not found');
+        }
+        let newTreeData = [...treeData];
+        let currentId = id;
+        let currentProperty = property;
+        let result: {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} = {treeData: newTreeData, newNodeId: [id]};
+        if (isArrayElement && element.type !== 'array') {
+            throw new Error('Element is not an array');
+        }
+        if (isArrayElement && currentNode.data?.nodeType !== NodeType.Array) {
+            throw new Error('Node is not an array');
+        }
+        if (element.type === 'leaf' || (element.type === 'array' && !isArrayElement)) {
+            const partialResult = this.addProperty(newTreeData, currentId, 
+                {key: currentProperty, defaultValue: value?.[property] ?? (element.defaultValue ?? "insert_value")}, false, element.type === 'array'
+            );
+            result.treeData = partialResult.treeData;
+            result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
+            return result;
+        }
+        const parentPropertyName = element.type === 'array' && isArrayElement ? property : element.propertyName;
+        let nodesToAdd = jsonConfigStructure.filter(el => el.parentProperty === parentPropertyName && el.defaultAdd && 
+            (!el.conditionalProperty || (value &&
+                (Object.keys(value ?? {}).includes(el.conditionalProperty) && 
+                    (el.conditionalValue && el.conditionalValue.includes(String(value[el.conditionalProperty]))
+                        || (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(String(value[el.conditionalProperty]))))
+                )
+            ))
+        );
+        if (element.type === 'array' && isArrayElement) {
+            let partialResult = this.addArrayElement(treeData, id, insertPosition);
+            //let partialResult = this.addProperty(newTreeData, id, {key: property, defaultValue: '', notRemovable: !element.optional}, false, true); // TODO override?
+            result.treeData = partialResult.treeData;
+            result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
+            const currentParentNode: string | number = partialResult.newNodeId[0];
+            nodesToAdd.filter(el => el.defaultAdd).forEach(node => {
+                partialResult = this.addSubJsonElement(partialResult.treeData, currentParentNode, node.propertyName, value);
+                result.treeData = partialResult.treeData;
+                result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
+            });
+        } else if(element.type = 'object') {
+            let partialResult = this.addProperty(newTreeData, currentId, 
+                {key: currentProperty, defaultValue: value?.[currentProperty] ?? (element.defaultValue ?? "insert_value")}, true
+            );
+            result.treeData = partialResult.treeData;
+            result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
+            const currentParentNode: string | number = partialResult.newNodeId[0];
+            nodesToAdd.filter(el => el.defaultAdd).forEach(node => {
+                partialResult = this.addSubJsonElement(partialResult.treeData, currentParentNode, node.propertyName, value);
+                result.treeData = partialResult.treeData;
+                result.newNodeId = [...result.newNodeId, ...partialResult.newNodeId];
+            });
+        }
+        return result;      
+    }
+
+    /**
+     * Add a generic element to the tree
+     * @param treeData 
+     * @param id parent node id
+     * @param property property to add
+     * @param value property values
+     * @param isArrayElement if true, an element of property (which must be an array) is being added
+     */
+    addJsonElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, property: string,
+            value?: Record<string, string | number | boolean>, isArrayElement?: boolean, insertPosition?: number) {
+        const currentNode = treeData.find(node => node.id === id);
+        if (!currentNode) {
+            throw new Error('Node not found');
+        }
+        return this.addSubJsonElement(treeData, id, property, value, isArrayElement, insertPosition);
+    }
+
+    /**
+     * Add an array element of a class among layoutGroups, sections, components to the tree
+     * @param treeData 
+     * @param id 
+     * @param arrayClass 
+     * @param value 
+     * @returns 
+     */
+    addClassElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, arrayClass: 'layoutGroups' | 'sections' | 'components' | 'subFields' | 'customList', 
+                                    value?: Record<string, string>, insertPosition?: number): 
+                                    {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
+        return this.addJsonElement(treeData, id, arrayClass, value, true, insertPosition);
+    }
+
+    /**
      * Adds a group element to the tree
      * @param treeData The tree data
      * @param id The id of the parent node
-     * @param value The name of the group element
+     * @param value Property values of the group element
      */
-    addGroupElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: string):
+    addGroupElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: Record<string, string>):
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addArrayElement(treeData, id, [
-                {key: 'groupName', defaultValue: value ?? 'New_Group', propertyIsArray: false, defaultAdd: true},
-                {key: 'label', defaultValue: value ?? 'New_Group_Label', propertyIsArray: false, defaultAdd: true},
-                {key: 'sections', propertyIsArray: true, defaultAdd: true},
-            ]);
-
-        return {
-            treeData: result.treeData,
-            newNodeId: result.newNodeId
-        };
+        return this.addClassElement(treeData, id, 'layoutGroups', value);
     }
 
     /**
      * Adds a section element to the tree
      * @param treeData The tree data
      * @param id The id of the parent node
-     * @param value The name of the section element
+     * @param value Property values of the section element
      */
-    addSectionElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: string):
+    addSectionElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: Record<string, string>):
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addArrayElement(treeData, id, [
-            {key: 'sectionName', defaultValue: value ?? 'New_Section{index}', propertyIsArray: false, defaultAdd: true},
-            {key: 'label', defaultValue: value ?? 'New Section Label {index}', propertyIsArray: false, defaultAdd: true},
-            {key: 'components', propertyIsArray: true, defaultAdd: true},
-            {key: 'xs', defaultAdd: true, defaultValue: 12},
-            {key: 'sm', defaultValue: 12, removable: true},
-            {key: 'md', defaultValue: 12, removable: true},
-            {key: 'lg', defaultValue: 12, removable: true},
-            {key: 'xl', defaultValue: 12, removable: true},
-        ], undefined, NodeSubType.LayoutGroupSectionElement);
-        return {
-            treeData: result.treeData,
-            newNodeId: result.newNodeId
-        };
+        return this.addClassElement(treeData, id, 'sections', value);
     }
 
     /**
      * Adds a component element to the tree
      * @param treeData The tree data
      * @param id The id of the parent node
+     * @param value Property values of the component element
      */
-    addComponentElement(treeData: NodeModel<IJsonTreeData>[], id: number | string):
+    addComponentElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: Record<string, string>):
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        let result = this.addArrayElement(treeData, id, [
-            {key: 'componentName', defaultValue: 'New_Component{index}', propertyIsArray: false, defaultAdd: true},
-            {key: 'componentType', defaultValue: 'wdStringTextField', propertyIsArray: false, defaultAdd: true},
-            {key: 'fieldName', defaultValue: 'Field_Name', propertyIsArray: false, defaultAdd: true, removable: true},
-            {key: 'label', defaultValue: 'Component label {index}', propertyIsArray: false, defaultAdd: true},
-            {key: 'xs', defaultAdd: true, defaultValue: 12},
-            {key: 'sm', defaultValue: 12, removable: true},
-            {key: 'md', defaultValue: 12, removable: true},
-            {key: 'lg', defaultValue: 12, removable: true},
-            {key: 'xl', defaultValue: 12, removable: true},
-            {key: 'gridView', defaultValue: '', propertyIsObject: true, defaultAdd: true },
-        ], undefined, NodeSubType.LayoutGroupSectionElementComponent);
-        const gridViewNode = result.treeData.find(el =>
-            el.data && 'key' in el.data && el.data?.key === 'gridView' && result.newNodeId.includes(el.id));
-        if (gridViewNode) {
-            gridViewNode.droppable = true;
-            result = this.addGridViewProperties(result.treeData, gridViewNode.id);
-        }
+        return this.addClassElement(treeData, id, 'components', value);
+    }
 
+    /**
+     * Add an element to a combobox custom list
+     * @param treeData The tree data
+     * @param id The id of the parent node
+     * @param value Property values of the element
+     * @returns 
+     */
+    addCustomListElement(treeData: NodeModel<IJsonTreeData>[], id: number | string):
+                                    {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
+        const result = this.addClassElement(treeData, id, 'customList', {value: 'value', label: 'label'});
         return {
             treeData: result.treeData,
             newNodeId: result.newNodeId
         };
     }
-
-    addGridViewProperties(treeData: NodeModel<IJsonTreeData>[], id: number | string): 
-                                    {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = {treeData: [...treeData], newNodeId: [] as (number | string)[]};
-        [
-            {key: 'defaultVisible', defaultValue: 'true', defaultAdd: true},
-            {key: 'textAlignment', defaultValue: 'left', defaultAdd: false},
-            {key: 'position', defaultValue: '1', defaultAdd: false},
-            {key: 'width', defaultValue: '200', defaultAdd: false},
-            {key: 'minWidth', defaultValue: '150', defaultAdd: false},
-            {key: 'filterable', defaultValue: 'true', defaultAdd: false},
-        ].forEach(p => {
-            const gridViewNode = treeData.find(node => node.id === id);
-            if (gridViewNode) {
-                gridViewNode.droppable = true;
-                gridViewNode.data!.nodeType = NodeType.Object;
-                const newPropertyLeaf = this.addProperty(result.treeData,
-                    id, {key: p.key, defaultValue: p.defaultValue, override: false,
-                        notRemovable: true});
-                result.treeData = newPropertyLeaf.treeData;
-                result.newNodeId = [...result.newNodeId, ...newPropertyLeaf.newNodeId];    
-            }
-        });
-        return result;
-    }
+ 
 
     /**
      * Extract the decimal places from a field definition in the json schema
@@ -343,58 +380,15 @@ export class JsonTreeRenderer extends JsonConverter {
             }
             let result:  {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]};
             if (subFormComponent) {
-                result = this.addArrayElement(treeData, componentsNodeid, [
-                    {key: 'colId', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true},
-                    {key: 'sortable', defaultValue: false, propertyIsArray: false, defaultAdd: true},
-                    {key: 'filter', defaultValue: false, propertyIsArray: false, defaultAdd: true},
-                    {key: 'flex', defaultValue: 1, propertyIsArray: false, defaultAdd: true},
-                    {key: 'minWidth', defaultValue: 300, propertyIsArray: false, defaultAdd: true},
-                    {key: 'lockPinned', defaultValue: false, propertyIsArray: false, defaultAdd: true},
-                    {key: 'cellRenderer', defaultValue: 300, propertyIsArray: false, propertyIsObject: true, defaultAdd: true},
-                ], insertPosition);
-                const cellRendererNode = result.treeData.find(el =>
-                    el.data && 'key' in el.data && el.data?.key === 'cellRenderer' && result.newNodeId.includes(el.id));
-                if (cellRendererNode) {
-                    cellRendererNode.droppable = true;
-                    (cellRendererNode.data! as IJsonTreeDataArrayElement).optionalSubProperties = [
-                        {key: "multiSelect", defaultValue: false},
-                        {key: "externalDataInfo", defaultValue: ""},
-                        {key: "decimalplaces", defaultValue: 2}
-                    ];
-                    [{key: 'componentName', defaultValue: fieldName}, {key: 'componentType', defaultValue: componentType.componentType},
-                        {key: 'label', defaultValue: fieldName}, {key: 'fieldName', defaultValue: fieldName}
-                    ].forEach(p => {
-                            const newPropertyLeaf = this.addProperty(result.treeData,
-                                cellRendererNode.id, {key: p.key, defaultValue: p.defaultValue, override: false,
-                                    notRemovable: true});
-                            result.treeData = newPropertyLeaf.treeData;
-                            result.newNodeId = [...result.newNodeId, ...newPropertyLeaf.newNodeId];
-                    });
-                }
+                const properties = jsonConfigStructure.filter(el => el.parentProperty === 'subFields').map(el => el.propertyName);
+                return this.addClassElement(treeData, componentsNodeid, 'subFields', 
+                    {colId: fieldName, fieldName: fieldName, component: fieldName, label: fieldName, 
+                        componentType: componentType.componentType}, insertPosition);
             } else {
-                result = this.addArrayElement(treeData, componentsNodeid, [
-                    {key: 'componentName', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true},
-                    {key: 'componentType', defaultValue: componentType.componentType, propertyIsArray: false, defaultAdd: true},
-                    {key: 'fieldName', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true, removable: true},
-                    {key: 'label', defaultValue: fieldName, propertyIsArray: false, defaultAdd: true},
-                    {key: 'xs', defaultValue: 12, defaultAdd: true},
-                    {key: 'sm', defaultValue: 12, removable: true},
-                    {key: 'md', defaultValue: 12, removable: true},
-                    {key: 'lg', defaultValue: 12, removable: true},
-                    {key: 'xl', defaultValue: 12, removable: true},
-                    {key: 'gridView', defaultValue: '', removable: true, propertyIsObject: true, defaultAdd: true},
-                ], insertPosition, NodeSubType.LayoutGroupSectionElementComponent);
-                const gridViewNode = result.treeData.find(el =>
-                    el.data && 'key' in el.data && el.data?.key === 'gridView' && result.newNodeId.includes(el.id));
-                if (gridViewNode) {
-                    gridViewNode.droppable = true;
-                    result.treeData = this.addGridViewProperties(result.treeData, gridViewNode.id).treeData;
-                }
+                return this.addClassElement(treeData, componentsNodeid, 'components', 
+                    {componentName: fieldName, fieldName: fieldName, component: fieldName, label: fieldName, 
+                        componentType: componentType.componentType}, insertPosition);
             }
-            return {
-                treeData: result.treeData,
-                newNodeId: result.newNodeId
-            };
         } else {
             //throw new Error('Invalid property type');
             console.log(`Invalid property type for property ${property}`);
@@ -449,10 +443,9 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param property The property to add
      * @param isObject True if the property is an object
      * @param isArray True if the property is an array
-     * @param subProperties The subproperties of the property
      */
     addProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string, property: IOptionalProperties,
-                isObject?: boolean, isArray?: boolean, subProperties?: IOptionalProperties[]):
+                isObject?: boolean, isArray?: boolean):
                                     {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
         const arrayNode = treeData.find(el => el.id === id);
         if (!arrayNode) {
@@ -498,7 +491,6 @@ export class JsonTreeRenderer extends JsonConverter {
                             removable: !property.notRemovable,
                             nodeType: NodeType.Object,
                             key: property.key,
-                            optionalSubProperties: subProperties ?? []
                         }
                     }
              : { // isArray = true
@@ -515,89 +507,11 @@ export class JsonTreeRenderer extends JsonConverter {
                                 key: property.key,
                             }
                     });
-        let resultTreeData = [...treeData, ...this.addTreeDataParams([newNode], undefined)];
-        if (property.key === 'gridView') {
-            resultTreeData = this.addGridViewProperties(resultTreeData, newNode.id).treeData;
-        }
+        let resultTreeData = this.addTreeDataParams([...treeData, newNode]);
+
         return {
             treeData: resultTreeData,
-            newNodeId: [id, newNode.id]
-        };
-    }
-
-    addExternalDataInfoProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string) {
-        const arrayNode = treeData.find(el => el.id === id);
-        if (!arrayNode) {
-            return {treeData: treeData, newNodeId: []};
-        }
-        const existingNodeIndex = treeData.findIndex(el =>
-            el.parent === id && el.data && ('key' in el.data) && el.data.key === 'externalDataInfo');
-        if (existingNodeIndex !== -1) {
-            return {treeData: treeData, newNodeId: []};
-        }
-        return this.addProperty(treeData, id, {key: 'externalDataInfo', defaultValue: '' }, true, false);
-    }
-
-    addApiCallInfoProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string) {
-        const arrayNode = treeData.find(el => el.id === id);
-        if (!arrayNode) {
-            return {treeData: treeData, newNodeId: []};
-        }
-        const existingNodeIndex = treeData.findIndex(el =>
-            el.parent === id && el.data && ('key' in el.data) && el.data.key === 'apiCallInfo');
-        if (existingNodeIndex !== -1) {
-            return {treeData: treeData, newNodeId: []};
-        }
-        let result:  {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]};
-        result = this.addProperty(treeData, id, {key: 'apiCallInfo', defaultValue: ''}, true, false);
-        const apiCallInfoNode = result.treeData.find(el =>
-            el.data && 'key' in el.data && el.data?.key === 'apiCallInfo' && result.newNodeId.includes(el.id));
-        if (apiCallInfoNode) {
-            apiCallInfoNode.droppable = true;
-            [   {key: 'apiSuffix', defaultValue: 'insert_endpoint'},
-                {key: 'descriptionField', defaultValue: 'field name'},
-                {key: 'foreignIdField', defaultValue: 'Id'}].forEach(p => {
-                const newPropertyLeaf = this.addProperty(result.treeData,
-                    apiCallInfoNode.id, {key: p.key, defaultValue: p.defaultValue, override: false,
-                        notRemovable: true});
-                result.treeData = newPropertyLeaf.treeData;
-                result.newNodeId = [...result.newNodeId, ...newPropertyLeaf.newNodeId];
-            });
-        }
-        return {
-            treeData: result.treeData,
-            newNodeId: result.newNodeId
-        };
-    }
-
-    addCustomListProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string) {
-        const arrayNode = treeData.find(el => el.id === id);
-        if (!arrayNode) {
-            return {treeData: treeData, newNodeId: []};
-        }
-        const existingNodeIndex = treeData.findIndex(el =>
-            el.parent === id && el.data && ('key' in el.data) && el.data.key === 'customList');
-        if (existingNodeIndex !== -1) {
-            treeData.splice(existingNodeIndex, 1);
-        }
-        let result:  {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]};
-        result = this.addProperty(treeData, id, {key: 'customList', defaultValue: '', notRemovable: false, override: false },
-            false, true);
-        return {
-            treeData: result.treeData,
-            newNodeId: result.newNodeId
-        };
-    }
-
-    addCustomListElement(treeData: NodeModel<IJsonTreeData>[], id: number | string, value?: string):
-                                    {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addArrayElement(treeData, id, [
-            {key: 'value', defaultValue: value ?? 'New_Value', propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'label', defaultValue: value ?? 'New_Label', propertyIsArray: false, defaultAdd: true, removable: false},
-        ]);
-        return {
-            treeData: result.treeData,
-            newNodeId: result.newNodeId
+            newNodeId: [newNode.id]
         };
     }
 
@@ -611,21 +525,7 @@ export class JsonTreeRenderer extends JsonConverter {
      */
     addSubFormElement(treeData: NodeModel<IJsonTreeData>[], entity: string, id: number | string, addSubFields: boolean,
                       schema: IDataSchema): {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addArrayElement(treeData, id, [
-            {key: 'componentName', defaultValue: 'SubForm{index}' + entity, propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'componentType', defaultValue: 'wdSubForm', propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'entityName', defaultValue: entity, propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'fieldName', defaultValue: "refFieldName", propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'label', defaultValue: entity, propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'minHeight', defaultValue: '300px', propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'pagination', defaultValue: false, propertyIsArray: false, defaultAdd: true, removable: false},
-            {key: 'xs', defaultAdd: true, defaultValue: 12, removable: false},
-            {key: 'sm', defaultValue: 12, removable: true},
-            {key: 'md', defaultValue: 12, removable: true},
-            {key: 'lg', defaultValue: 12, removable: true},
-            {key: 'xl', defaultValue: 12, removable: true},
-            {key: 'subFields', propertyIsArray: true, removable: false, defaultAdd: true}
-        ], undefined, NodeSubType.LayoutGroupSectionElementComponent);
+        const result = this.addClassElement(treeData, id, 'components', {componentType: 'wdSubForm', entityName: entity});
         if (addSubFields) {
             const subFieldsNode = result.treeData.find(el =>
                 el.data && 'key' in el.data && el.data.key === 'subFields' && result.newNodeId.includes(el.id));
@@ -644,24 +544,15 @@ export class JsonTreeRenderer extends JsonConverter {
     }
 
     /**
-     * Remove a property from the tree
-     * @param treeData The tree data
-     * @param id The id of the property to remove
-     */
-    removeProperty(treeData: NodeModel<IJsonTreeData>[], id: number | string): NodeModel<IJsonTreeData>[] {
-        return treeData.filter(el => el.id !== id && el.parent !== id);
-    }
-
-    /**
      * Remove recursively the sub elements of an array from the tree
      * @param treeData The tree data
      * @param id The id of the array element to remove
      */
-    private removeArrayElementSubNode(treeData: NodeModel<IJsonTreeData>[], id: number | string):
+    private removeTreeElementSubNode(treeData: NodeModel<IJsonTreeData>[], id: number | string):
                                     NodeModel<IJsonTreeData>[] {
         let newTreeData = [...treeData];
         treeData.filter(el => el.parent === id).forEach(node => {
-            newTreeData = this.removeArrayElementSubNode(newTreeData, node.id);
+            newTreeData = this.removeTreeElementSubNode(newTreeData, node.id);
         });
         const index = newTreeData.findIndex(el => el.id === id);
         if (index !== -1) {
@@ -675,12 +566,12 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param treeData
      * @param id
      */
-    removeArrayElement(treeData: NodeModel<IJsonTreeData>[], id: number | string): NodeModel<IJsonTreeData>[] {
+    removeTreeElement(treeData: NodeModel<IJsonTreeData>[], id: number | string): NodeModel<IJsonTreeData>[] {
         const currentNode = treeData.find(el => el.id === id);
         if (currentNode) {
             const parentNodeId = currentNode.parent;
             //const newTreeData = treeData.filter(node => node.id !== id);
-            const newTreeData = this.removeArrayElementSubNode(treeData, id);
+            const newTreeData = this.removeTreeElementSubNode(treeData, id);
 
             const arrayElements = newTreeData.filter(el => el.parent === parentNodeId
                 && el.data?.nodeType === NodeType.ArrayElement);
@@ -692,7 +583,7 @@ export class JsonTreeRenderer extends JsonConverter {
                     currentArrayElement.text = index + ":";
                 }
             });
-            return newTreeData;
+            return this.addTreeDataParams(newTreeData);
         } else {
             return treeData;
         }
@@ -775,14 +666,15 @@ export class JsonTreeRenderer extends JsonConverter {
         const layoutGroupsNode = baseData.find(
             el => el.data && 'key' in el.data && el.data?.key === 'layoutGroups'
         );
-        baseData = this.addGroupElement(baseData, layoutGroupsNode!.id, "Main").treeData;
+        baseData = this.addGroupElement(baseData, layoutGroupsNode!.id, {groupName: "Main", label: "Main"}).treeData;
         const sectionsNode = baseData.find(
             el => el.data && 'key' in el.data && el.data?.key === 'sections'
         );
-        baseData = this.addSectionElement(baseData, sectionsNode!.id, "Main_section{index}").treeData;
+        baseData = this.addSectionElement(baseData, sectionsNode!.id, {sectionName: "main_section", label: "Main section"}).treeData;
         const openNodes = baseData.filter(el =>
             el.data?.nodeType !== NodeType.CloseNode && el.data?.nodeSubType !== 'toolbar'
         ).map(el => el.id);
+        baseData = this.updateTreeDataValueLists({treeData: baseData, newNodeId: openNodes}, dataSchema);
         return {
             baseData: baseData,
             treeData: this.finalNodeRendering({jsonData: baseData, openNodes}),
@@ -797,7 +689,7 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param dataSchema The json schema
      */
     createTreeData = (jsonObject: Object, dataSchema?: IDataSchema[]): NodeModel<IJsonTreeData>[] => {
-        return this.addTreeDataParams(this.buildTreeData(jsonObject), undefined);
+        return this.addTreeDataParams(this.buildTreeData(jsonObject));
     }
 
     /**
@@ -834,50 +726,55 @@ export class JsonTreeRenderer extends JsonConverter {
     modifyProperty = (treeData: NodeModel<IJsonTreeData>[], nodeId: number | string, newValue: string) => {
         const currentNode = treeData.find(el => el.id === nodeId);
         const parentNode = treeData.find(el => currentNode?.parent === el.id);
+        if (!currentNode || !parentNode) {
+            return treeData;
+        } 
         let componentTypeModified = false;
-        let optionalProperties: IOptionalProperties[] = [
-            {key: 'fieldName', defaultValue: 'Field_Name'},
-            {key: 'xs', defaultValue: 12},
-            {key: 'sm', defaultValue: 12},
-            {key: 'md', defaultValue: 12},
-            {key: 'lg', defaultValue: 12},
-            {key: 'xl', defaultValue: 12},
-        ];
+        // Calculate nodes to remove and properties to add if the component type is being changed
+        const nodesToRemove: (string |number)[] = [];
+        const propertiesToAdd: string[] = [];
         if (currentNode && currentNode.data?.nodeType === NodeType.Leaf && currentNode.data.key === 'componentType' && parentNode) {
             componentTypeModified = true;
-            switch (newValue) {
-                case  "wdNumberTextField":
-                    optionalProperties.push({key: "decimalplaces", defaultValue: 0});
-                    break;
-                case "wdTextArea":
-                    optionalProperties.push({key: "linesNumber", defaultValue: 4});
-                    break;
-                case "wdCombobox":
-                    optionalProperties = [...optionalProperties,
-                        {key: "multiSelect", defaultValue: 'false'},
-                    ];
-                    break;
-            }
-        }
-
-        return this.addTreeDataParams(treeData.map(node => {
-            if (node.id === nodeId && node.data?.nodeType === NodeType.Leaf) {
-                return {
-                    ...node, data: {
-                        ...node.data, text2: newValue, value: newValue, nodeTextCustomStyle: undefined,
-                        blocked_update: false
-                    }
-                };
-            } else if (componentTypeModified && node.id === parentNode!.id && node.data?.nodeType === NodeType.ArrayElement) {
-                return {
-                    ...node, data: {
-                        ...node.data, optionalSubProperties: optionalProperties
+            const currentPropertyNodes = treeData.filter(node => node.parent === parentNode.id);
+            const parentType = this.getParentProperty(treeData, parentNode.id);
+            const newProperties = jsonConfigStructure
+                .filter(el => el.parentProperty === parentType && el.defaultAdd && (!el.conditionalProperty || (
+                    el.conditionalProperty === 'componentType' && 
+                        ((el.conditionalValue && el.conditionalValue.includes(newValue)) || 
+                            (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(newValue)))))
+                ).map(el => el.propertyName);
+            currentPropertyNodes.forEach(node => {
+                if (node.data && 'key' in node.data) {
+                    if (!newProperties.includes(String(node.data?.key))) {
+                        nodesToRemove.push(node.id);
                     }
                 }
-            } else {
-                return node;
+            });
+            newProperties.forEach(prop => {
+                if (!(currentPropertyNodes.find(node => !!node.data && 'key' in node.data && node.data.key === prop))) {
+                    propertiesToAdd.push(prop);
+                }
+            });
+        }
+        let newTreeData: NodeModel<IJsonTreeData>[] = [...treeData];
+        const modifiedNode = newTreeData.find(el => el.id === nodeId);
+        if (modifiedNode && modifiedNode.data && modifiedNode.data.nodeType === NodeType.Leaf) {
+            modifiedNode.data.text2 = newValue;
+            modifiedNode.data.value = newValue;
+            modifiedNode.data.nodeTextCustomStyle = undefined;
+            modifiedNode.data.blocked_update = false;
+        }
+        
+        nodesToRemove.forEach(el => {
+            const index = newTreeData.findIndex(node => node.id === el);
+            if (index > -1) {
+                newTreeData.splice(index, 1);
             }
-        }));
+        });
+        propertiesToAdd.forEach(el => {
+            newTreeData = this.addJsonElement(newTreeData, parentNode?.id, el).treeData;
+        });
+        return this.addTreeDataParams(newTreeData);
     }
 
     /**
@@ -967,24 +864,6 @@ export class JsonTreeRenderer extends JsonConverter {
             }
         });
         return resultTreeData;
-/*
-        arrayNodes.forEach(node => {
-            maxNodeId++;
-            const closestComponentsNode = this.getClosestComponentsNode(resultTreeData, node);
-            if (closestComponentsNode) {
-                newTreeData = resultTreeData.map(node => {
-                    if (node.id === closestComponentsNode) {
-                        return {...node, id: maxNodeId};
-                    } else if (node.parent === closestComponentsNode) {
-                        return {...node, parent: maxNodeId};
-                    } else {
-                        return node;
-                    }
-                });
-            }
-        });
-        return newTreeData;
-*/
     }
 
     /**
@@ -1017,44 +896,14 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param treeData The tree data
      * @param parentNodeSubType The parent node subtype
      */
-    addTreeDataParams = (treeData: NodeModel<IJsonTreeData>[], parentNodeSubType?: NodeSubType) => {
-        const addedActions: {condition: (data: IJsonTreeData | undefined) => boolean, actionType: JsonTreeActionType, icon: string,
-            color: DailyToolbarPaletteType, additionalParams?: (data: IJsonTreeData | undefined) => Record<string, unknown>}[] = [
-            {condition: (data) => data?.nodeType === NodeType.Array && data?.key === 'layoutGroups',
-                actionType: 'addGroup', icon: 'plus-circle-outline', color: 'primary'},
-            {condition: (data) => data?.nodeType === NodeType.Array && data?.key === 'sections',
-                actionType: 'addSection', icon: 'plus-circle-outline', color: 'primary'},
-            {condition: (data) => data?.nodeType === NodeType.Array && data?.key === 'components',
-                actionType: 'addComponent', icon: 'plus-circle-outline', color: 'primary'},
-            {condition: (data) => data?.nodeType === NodeType.Array && data?.key === 'components',
-                actionType: 'addSubForm', icon: 'table-large-plus', color: 'primary'},
-            {condition: (data) => (data?.nodeType === NodeType.ArrayElement || data?.nodeType === NodeType.Object) &&
-                    !!data?.optionalSubProperties && data?.optionalSubProperties.length > 0,
-                actionType: 'addProperty', icon: 'plus', color: 'primary',
-                additionalParams: (data: IJsonTreeData | undefined) => ({
-                    optionalProperties: data && ('optionalSubProperties' in data) ? data.optionalSubProperties : undefined
-                })},
-            {condition: (data) => (data?.nodeType === NodeType.Leaf ||
-                            data?.nodeType === NodeType.Object || data?.nodeType === NodeType.Array) && !!data?.removable,
-                actionType: 'removeProperty', icon: 'close', color: 'error'},
-            {condition: (data) => data?.nodeType === NodeType.ArrayElement && data?.nodeSubType === NodeSubType.LayoutGroupSectionElementComponent,
-                actionType: 'locateComponent', icon: 'target', color: 'primary'},
-            {condition: (data) => data?.nodeType === NodeType.ArrayElement,
-                actionType: 'removeArrayElement', icon: 'close', color: 'error'},
-            {condition: (data) => data?.nodeType === NodeType.ArrayElement &&
-                            !!data.optionalSubProperties?.find(el => el.key === 'multiSelect'),
-                actionType: 'addExternalDataInfoProperty', icon: 'database-arrow-left-outline', color: 'primary'},
-            {condition: (data) => !!data && 'key' in data && data?.key === 'externalDataInfo',
-                actionType: 'addExternalDataInfoSubProperty', icon: 'table-arrow-left', color: 'primary',
-                additionalParams: (data: IJsonTreeData | undefined) => ({
-                    optionalProperties:  [{key: "apiCallInfo", defaultValue: ""},
-                    {key: "customList", defaultValue: ""}]
-                })},
-            {condition: (data) => !!data && 'key' in data && data?.key === 'customList',
-                actionType: 'addCustomListElement', icon: 'plus', color: 'primary'},
-        ];
-        return this.assignSubTypes(treeData, parentNodeSubType).map(node => {
+    addTreeDataParams = (treeData: NodeModel<IJsonTreeData>[]) => {
+        return this.assignSubTypes(treeData).map(node => {
+            if (!node.data || Number(node.parent) < 2) {
+                return node;
+            }
             const newNode: NodeModel<IJsonTreeData> = {...node};
+            const nodeKey = newNode.data && 'key' in newNode.data ? newNode.data.key : '';
+            let nodeType = newNode.data?.nodeType;
             if (newNode.data?.nodeType === NodeType.Leaf && newNode.data?.editable) {
                 newNode.data = {...newNode.data,
                             customActions: [
@@ -1065,22 +914,107 @@ export class JsonTreeRenderer extends JsonConverter {
                             ]
                         };
             }
-            if (newNode.data?.actions) {
+            if (newNode.data && !newNode.data.actions) {
                 newNode.data.actions = [];
             }
-            addedActions.forEach(action => {
-                if (newNode.data && action.condition(newNode.data)) {
-                    newNode.data = {...newNode.data,
-                        actions: [...(newNode.data?.actions ?? []),
-                            this.defineStandardAction(action.icon, action.color, '',
-                                (nodeId: number | string, params: Record<string, unknown>) => this.genericAction(action.actionType,
-                                    {nodeId: nodeId, ...(params ?? {})}),
-                                'end', undefined, action.additionalParams?.(newNode.data!)
-                            ),
-                        ]
-                    };
+            let actions: ITreeAction[] = [];
+            if (nodeType === NodeType.ArrayElement || nodeType === NodeType.Object) {
+                const parentProperty = this.getParentProperty(treeData, nodeType === NodeType.ArrayElement ? newNode.parent : newNode.id);
+                const childrenProps = treeData.filter(el => el.parent === newNode.id);
+                const optionalProperties = jsonConfigStructure.filter(el => 
+                    el.parentProperty === parentProperty && (!el.conditionalProperty ||
+                        (el.conditionalProperty && childrenProps.find(s => s?.data && 'key' in s.data && 'value' in s.data && s.data.key === el.conditionalProperty &&
+                            ((el.conditionalValue && el.conditionalValue.includes(String(s.data.value))) ||
+                                (el.conditionalValueExclusion && !el.conditionalValueExclusion.includes(String(s.data.value)))))
+                        ))
+                    ).filter(p => !childrenProps.find(s => s.data && 'key' in s.data && s.data.key === p.propertyName)) 
+                    .map(el => ({key: el.propertyName, defaultValue: el.defaultValue, notRemovable: !el.optional})  //TODO: override ?
+                );
+                actions = [...actions, 
+                    ...(optionalProperties.length > 0 ? [this.defineStandardAction('plus', 'primary', '', 
+                        (nodeId: number | string, params: Record<string, unknown>) => this.genericAction('addProperty',
+                            {nodeId: nodeId, ...(params ?? {})}), 'end', undefined, 
+                            {optionalProperties: optionalProperties})] : []),
+                ];
+            } 
+            if (nodeType === NodeType.Array) {
+                const actionForArray: {
+                    actionType: JsonTreeActionType, 
+                    icon: string,
+                    color: DailyToolbarPaletteType, 
+                    additionalParams?: Record<string, unknown>
+                }[] = [];
+                switch(nodeKey) {
+                    case 'layoutGroups':
+                        actionForArray.push({actionType: 'addGroup', icon: 'plus-circle-outline', color: 'primary'});
+                        break;
+                    case 'sections':
+                        actionForArray.push({actionType: 'addSection', icon: 'plus-circle-outline', color: 'primary'});
+                        break;
+                    case 'components':
+                        actionForArray.push({actionType: 'addComponent', icon: 'plus-circle-outline', color: 'primary'});
+                        actionForArray.push({actionType: 'addSubForm', icon: 'table-large-plus', color: 'primary'});
+                        break;
+                    case 'subFields':
+                        actionForArray.push({actionType: 'addComponentFromField', icon: 'plus-circle-outline', color: 'primary'});
+                        break;
+                    case 'customList':
+                        actionForArray.push({actionType: 'addCustomListElement', icon: 'plus-circle-outline', color: 'primary'});
+                        actionForArray.push({actionType: 'removeTreeElement', icon: 'close', color: 'error'});
+                        break;
+                    default:
+                        actionForArray.push({actionType: 'removeTreeElement', icon: 'close', color: 'error'});
+                        break;
                 }
-            });
+                actions = [...actions, 
+                    ...actionForArray
+                        .map(el => this.defineStandardAction(el.icon, el.color, '', 
+                            (nodeId: number | string, params: Record<string, unknown>) => 
+                                this.genericAction(el.actionType,{nodeId: nodeId, ...(params ?? {})}), 'end', undefined))
+                ];
+            }
+            if (nodeType === NodeType.ArrayElement) {
+                actions = [...actions,
+                    this.defineStandardAction('close', 'error', '', 
+                        (nodeId: number | string, params: Record<string, unknown>) => this.genericAction('removeTreeElement',
+                            {nodeId: nodeId, ...(params ?? {})}), 
+                            'end'
+                    )
+                ];
+                const parentProperty = this.getParentProperty(treeData, nodeType === NodeType.ArrayElement ? newNode.parent : newNode.id);
+                if (parentProperty === 'components') {
+                    const childrenProps = treeData.filter(el => el.parent === newNode.id);
+                    if (childrenProps.find(el => el.data && 'key' in el.data && el.data.key === 'fieldName')) {
+                        actions = [...actions,
+                            this.defineStandardAction('target', 'primary', '', 
+                                (nodeId: number | string, params: Record<string, unknown>) => this.genericAction('locateComponent',
+                                    {nodeId: nodeId, ...(params ?? {})}), 
+                                    'end'
+                            )
+                        ];
+                    }
+                }
+            }
+            if (nodeType === NodeType.Leaf || nodeType === NodeType.Object) {
+                const parentProperty = this.getParentProperty(treeData, nodeType === NodeType.Leaf ? newNode.parent : newNode.id);
+                let removable = true;
+                const property = jsonConfigStructure.find(el => el.propertyName === nodeKey && parentProperty === el.parentProperty);
+                if (property && !property.optional) {
+                    removable = false;
+                }
+                if (removable) {
+                    actions = [...actions,
+                        this.defineStandardAction('close', 'error', '', 
+                            (nodeId: number | string, params: Record<string, unknown>) => this.genericAction('removeTreeElement',
+                                {nodeId: nodeId, ...(params ?? {})}), 
+                                'end'
+                        )
+                    ];
+                }
+            }
+            if (newNode.data) {
+                newNode.data.actions = actions;
+            }
             return newNode;
         });
     }
@@ -1140,7 +1074,8 @@ export class JsonTreeRenderer extends JsonConverter {
                     }
                 }
                 if (node.data?.nodeType === NodeType.Leaf && (node.data?.key === 'multiSelect' ||
-                                node.data?.key === 'filterable' || node.data?.key === 'defaultVisible')) {
+                                node.data?.key === 'filterable' || node.data?.key === 'defaultVisible' || 
+                                node.data?.key === 'customListValueDisplayed')) {
                     return {
                         ...node,
                         data: {
