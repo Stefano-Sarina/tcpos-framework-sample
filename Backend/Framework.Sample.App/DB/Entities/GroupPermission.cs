@@ -19,7 +19,7 @@ public class GroupPermission : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Group))]
-    [UniqueIndexField("Unk_GroupId_PermissionId")]
+    [UniqueIndexField(KeyName = "Unk_GroupId_PermissionId")]
     public int GroupId
     {
         get;
@@ -28,7 +28,7 @@ public class GroupPermission : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueIndexField("Unk_GroupId_PermissionId")]
+    [UniqueIndexField(KeyName = "Unk_GroupId_PermissionId")]
     public int PermissionId
     {
         get;

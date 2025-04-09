@@ -17,7 +17,7 @@ public class Group : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueIndexField("Unk_GroupName")]
+    [UniqueIndexField(KeyName = "Unk_GroupName")]
     [StringLength(40, MinimumLength = 1)]
     public string GroupName
     {

@@ -18,7 +18,7 @@ public class OrderDetail : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Order))]
-    [UniqueIndexField("Unk_OrderId_ProductId")]
+    [UniqueIndexField(KeyName = "Unk_OrderId_ProductId")]
     public int OrderId
     {
         get;
@@ -27,7 +27,7 @@ public class OrderDetail : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Product))]
-    [UniqueIndexField("Unk_OrderId_ProductId")]
+    [UniqueIndexField(KeyName = "Unk_OrderId_ProductId")]
     public int ProductId
     {
         get;

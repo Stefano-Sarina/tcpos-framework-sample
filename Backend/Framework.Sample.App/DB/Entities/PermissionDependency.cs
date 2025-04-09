@@ -19,7 +19,7 @@ public class PermissionDependency : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueIndexField("unk_childprm_parentprm")]
+    [UniqueIndexField(KeyName = "unk_childprm_parentprm")]
     public int ChildPermissionId
     {
         get;
@@ -37,7 +37,7 @@ public class PermissionDependency : Entity
 
     [ConcurrencyItem]
     [ForeignKey(nameof(Permission))]
-    [UniqueIndexField("unk_childprm_parentprm")]
+    [UniqueIndexField(KeyName = "unk_childprm_parentprm")]
     public int ParentPermissionId
     {
         get;
