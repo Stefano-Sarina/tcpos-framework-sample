@@ -17,7 +17,7 @@ public class Customer : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueIndexField("Unk_FirstName_LastName")]
+    [UniqueIndexField(KeyName = "Unk_FirstName_LastName")]
     [StringLength(40, MinimumLength = 1)]
     public string FirstName
     {
@@ -26,7 +26,7 @@ public class Customer : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueIndexField("Unk_FirstName_LastName")]
+    [UniqueIndexField(KeyName = "Unk_FirstName_LastName")]
     [StringLength(40, MinimumLength = 1)]
     public string LastName
     {
