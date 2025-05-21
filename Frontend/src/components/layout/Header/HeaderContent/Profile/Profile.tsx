@@ -27,7 +27,7 @@ import ProfileTab from './ProfileTab';
 // assets
 import avatar1 from '../../../../../assets/images/users/avatar-1.png';
 import {LogoutOutlined} from '@ant-design/icons';
-import {DailyPublicRegistrationContainer} from '@tcpos/backoffice-core';
+import {NextBOPublicRegistrationContainer} from '@tcpos/backoffice-core';
 import {useAppSelector} from '@tcpos/backoffice-components';
 import {useNavigate} from "react-router-dom";
 import {useIntl} from "react-intl";
@@ -68,7 +68,7 @@ const Profile = () => {
     const navigate = useNavigate();
     //const { logout, operator } = useAuth();
     const user = useAppSelector(state => state.user);
-    const userLogic = DailyPublicRegistrationContainer.resolve(AUserLogic);
+    const userLogic = NextBOPublicRegistrationContainer.resolve(AUserLogic);
     const intl = useIntl();
 
     const handleLogout = async () => {
@@ -98,7 +98,7 @@ const Profile = () => {
     };
 
     const iconBackColorOpen = theme.palette.mode === 'dark' ? 'grey.200' : 'grey.300';
-    // TODO Replicated code from WDLinkWrapper: replace menu items and onClick method with WDLinkWrapper
+    // TODO Replicated code from NBOLinkWrapper: replace menu items and onClick method with NBOLinkWrapper
 
 
     return (

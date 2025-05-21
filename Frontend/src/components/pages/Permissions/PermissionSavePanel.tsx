@@ -56,7 +56,7 @@ export function PermissionSavePanel({selected, permissionBeingUpdated, onProceed
                         </SvgIcon> <FormattedMessage id={"{num} chained effects"}
                                                      values={{num: permissionBeingUpdated.length}}/>
                     </Typography>}
-                {/* <WD_Combobox
+                {/* <NBO_Combobox
                     valueList={[]}
                     componentName={'PermissionTypeList'}
                     componentId={'PermissionTypeList'}

@@ -263,9 +263,11 @@ export class JsonConverter {
                     errors = [...errors, currentErrors];
                 } else {
                     Object.keys(el).forEach(key => {
-                        const currentErrors = this.jsonSubValidation(el[key], key, `${nav}/${property}[${index}]`);
-                        if (currentErrors.length > 0) {
-                            errors = [...errors, ...currentErrors];
+                        if (!(property === 'customList' && key === 'value')) {
+                            const currentErrors = this.jsonSubValidation(el[key], key, `${nav}/${property}[${index}]`);
+                            if (currentErrors.length > 0) {
+                                errors = [...errors, ...currentErrors];
+                            }
                         }
                     });
                 }
@@ -277,7 +279,9 @@ export class JsonConverter {
             const {mandatoryProps, optionalProps} = this.getProperties(subObject, property);
             const currentErrors = this.checkObjectProperties(subObject, mandatoryProps, optionalProps, `${nav}`);
             if (property === "externalDataInfo") {
-                if (Object.keys(subObject).length !== 1) {
+                if ((Object.keys(subObject).indexOf('apiCallInfo') !== -1 && Object.keys(subObject).indexOf('customList') !== -1)
+                    || (Object.keys(subObject).indexOf('apiCallInfo') === -1 && Object.keys(subObject).indexOf('customList') === -1)
+                ) {
                     return [`${nav} property must have exactly one property ('apiCallInfo' or 'customList).`];
                 }
             }

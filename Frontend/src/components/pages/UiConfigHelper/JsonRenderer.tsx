@@ -1,19 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {
     ABaseApiController,
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     loadInterfaceBuilder
 } from "@tcpos/backoffice-core";
 import type {IApiError} from "@tcpos/backoffice-core";
 import {rwModes} from "@tcpos/common-core";
-import type {ITreeData, IWDConfirmDialogProps} from "@tcpos/backoffice-components";
+import type {ITreeData, INBOConfirmDialogProps} from "@tcpos/backoffice-components";
 import {
     EntityTranslationContextProvider,
     TranslationFormats,
     useAppDispatch,
-    useDailyNavigateToField,
-    WD_ConfirmDialog,
-    WD_TreeContainer
+    useNextBONavigateToField,
+    NBO_ConfirmDialog,
+    NBO_TreeContainer
 } from "@tcpos/backoffice-components";
 import {useIntl} from "react-intl";
 import {Box, Card, CardContent, CardHeader, Grid, Typography} from "@mui/material";
@@ -129,17 +129,17 @@ export const JsonRenderer = () => {
                 .join('');
     };
     const getEntityList = async () => {
-        const apiController = DailyPublicRegistrationContainer.resolve(ABaseApiController);
+        const apiController = NextBOPublicRegistrationContainer.resolve(ABaseApiController);
         if (!apiController) {
             throw new Error('API controller not found');
         }
-        const apiResponse = await apiController.dataListLoad("Permission", [
+        const apiResponse = await apiController.dataListLoad("PrmPermissions", [
             {id: 1, parentId: 0, mode: "AND", type: "filterGroup"},
-            {id: 2, parentId: 1, field: 'PermissionType', values: [0], type: "filter", operator: "Number.equals"},
-            {id: 3, parentId: 1, field: 'PermissionName', values: ['-api-get'], type: "filter", operator: "String.endsWith"},
-        ], [], ['PermissionName'], undefined, undefined, undefined, true);
+            {id: 2, parentId: 1, field: 'Type', values: ['erp'], type: "filter", operator: "String.equals"},
+            {id: 3, parentId: 1, field: 'SubType', values: ['get'], type: "filter", operator: "String.equals"},
+        ], [], ['Entity'], undefined, undefined, undefined, true);
         if (apiResponse && !(apiResponse as IApiError).status) {
-            setEntityList((apiResponse as Record<string, any>[]).map(el => el.PermissionName.replace('-api-get', '') /*snakeToPascal(el.Entity)*/));
+            setEntityList((apiResponse as Record<string, any>[]).map(el => el.Entity /*snakeToPascal(el.Entity)*/));
         } else {
             throw new Error('Entity list not found');
         }
@@ -157,7 +157,7 @@ export const JsonRenderer = () => {
     const onImportedJsonChanged = (json: string) => {
         if (json !== "") {
             try {
-                const parsedJson = JSON.parse(json);
+                const parsedJson = JSON.parse(json.replace(new RegExp('"wd'), '"nbo'));
                 if (parsedJson) {
                     const error = jsonDataManager.validateJson(parsedJson);
                     if (error !== "") {
@@ -267,7 +267,7 @@ export const JsonRenderer = () => {
         }
     }, [jsonTreeActions, jsonDataManager]);
 
-    const navigateToField = useDailyNavigateToField(
+    const navigateToField = useNextBONavigateToField(
             objectName ?? "", "0", tabsValue, handleTabsValueChange, false
     );
 
@@ -280,7 +280,7 @@ export const JsonRenderer = () => {
         const componentType = jsonDataManager.jsonData.treeData
                 .filter(el => el.parent === nodeId)
                 .find(el => el.data && 'key' in el.data && el.data.key === 'componentType');
-        if (componentType?.data && 'value' in componentType.data && componentType.data.value === "wdSubForm") {
+        if (componentType?.data && 'value' in componentType.data && componentType.data.value === "nboSubForm") {
             let parent = jsonDataManager.jsonData.treeData.find(el => el.id === nodeId)?.parent;
             let parentNode = jsonDataManager.jsonData.treeData.find(el => el.id === parent);
             while (parentNode && parentNode.id !== 0 && parentNode.data?.nodeSubType !== "layoutGroups") {
@@ -299,7 +299,7 @@ export const JsonRenderer = () => {
         if (componentName && fieldNameNodeData && 'value' in fieldNameNodeData) {
             const fieldName = fieldNameNodeData.value;
             if (entity && componentName && fieldName) {
-                navigateToField.dailyNavigateToField({entityName: entity, entityId: "0", fieldName: String(fieldName),
+                navigateToField.nextBONavigateToField({entityName: entity, entityId: "0", fieldName: String(fieldName),
                     componentId: String(componentName)});
             }
         }
@@ -362,7 +362,7 @@ export const JsonRenderer = () => {
      * @param entityName
      */
     const getDataSchemaFromAPI = async (entityName: string) => {
-        const apiController = DailyPublicRegistrationContainer.resolve(ABaseApiController);
+        const apiController = NextBOPublicRegistrationContainer.resolve(ABaseApiController);
         if (!apiController) {
             throw new Error('API controller not found');
         }
@@ -426,7 +426,7 @@ export const JsonRenderer = () => {
         setEntityDialogProps(prevProps => ({...prevProps, error: ""}));
     };
 
-    const [dialogProps, setDialogProps] = useState<IWDConfirmDialogProps>({
+    const [dialogProps, setDialogProps] = useState<INBOConfirmDialogProps>({
         title: "", message: "", open: false, actions: []
     });
 
@@ -579,7 +579,7 @@ export const JsonRenderer = () => {
     >
         <ImportJsonDialog open={openJsonImportDialog} json={importedJson} onJsonChanged={onImportedJsonChanged}
                           onOk={onJsonImportOk} onCancel={onJsonImportCancel} error={importedJsonError} />
-        <WD_ConfirmDialog
+        <NBO_ConfirmDialog
                 title={dialogProps.title}
                 message={dialogProps.message}
                 open={dialogProps.open}
@@ -659,7 +659,7 @@ export const JsonRenderer = () => {
                                                         ml: layoutModel === 'Vertical' ? 1 : 0,
                                                     }}>
                                                         <Typography variant={'body1'} sx={{fontFamily: 'Monospace'}}>
-                                                            <WD_TreeContainer
+                                                            <NBO_TreeContainer
                                                                     treeData={jsonDataManager.jsonData.treeData}
                                                                     initialOpen={/* jsonDataManager.jsonData.openNodes.length === 0
                                                                             ? "all" 

@@ -9,7 +9,7 @@ import {RegisterCustomInterface} from "./registerCustomInterface";
  * - Custom UI components {@link RegisterCustomInterface}
  * - Plugins
  *
- * The registrations are performed using the {@link DailyPublicRegistrationContainer} class provided by the _webdaily-core_
+ * The registrations are performed using the {@link NextBOPublicRegistrationContainer} class provided by the _backoffice-core_
  * package.
  *
  * @category Functions

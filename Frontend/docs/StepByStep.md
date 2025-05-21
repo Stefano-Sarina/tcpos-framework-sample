@@ -61,7 +61,7 @@ In the src/core/dataControllers folder there are a data controller for each mode
 export class CustomerDataController extends CommonDataController<CustomerEntityType> {
 
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
     ) {
         super(apiController);
     }

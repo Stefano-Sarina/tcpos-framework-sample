@@ -1,13 +1,13 @@
 import {type CustomerEntityType, type ICustomerPayload} from "../apiModels/ICustomerPayload";
 import type {LogicResult} from "@tcpos/common-core";
 import {PublicInjectable} from "@tcpos/common-core";
-import {ABaseApiController, CommonDataController, DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {ABaseApiController, CommonDataController, NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 
 @PublicInjectable()
 export class CustomerDataController extends CommonDataController<CustomerEntityType> {
 
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
     ) {
         super(apiController);
     }

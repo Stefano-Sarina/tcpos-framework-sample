@@ -4,7 +4,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import {TCIcon} from "@tcpos/common-components";
 import {Box, IconButton, ListItemIcon, ListItemText, Menu, MenuItem} from "@mui/material";
 import "./PermissionNode.scss";
-import {WD_DailyActionToolbarButton} from "@tcpos/backoffice-components";
+import {NBO_ActionToolbarButton} from "@tcpos/backoffice-components";
 import type {IPermissionData} from "./IPermissionData";
 import {PermissionStatusComp} from "./PermissionStatusComp";
 import {PermissionChildStats} from "./PermissionChildStats";
@@ -102,7 +102,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
 
 
     return <Box ref={ref}
-                className={`wd-treenode-root permission-node level${indent}`}
+                className={`nbo-treenode-root permission-node level${indent}`}
                 sx={{
                     //paddingInlineStart: indent,
                     display: 'flex',
@@ -110,12 +110,12 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                     //   "--indent": theme => theme.spacing(indent)
                 }}
                 style={{}}
-                data-testid={`wd-treenode-${props.id}`}
+                data-testid={`nbo-treenode-${props.id}`}
     >
-        <div className={"wd-treenode-elementWrapper"}>
+        <div className={"nbo-treenode-elementWrapper"}>
             <Box
-                data-testid={'wd-treenode-expandIconWrapper'}
-                className={'wd-treenode-expandIconWrapper'}
+                data-testid={'nbo-treenode-expandIconWrapper'}
+                className={'nbo-treenode-expandIconWrapper'}
                 sx={{
                     alignItems: 'center',
                     fontSize: 0,
@@ -136,13 +136,13 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                         ? theme.palette[currentColor].main + " !important"
                         : undefined
                 }}>
-                    <ArrowRightIcon data-testid={'wd-treenode-ArrowRightIcon' + props.id}/>
+                    <ArrowRightIcon data-testid={'nbo-treenode-ArrowRightIcon' + props.id}/>
                 </Box>
                 }
             </Box>
             <Box
-                className={'wd-treenode-selection'}
-                data-testid={"wd-treenode-selector"}
+                className={'nbo-treenode-selection'}
+                data-testid={"nbo-treenode-selector"}
             >
                 <IconButton color={"default"} onClick={() => {
                     const newValue = !props.selected;
@@ -159,8 +159,8 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                 </IconButton>
             </Box>
             <Box
-                className={'wd-treenode-itemText'}
-                data-testid={'wd-treenode-itemText' + props.id}
+                className={'nbo-treenode-itemText'}
+                data-testid={'nbo-treenode-itemText' + props.id}
             >
 
                 <Box
@@ -169,10 +169,10 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                         alignItems: 'center',
                         justifyContent: 'center'
                     }}
-                    className={"wd-treenode-nodeTitleCont"}
+                    className={"nbo-treenode-nodeTitleCont"}
                 >
                     {props.data?.icon && <Box
-                        className={'wd-treenode-gridItemIcon'}
+                        className={'nbo-treenode-gridItemIcon'}
                         sx={{
                             display: 'flex',
                             alignItems: 'center',
@@ -192,7 +192,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                                     : undefined,
                                 margin: 'auto'
                             }}
-                            data-testid={'wd-treenode-icon' + props.id}
+                            data-testid={'nbo-treenode-icon' + props.id}
                         />
                     </Box>}
                     {props.data?.actions?.filter(el => el.position === 'start')
@@ -206,7 +206,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                                     {...props.data?.typographyProps}
                                     iconCode={'tci-' + el.icon}
                                     color={el.color}
-                                    data-testid={'wd-treenode-iconbutton' + index + "_" + props.id}
+                                    data-testid={'nbo-treenode-iconbutton' + index + "_" + props.id}
                                 />
                             </IconButton>
                         ))
@@ -230,7 +230,7 @@ export const PermissionNodeInner = (props: PermissionNodeParams) => {
                     <Box sx={{alignItems: 'center', marginLeft: 2}}>
                         {props.data?.actions?.filter(el => !el.position || el.position === 'end')
                             .map((el, index) => (
-                                <WD_DailyActionToolbarButton
+                                <NBO_ActionToolbarButton
                                     isInMoreItemsList={false}
                                     name={'TreeToolbarButton' + index}
                                     enabled={true}

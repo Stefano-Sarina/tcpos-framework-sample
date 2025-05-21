@@ -18,7 +18,7 @@
               "components": [
                 {
                   "componentName": "Name",
-                  "componentType": "wdStringTextField",
+                  "componentType": "nboStringTextField",
                   "fieldName": "Name",
                   "label": "Name",
                   "xs" : 12,
@@ -31,7 +31,7 @@
                 },
                 {
                   "componentName": "Price",
-                  "componentType": "wdNumberTextField",
+                  "componentType": "nboNumberTextField",
                   "fieldName": "Price",
                   "label": "Price",
                   "decimalplaces": 2,

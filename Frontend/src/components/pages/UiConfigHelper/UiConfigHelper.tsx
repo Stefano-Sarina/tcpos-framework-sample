@@ -1,6 +1,6 @@
 import React, {useMemo, useState} from "react";
 import {Grid} from "@mui/material";
-import {WD_TextArea} from "@tcpos/backoffice-components";
+import {NBO_TextArea} from "@tcpos/backoffice-components";
 import {useIntl} from "react-intl";
 import {rwModes} from "@tcpos/common-core";
 
@@ -20,7 +20,7 @@ export const UiConfigHelper = () => {
 
     return  <Grid container spacing={3}>
         <Grid item xs={12}>
-            <WD_TextArea
+            <NBO_TextArea
                     componentName={'textAreaJsonConfig'}
                     bindingGuid={""}
                     groupName={""}

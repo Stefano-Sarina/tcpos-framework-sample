@@ -1,8 +1,8 @@
 import { ALocalizationService, PublicInjectable, type IEntityDataError, type IEntityDataMainObject, type IEntityFieldError, type IInterfaceBuilderModel } from "@tcpos/common-core";
 import {
-    DailyPublicRegistrationContainer, ABaseApiController,
-    CommonObjectController, ADailyConfigService,
-    ADailyApiClient,
+    NextBOPublicRegistrationContainer, ABaseApiController,
+    CommonObjectController, ANextBOConfigService,
+    ANextBOApiClient,
     store
 } from "@tcpos/backoffice-core";
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
@@ -23,20 +23,42 @@ export class CustomerObjectController extends
         CommonObjectController<CustomerObjectDataType, CustomerObjectExtendedDataType, I18n> {
 
     constructor(
-                @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
-                @DailyPublicRegistrationContainer.inject(ADailyConfigService) protected configService: ADailyConfigService<I18n>,
-                @DailyPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
+                @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
+                @NextBOPublicRegistrationContainer.inject(ANextBOConfigService) protected configService: ANextBOConfigService<I18n>,
+                @NextBOPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
     ) {
         super(apiController, configService, localeService);
 
     }
-    apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
+    apiClient = NextBOPublicRegistrationContainer.resolve(ANextBOApiClient);
 
     init(mainId: string, objectName: string, interfaceConfig: IInterfaceBuilderModel) {
         this.mainId = mainId;
         this.mainEntity = "Customer";
         this.objectDescription = "Customers";
         this.objectName = objectName;
+        this.visibilityConditions = [
+            {
+                groupName: "main_definitions",
+                sectionName: "MainDefinitions",
+                componentName: "Phone",
+                func: (entityName, entityId, data) => {
+                    return data.find(el => el.entityName === "Customer")?.data.FirstName === "Pippo" && 
+                        data.find(el => el.entityName === "Customer")?.data.LastName === "Pluto";
+                }
+            }
+        ];
+		this.forcedRWModeConditions = [
+            {
+                groupName: "main_definitions",
+                sectionName: "MainDefinitions",
+                componentName: "Phone",
+                func: (entityName, entityId, data) => {
+                    return data.find(el => el.entityName === "Customer")?.data.FirstName === "Pippo" && 
+                        data.find(el => el.entityName === "Customer")?.data.LastName === "a" ? 'read' : 'write';
+                }
+            }
+        ];
         super.init(mainId, this.objectName, interfaceConfig);
     }
 

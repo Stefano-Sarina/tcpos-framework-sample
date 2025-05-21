@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from 'react-router';
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     ABaseApiController
 } from "@tcpos/backoffice-core";
 import MainCard from '../themeComponents/MainCard';
@@ -46,7 +46,7 @@ export const SearchResults = () => {
                         });
                     }
                     const fetchData = async () => {
-                        const response = await DailyPublicRegistrationContainer.resolve(ABaseApiController)
+                        const response = await NextBOPublicRegistrationContainer.resolve(ABaseApiController)
                                 .getData(getDataEndPoint.endpoint, false)
                                 .apiCall({queryParams: {}, noCache: true, filter: filter, select: [], abortSignal}) as Record<string, string>[];
                         const nextResponse: ISearchResults[] = response.map((el: Record<string, string>) => {

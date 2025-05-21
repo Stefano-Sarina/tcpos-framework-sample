@@ -10,13 +10,13 @@ export const CustomerCustomSectionList: IEntityCustomSection[] = [
         fields: [
             {
                 "name" : "FirstName",
-                "componentType" : "wdHidden",
+                "componentType" : "nboHidden",
                 "fieldName" : "FirstName",
                 "label" : ""
             },
             {
                 "name" : "Description2",
-                "componentType" : "wdTextbox",
+                "componentType" : "nboTextbox",
                 "fieldName" : "Description",
                 "label" : "Last name 2"
             }
@@ -32,13 +32,13 @@ export const CustomerCustomSectionList: IEntityCustomSection[] = [
         fields: [
             {
                 "name" : "ValidFrom",
-                "componentType" : "wdDatePicker",
+                "componentType" : "nboDatePicker",
                 "fieldName" : "ValidFrom",
                 "label" : "Valid from"
             },
             {
                 "name" : "ValidTo",
-                "componentType" : "wdDatePicker",
+                "componentType" : "nboDatePicker",
                 "fieldName" : "ValidTo",
                 "label" : "Valid up to"
             },
@@ -53,7 +53,7 @@ export const CustomerCustomSectionList: IEntityCustomSection[] = [
         fields: [
             {
                 "name" : "CardType",
-                "componentType" : "wdCombobox",
+                "componentType" : "nboCombobox",
                 "fieldName" : "CardType",
                 "label" : "Card type",
                 "multiSelect" : false,
@@ -84,7 +84,7 @@ export const CustomerCustomSectionList: IEntityCustomSection[] = [
             },
             {
                 "name" : "BalanceOnCard",
-                "componentType" : "wdCheckbox",
+                "componentType" : "nboCheckbox",
                 "fieldName" : "BalanceOnCard",
                 "label" : "Balance on card"
             },

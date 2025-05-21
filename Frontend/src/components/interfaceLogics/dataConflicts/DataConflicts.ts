@@ -1,5 +1,5 @@
 import type {IEditHistory, IEntityDataMainObject, IEntityDataObject, IEntityDataObjectIds} from "@tcpos/common-core";
-import {DailyRowStatus} from "@tcpos/common-core";
+import {NextBORowStatus} from "@tcpos/common-core";
 import _ from "underscore";
 import {objectDiff} from "@tcpos/backoffice-core";
 import {
@@ -61,7 +61,7 @@ export class DataConflicts {
                         localData.objectDataRowStatuses.find(
                             rowStatus =>
                                 rowStatus.entityName === el.entityName && rowStatus.entityId === el.entityId &&
-                                rowStatus.status !== DailyRowStatus.DELETED
+                                rowStatus.status !== NextBORowStatus.DELETED
                         )
                     );
 
@@ -139,7 +139,7 @@ export class DataConflicts {
         localData.objectData.filter(ent => Number(ent.entityId) > 0 &&
             localData.objectDataRowStatuses.find(
                 el => el.entityName === ent.entityName && el.entityId === ent.entityId &&
-                    el.status === DailyRowStatus.MODIFIED
+                    el.status === NextBORowStatus.MODIFIED
             )
         ).forEach(localDataEnt => {
                 if (!remoteData.objectData.find(

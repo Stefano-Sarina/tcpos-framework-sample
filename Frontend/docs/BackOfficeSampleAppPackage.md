@@ -7,7 +7,7 @@ backoffice-core logic).
 
 ## Configuration
 BackOffice is a React/Typescript project bundled with Webpack. The starting point is the _index.tsx_ file
-which loads the _bootstrap.tsx_, which in turn renders the main component of the application: __WebDailyFullApp__. 
+which loads the _bootstrap.tsx_, which in turn renders the main component of the application: __FullApp__. 
 This component is simply a wrapper of the __App__ component.
 
 ## App component
@@ -57,8 +57,8 @@ wrappers:
 - ThemeCustomization wrapper: it defines the theme configuration
 - RTLLayout wrapper: it manages the theme mode ('LTR' or 'RTL')
 - AppThemeOverrides wrapper: specific UI customization
-- WD_Snackbar: component which provides a snackbar for the whole application
-- WD_ErrorBoundary: application errors management
+- NBO_Snackbar: component which provides a snackbar for the whole application
+- NBO_ErrorBoundary: application errors management
 - Locales: provides localization
 - ScrollTop component
 Also, a Backdrop component provides a waiting state with a CircularProgress icon; then, the MenuGenerate component

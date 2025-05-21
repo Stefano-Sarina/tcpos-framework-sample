@@ -18,7 +18,7 @@
             "components" : [
               {
                 "componentName": "Customer",
-                "componentType": "wdCombobox",
+                "componentType": "nboCombobox",
                 "fieldName" : "CustomerId",
                 "label" : "Customer",
                 "multiSelect" : false,
@@ -39,7 +39,7 @@
               },
               {
                 "componentName" : "OrderDate",
-                "componentType" : "wdDatePicker",
+                "componentType" : "nboDatePicker",
                 "fieldName" : "OrderDate",
                 "label" : "Order date",
                 "xs": 12,
@@ -53,7 +53,7 @@
               },
               {
                 "componentName" : "Notes",
-                "componentType" : "wdStringTextField",
+                "componentType" : "nboStringTextField",
                 "fieldName" : "Notes",
                 "label" : "Notes",
                 "xs": 12,
@@ -71,7 +71,7 @@
                 "componentName": "OrderDetailSubForm",
                 "entityName": "OrderDetail",
                 "label": "Details",
-                "componentType": "wdSubForm",
+                "componentType": "nboSubForm",
                 "minHeight" : "300px",
                 "pagination" : false,
                 "fieldName": "OrderId",
@@ -87,7 +87,7 @@
                     "minWidth": 200,
                     "cellRenderer": {
                       "componentName": "ProductId",
-                      "componentType": "wdCombobox",
+                      "componentType": "nboCombobox",
                       "fieldName": "ProductId",
                       "label": "Product",
                       "multiSelect": false,
@@ -109,7 +109,7 @@
                     "minWidth": 200,
                     "cellRenderer": {
                       "componentName": "Quantity",
-                      "componentType": "wdNumberTextField",
+                      "componentType": "nboNumberTextField",
                       "fieldName": "Quantity",
                       "label": "Quantity"
                     }

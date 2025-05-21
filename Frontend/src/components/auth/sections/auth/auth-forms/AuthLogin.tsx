@@ -33,7 +33,7 @@ import {Formik} from 'formik';
 import IconButton from "../../../../themeComponents/@extended/IconButton";
 import AnimateButton from '../../../../themeComponents/@extended/AnimateButton';
 import type { ILoginConfiguration} from '@tcpos/backoffice-core';
-import {store, setInit, setAutoRedirect, DailyPublicRegistrationContainer, removeAppLoadingState, setDirtyData, ABaseApiController, setUserData, setLogged} from '@tcpos/backoffice-core';
+import {store, setInit, setAutoRedirect, NextBOPublicRegistrationContainer, removeAppLoadingState, setDirtyData, ABaseApiController, setUserData, setLogged} from '@tcpos/backoffice-core';
 // assets
 import {EyeOutlined, EyeInvisibleOutlined, AppstoreFilled} from '@ant-design/icons';
 
@@ -57,7 +57,7 @@ const AuthLogin = () => {
     const red: string | null = urlParams.get('red'); // string or undefined
     const err: string | null = urlParams.get('error_description');
     const loginErrors = useAppSelector((state) => state.user.loginErrors);
-    const userLogic = DailyPublicRegistrationContainer.resolve(AUserLogic);
+    const userLogic = NextBOPublicRegistrationContainer.resolve(AUserLogic);
 
     const [showPassword, setShowPassword] = React.useState(false);
 
@@ -130,7 +130,7 @@ const AuthLogin = () => {
                         })}
                         onSubmit={async (values, {setErrors, setStatus, setSubmitting}) => {
                             //navigate(`/${lang}/home`);
-                            const response = await DailyPublicRegistrationContainer.resolve(ABaseApiController)
+                            const response = await NextBOPublicRegistrationContainer.resolve(ABaseApiController)
                                 .apiPost(`/api/login?isAdmin=${admin ? 'true' : 'false'}`, {});
                             dispatch(setUserData(admin ? "Admin" : "Not admin")); // TODO refactor setUserData and  add user data (is admin)
                             //window.location.href = `/${lang}/home`;
@@ -180,7 +180,7 @@ const AuthLogin = () => {
 
 /*
                                         try {
-                                          const userLogic = DailyPublicRegistrationContainer.resolveIUserLogic();
+                                          const userLogic = NextBOPublicRegistrationContainer.resolveIUserLogic();
                                           await userLogic.login(values.username, values.password);
                                         } catch (err: any) {
                                           console.error(err);

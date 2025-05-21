@@ -2,12 +2,12 @@ import React, { useEffect} from "react";
 import type {PropsWithChildren} from "react";
 import {
     buildGridFilterTreeStore,
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     loadInterfaceBuilder,
     loadInterfaceMenu,
     setPermissions,
-    ADailyApiClient,
-    ADailyConfigService
+    ANextBOApiClient,
+    ANextBOConfigService
 } from "@tcpos/backoffice-core";
 import type  {
     IEntityModel,
@@ -24,7 +24,7 @@ import {useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
  */
 export const MenuGenerate = ({children}: PropsWithChildren) => {
     const dispatch = useAppDispatch();
-    const apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
+    const apiClient = NextBOPublicRegistrationContainer.resolve(ANextBOApiClient);
     const apiUrl = useAppSelector(state => state.interfaceConfig.apiUrl);
     let response: any;
     const pluginList = useAppSelector((state) => state.pluginsConfig);
@@ -93,7 +93,7 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
 
     const updateMenu = async () => {
         try {
-            const interfaceConfig: IViewConfigModel<string> = await DailyPublicRegistrationContainer.resolve(ADailyConfigService)
+            const interfaceConfig: IViewConfigModel<string> = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService)
                 .getInterfaceConfig();
             const menuEntityList: string[] = [];
             const localInterfaceConfig = {...interfaceConfig};
@@ -172,8 +172,8 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
  */            
             dispatch(setPermissions(permissions));
             pluginList.forEach(p => {
-                if (DailyPublicRegistrationContainer.isRegisteredPluginMenuCustomization(p.toLowerCase())) {
-                    const customization = DailyPublicRegistrationContainer.resolvePluginMenuCustomization(p.toLowerCase());
+                if (NextBOPublicRegistrationContainer.isRegisteredPluginMenuCustomization(p.toLowerCase())) {
+                    const customization = NextBOPublicRegistrationContainer.resolvePluginMenuCustomization(p.toLowerCase());
                     localInterfaceConfig.menuGroups = customizeMenuGroups(localInterfaceConfig.menuGroups, customization.groups ?? [],
                         customization.entities ?? []);
                 }
@@ -195,9 +195,9 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
 /*                const response: any = await apiClient.get('/connect/userinfo', {}, false, true);
                  if (response?.Subject) {
                     const operatorDataControllerRegistration =
-                            DailyPublicRegistrationContainer.resolveEntry("dataControllers", "Operators").controller;
+                            NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "Operators").controller;
                     const operatorDataController =
-                            DailyPublicRegistrationContainer.resolveConstructor(operatorDataControllerRegistration);
+                            NextBOPublicRegistrationContainer.resolveConstructor(operatorDataControllerRegistration);
                     operatorDataController.init();
                     if (operatorDataController) {
                         const currentOperatorData = await operatorDataController.dataListLoad<IOperatorPayload>(
@@ -233,8 +233,8 @@ export const MenuGenerate = ({children}: PropsWithChildren) => {
                                     lastAddedNode: null
                                 }));
 
-                                const response2 = await DailyPublicRegistrationContainer
-                                    .resolve(ADailyConfigService).getDataViewConfig(entity.entityId);
+                                const response2 = await NextBOPublicRegistrationContainer
+                                    .resolve(ANextBOConfigService).getDataViewConfig(entity.entityId);
                                 if (response2?.objectName) {
                                     dispatch(loadInterfaceBuilder(response2));
                                 }

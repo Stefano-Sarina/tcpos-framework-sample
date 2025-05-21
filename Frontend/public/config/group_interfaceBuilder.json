@@ -18,7 +18,7 @@
             "components" : [
               {
                 "componentName" : "GroupName",
-                "componentType" : "wdStringTextField",
+                "componentType" : "nboStringTextField",
                 "fieldName" : "GroupName",
                 "label" : "GroupName",
                 "xs": 12,
@@ -40,7 +40,7 @@
                 "componentName": "UserGroupSubForm",
                 "entityName": "UserGroup",
                 "label": "Components",
-                "componentType": "wdSubForm",
+                "componentType": "nboSubForm",
                 "minHeight": "300px",
                 "pagination": false,
                 "xs": 12,
@@ -56,7 +56,7 @@
                     "minWidth": 300,
                     "cellRenderer": {
                       "componentName": "UserId",
-                      "componentType": "wdCombobox",
+                      "componentType": "nboCombobox",
                       "fieldName": "UserId",
                       "label": "User",
                       "multiSelect": false,

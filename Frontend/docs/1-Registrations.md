@@ -6,5 +6,5 @@ At application loading, the appRegistration function is called. It registers:
 - Custom UI components
 - Plugins
 
-The registrations are performed using the _DailyPublicRegistrationContainer_ class provided by the _webdaily-core_
+The registrations are performed using the _NextBOPublicRegistrationContainer_ class provided by the _backoffice-core_
 package.

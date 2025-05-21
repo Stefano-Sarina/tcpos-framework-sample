@@ -5,10 +5,10 @@ import type {AxiosInstance, AxiosRequestConfig, GenericAbortSignal, Cancel, Axio
 import {
     ABaseApiController,
     ActionExecutorHelper,
-    DailyHooksAfter,
-    DailyHooksBefore, FilterLogic,
+    NextBOHooksAfter,
+    NextBOHooksBefore, FilterLogic,
     store,
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     ACacheLogic,
     setLogged,
     CacheGroups} from "@tcpos/backoffice-core";
@@ -29,7 +29,7 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
     private axiosClient: AxiosInstance;
 
     constructor(
-        @DailyPublicRegistrationContainer.inject(ACacheLogic) private cacheLogic: ACacheLogic,
+        @NextBOPublicRegistrationContainer.inject(ACacheLogic) private cacheLogic: ACacheLogic,
     ) {
         super();
         this.axiosClient = axios.create({
@@ -57,7 +57,7 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
             }
             const getResult = async () => {
                 return await ActionExecutorHelper.executeAction<T, T>(
-                    apiEntityName, DailyHooksBefore.dataLoadBefore, DailyHooksAfter.dataLoadAfter, newData as T,
+                    apiEntityName, NextBOHooksBefore.dataLoadBefore, NextBOHooksAfter.dataLoadAfter, newData as T,
                     (data) => {
                         return {success: true, result: data};
                     }
@@ -160,7 +160,7 @@ export class CommonApiController<T extends Record<string, unknown>> extends ABas
             } while (!(newData as unknown as IApiError).type && newData.length < rowCount && all);
             const getResult = async () => {
                 return await ActionExecutorHelper.executeAction<T[], T[]>(
-                    apiEntityName, DailyHooksBefore.dataListLoadBefore, DailyHooksAfter.dataListLoadAfter, newData as T[],
+                    apiEntityName, NextBOHooksBefore.dataListLoadBefore, NextBOHooksAfter.dataListLoadAfter, newData as T[],
                     (data) => {
                         return {success: true, result: data};
                     }

@@ -4,8 +4,8 @@ import type {PermissionTreeProps} from "./PermissionTreeProps";
 
 export const PermissionTree = ({treeData, nodeGraph,selectedNodes,onSelected,openedNodes,onToggleOpen,onDeselected}: PermissionTreeProps) => {
     return (
-        <div className="wdtree-app"><h5 className="MuiTypography-root MuiTypography-h5 css-zkuve9-MuiTypography-root"
-                                        data-testid="wd-treenode-title"></h5>
+        <div className="nbotree-app"><h5 className="MuiTypography-root MuiTypography-h5 css-zkuve9-MuiTypography-root"
+                                        data-testid="nbo-treenode-title"></h5>
             {<PermissionNodeList treeData={treeData} nodeGraph={nodeGraph} level={0}
                 {...{
                     selectedNodes,onSelected,openedNodes,onToggleOpen,onDeselected

@@ -3,7 +3,7 @@ import type {I18n} from "../../../core/services/intl/I18n";
 import MainCard from "../../themeComponents/MainCard";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Box, Button, CardContent } from "@mui/material";
-import {ADailyConfigService, DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {ANextBOConfigService, NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 import { AppVersionRow } from "./AppVersionRow";
 import { useParams } from "react-router";
 
@@ -33,7 +33,7 @@ export const AppVersionHistory = () => {
 
     const [versionHistory, setVersionHistory] = useState<IVersionHistory[]>([]);
     const getVersionHistory = async () => {
-        const res = await DailyPublicRegistrationContainer.resolve(ADailyConfigService).getVersionHistory();
+        const res = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService).getVersionHistory();
         const versionList: IVersionHistory[] = [];
         res.filter((el: any) => el.version).forEach((el: any) => {
             versionList.push({

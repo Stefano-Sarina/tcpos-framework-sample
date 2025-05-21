@@ -6,11 +6,11 @@ import React, {useCallback, useEffect, useState} from "react";
 import {useTheme} from "@mui/material/styles";
 import {useIntl} from "react-intl";
 import type {JsonRendererViewModeType} from "./JsonRendererViewModeType";
-import type {IUiPermissions} from "../../EntityComponent/IUIPermissions";
 import {getInterfaceBuilderModel} from "@tcpos/backoffice-core";
 import "./uiPreviewComponent.scss";
 import {OpenInNew} from "@mui/icons-material";
 import type {IUIPreviewComponentProps} from "./IUIPreviewComponentProps";
+import type {IUiPermissions} from "../../EntityComponent/IUiPermissions";
 
 export const UIPreviewComponent = (props: IUIPreviewComponentProps) => {
     const theme = useTheme();

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useIntl} from "react-intl";
 import type {IComponentsView} from "./IComponentsView";
-import {WD_DailyActionToolbarDropDownButton} from "@tcpos/backoffice-components";
+import {NBO_ActionToolbarDropDownButton} from "@tcpos/backoffice-components";
 
 interface IComponentsViewSplitButtomProps {
     onViewChange: (view: IComponentsView) => void
@@ -31,7 +31,7 @@ export const ComponentsViewSplitButton = (props: IComponentsViewSplitButtomProps
         props.onViewChange(visibilities);
     }, [props, visibilities])
 
-    return <WD_DailyActionToolbarDropDownButton
+    return <NBO_ActionToolbarDropDownButton
             subItems={Object.keys(visibilities).map((option, index) => {
                 return {
                     name: option,

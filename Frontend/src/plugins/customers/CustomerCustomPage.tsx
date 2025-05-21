@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import MainCard from "../../components/themeComponents/MainCard";
 import Avatar from "../../components/themeComponents/@extended/Avatar";
 import {Link as RouterLink, useParams} from "react-router-dom";
-import {WD_BoundTextField, WD_BoundCheckBox} from "@tcpos/backoffice-components";
+import {NBO_BoundTextField, NBO_BoundCheckBox} from "@tcpos/backoffice-components";
 import {rwModes} from "@tcpos/common-core";
 import type {ButtonProps, ChipProps, IconButtonProps, SliderProps} from '@mui/material';
 import {
@@ -297,7 +297,7 @@ export const CustomerCustomPage = React.memo(() => {
                             <Box sx={{marginLeft: '10px', marginRight: '10px'}}>
                                 <Grid container spacing={5}>
                                     <Grid item xs={12} md={6}>
-                                        <WD_BoundTextField
+                                        <NBO_BoundTextField
                                                 objectName={'customerTest'}
                                                 objectId={objectId ?? '-1'}
                                                 entityName={'Customers'}
@@ -315,7 +315,7 @@ export const CustomerCustomPage = React.memo(() => {
                                             <Avatar alt="Avatar 1" src={avatarImage}
                                                     sx={{width: 124, height: 124, border: '0'}}/>
                                         </Box>
-                                        <WD_BoundTextField
+                                        <NBO_BoundTextField
                                                 objectName={'customerTest'}
                                                 objectId={objectId ?? '-1'}
                                                 entityName={'Customers'}
@@ -328,7 +328,7 @@ export const CustomerCustomPage = React.memo(() => {
                                                 fieldName={'Id'}
                                                 groupName={'MainDefinitions'}
                                         />
-                                        <WD_BoundCheckBox
+                                        <NBO_BoundCheckBox
                                                 objectName={'customerTest'}
                                                 objectId={objectId ?? '-1'}
                                                 entityName={'Customers'}
@@ -342,7 +342,7 @@ export const CustomerCustomPage = React.memo(() => {
                                                 groupName={'MainDefinitions'}
                                                 bindingGuid={""}
                                         />
-                                        <WD_BoundTextField
+                                        <NBO_BoundTextField
                                                 objectName={'customerTest'}
                                                 objectId={objectId ?? '-1'}
                                                 entityName={'Customers'}

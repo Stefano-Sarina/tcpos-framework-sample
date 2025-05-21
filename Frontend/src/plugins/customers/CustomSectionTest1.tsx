@@ -1,12 +1,14 @@
 import React from "react";
 import {useParams} from "react-router-dom";
-import {setData, setObjectData} from "@tcpos/backoffice-core";
-import {WD_BoundTextField, WD_BoundCheckBox, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
+import {setData, setFieldValue, setObjectData} from "@tcpos/backoffice-core";
+import {NBO_BoundTextField, NBO_BoundCheckBox, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
 import {rwModes} from "@tcpos/common-core";
 import type {IRawCRUDWrapperDataUpdate} from "@tcpos/backoffice-components";
 
 export const CustomSectionTest1 = () => {
     const {entityName} = useParams();
+    const {objectId} = useParams();
+
     const currentData = useAppSelector((state) =>
         state.dataSlice.find(el => el.entityName === entityName));
     const dispatch = useAppDispatch();
@@ -34,42 +36,22 @@ export const CustomSectionTest1 = () => {
         state.objects.find(el => el.objectName === 'customer' && el.objectId === ""));
 */
 
-    const onUpdate = (modifiedData?: IRawCRUDWrapperDataUpdate[]) => {
-        if (entityDataContext) {
-            const tmpData = [...entityDataContext.objectData];
-            if (modifiedData) {
-                modifiedData.forEach(m => {
-                    const modifiedField = tmpData.find(el => el.entityName === m.entityName && el.entityId === m.entityId)?.data;
-                    if (modifiedField) {
-                        (modifiedField as Record<string, unknown>)[m.fieldName] = m.value;
-                    }
-                });
-            }
-
-            dispatch(setObjectData({
-                objectName: 'customerTest',
-                objectId: "",
-                newDataObject: tmpData,
-            }));
-        }
-    };
 
     return (
         <>
-            <WD_BoundTextField
+            <NBO_BoundTextField
                 objectName={entityName ?? ""}
-                objectId={""}
+                objectId={objectId ?? ""}
                 componentName={"CodeTest1"}
                 componentId={"CodeTest1"}
-                fieldName={"Id"}
                 label={"Test code"}
-                entityName={entityName ?? ""}
-                entityId={""}
+                entityName={"Customer"}
+                entityId={objectId ?? ""}
+                fieldName={"LastName"}
                 rwMode={rwModes.W}
                 type={'string'}
-                groupName={"AdditionalDefinitions"}
             />
-            <WD_BoundCheckBox
+            <NBO_BoundCheckBox
                 objectName={entityName ?? ""}
                 objectId={""}
                 componentName={"CardValidTest1"}
@@ -81,20 +63,18 @@ export const CustomSectionTest1 = () => {
                 rwMode={rwModes.W}
                 type={'boolean'}
                 bindingGuid={'Customers__CardValidTest1'}
-                groupName={"AdditionalDefinitions"}
             />
-            <WD_BoundTextField
+            <NBO_BoundTextField
                 objectName={entityName ?? ""}
-                objectId={""}
+                objectId={objectId ?? ""}
                 componentName={"CardNumberTest1"}
                 componentId={"CardNumberTest1"}
-                fieldName={"CardNumber"}
+                fieldName={"FullName"}
                 label={"Test card number"}
-                entityName={entityName ?? ""}
-                entityId={""}
+                entityName={"Customer"}
+                entityId={objectId ?? ""}
                 rwMode={rwModes.W}
                 type={'string'}
-                groupName={"AdditionalDefinitions"}
             />
         </>
     );

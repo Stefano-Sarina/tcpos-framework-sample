@@ -4,7 +4,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 // material-ui
 import {Link, Paper, Stack, Typography, useMediaQuery} from '@mui/material';
 import {useTheme} from "@mui/material/styles";
-import {ADailyConfigService, DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {ANextBOConfigService, NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 import {useAppSelector} from "@tcpos/backoffice-components";
 
 declare const VERSION: string;
@@ -18,7 +18,7 @@ const Footer = () => {
 
     const appName = useAppSelector(state => state.interfaceConfig.applicationName);
     const getVersionInfo = async () => {
-        const res = await DailyPublicRegistrationContainer.resolve(ADailyConfigService).getVersionHistory();
+        const res = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService).getVersionHistory();
         setVersionInfo(res[0] ?
                 res[0].version + ' ' + res[0].date.replace(/-/g,'')
                 : "");

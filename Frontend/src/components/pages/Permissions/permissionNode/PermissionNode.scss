@@ -22,22 +22,22 @@
 
 
 
-  .wd-treenode-selection {
+  .nbo-treenode-selection {
     flex: 0 0 auto;
   }
 
-  .wd-treenode-elementWrapper {
+  .nbo-treenode-elementWrapper {
     display: flex;
     width: 100%;
     align-items: center;
     min-height: 38px;
 
-    .wd-treenode-itemText {
+    .nbo-treenode-itemText {
       flex: 1 0 auto;
       align-items: center;
     }
 
-    .wd-treenode-nodeTitleCont {
+    .nbo-treenode-nodeTitleCont {
       flex: 1 1 0;
       min-width: 0;
       display: grid;
@@ -50,7 +50,7 @@
     }
   }
 
-  .wd-permissionNode-childElementWrapper {
+  .nbo-permissionNode-childElementWrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-column-gap: 1rem;
