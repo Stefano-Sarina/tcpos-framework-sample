@@ -17,7 +17,7 @@ public class User : Entity
     }
 
     [ConcurrencyItem]
-    [UniqueIndexField("Unk_UserName")]
+    [UniqueIndexField(KeyName = "Unk_UserName")]
     [StringLength(40, MinimumLength = 1)]
     public string UserName
     {

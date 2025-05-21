@@ -11,16 +11,14 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.TestHost" Version="8.0.10" />
-		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
 		<PackageReference Include="TCPOS.Lib.Web.Data" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Web.Data.Bind" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Web.Data.Bind.Implementations" Version="0.*-*" />
 		<PackageReference Include="TCPOS.Lib.Authorization" Version="1.*-*" />
-		<PackageReference Include="TCPOS.Lib.Common" Version="1.*-*" />
 		<PackageReference Include="TCPOS.Lib.Data.Batches" Version="1.*-*" />
-		<PackageReference Include="TCPOS.Lib.Data.EntityFramework" Version="1.*-*" />
+		<PackageReference Include="TCPOS.Lib.Data.EntityFramework.Implementations" Version="2.*-*" />
 	</ItemGroup>
 
   <ItemGroup>
