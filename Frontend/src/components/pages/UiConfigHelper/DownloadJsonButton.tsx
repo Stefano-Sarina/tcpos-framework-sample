@@ -1,5 +1,5 @@
 import React from 'react';
-import {WD_DailyActionToolbarButton} from "@tcpos/backoffice-components";
+import {NBO_ActionToolbarButton} from "@tcpos/backoffice-components";
 import {useIntl} from "react-intl";
 
 interface INewButtonProps {
@@ -10,7 +10,7 @@ export const DownloadJsonButton = (props: INewButtonProps) => {
     const intl = useIntl();
 
     return <>
-        <WD_DailyActionToolbarButton
+        <NBO_ActionToolbarButton
                 name={'downloadJson'}
                 label={intl.formatMessage({id: 'Download JSON'})}
                 onEvent={props.onEvent}

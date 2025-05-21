@@ -1,5 +1,5 @@
 import type {DragLayerMonitorProps, NodeModel} from "@minoru/react-dnd-treeview";
-import { WD_TreeContainer} from "@tcpos/backoffice-components";
+import { NBO_TreeContainer} from "@tcpos/backoffice-components";
 import type {ITreeData} from "@tcpos/backoffice-components";
 import React from "react";
 import {Box, Typography} from "@mui/material";
@@ -36,7 +36,7 @@ export const UiSimulatorFieldList = (props: UiSimulatorFieldListParams) => {
         </Box>
         <Box>
             <Typography variant={"body1"}>
-                <WD_TreeContainer
+                <NBO_TreeContainer
                         treeData={props.treeData}
                         initialOpen={"all"}
                         componentName={"fieldList"}

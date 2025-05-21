@@ -1,4 +1,4 @@
-# DailyPublicRegistrationContainer class
+# NextBOPublicRegistrationContainer class
 
 This class provides some method for registrations and resolutions.
 
@@ -12,12 +12,12 @@ Example:
 
 ```
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
 } from "@tcpos/backoffice-core";
 
 //...
 
-DailyPublicRegistrationContainer.register(ALocalizationService, LocalizationService);
+NextBOPublicRegistrationContainer.register(ALocalizationService, LocalizationService);
 ```
 
 # resolve method
@@ -28,12 +28,12 @@ Example:
 
 ```
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
 } from "@tcpos/backoffice-core";
 
 //...
 
-const apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
+const apiClient = NextBOPublicRegistrationContainer.resolve(ANextBOApiClient);
 ```
 
 # registerEntry method
@@ -78,13 +78,13 @@ _ADataController_ under the name "dataControllers" as follows:
 
 ```
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
 } from "@tcpos/backoffice-core";
 import {createRegistrationEntry} from "@tcpos/common-core";
 
 //...
 
-DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "CostCenters", controller: CostCenterDataController}));
 ```
 
@@ -103,13 +103,13 @@ the _resolveConstructor_ must be used.
 
 Following the previous example, the resolution can be:
 ```
-const objectControllerRegistration = DailyPublicRegistrationContainer.isBound( "objectControllers", objectName)
-        ? DailyPublicRegistrationContainer.resolveEntry("objectControllers",  objectName).controller
+const objectControllerRegistration = NextBOPublicRegistrationContainer.isBound( "objectControllers", objectName)
+        ? NextBOPublicRegistrationContainer.resolveEntry("objectControllers",  objectName).controller
         : undefined;
 
 const objectController = () => {
     if (objectControllerRegistration) {
-        return DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController;
+        return NextBOPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController;
     } else {
         return undefined;
     }

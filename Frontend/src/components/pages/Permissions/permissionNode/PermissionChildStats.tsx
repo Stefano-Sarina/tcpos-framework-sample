@@ -34,7 +34,7 @@ export function PermissionChildStats({data, headerMode, dataGraph}: PermissionCh
     }, [context, dataGraph]);
 
     if (headerMode) {
-        return <div className="wd-permissionNode-childElementWrapper">
+        return <div className="nbo-permissionNode-childElementWrapper">
             <div className={"stat"}>
                 <span className={"text"}><FormattedMessage id={"Selected"}/></span>
             </div>
@@ -49,7 +49,7 @@ export function PermissionChildStats({data, headerMode, dataGraph}: PermissionCh
         </div>;
     }
 
-    return <div className="wd-permissionNode-childElementWrapper">
+    return <div className="nbo-permissionNode-childElementWrapper">
         <div className={"stat"}>
             {!!dataGraph?.children.length&&<FormattedMessage id={"{value} of {total}"} values={{
                 value: selectedChildNum,

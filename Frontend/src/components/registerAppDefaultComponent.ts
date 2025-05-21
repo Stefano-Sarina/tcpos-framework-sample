@@ -1,8 +1,8 @@
 /**
  * registers default components, plugins can remove these components to change rendering widgets
  */
-import {createRegistrationEntry, DailyComponents} from "@tcpos/common-core";
-import {DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {createRegistrationEntry, NextBOComponents} from "@tcpos/common-core";
+import {NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 import {
     DefaultViewModeToolbarButton,
     DeleteObjectToolbarButton,
@@ -16,32 +16,32 @@ import {
     UndoInLineEditGridViewButton,
     UndoRedoToolbarButton,
     ViewModeToolbarCombobox,
-    WD_BoundButton,
-    WD_BoundCheckBox,
-    WD_BoundComboBox,
-    WD_BoundDatePicker,
-    WD_BoundImageUpload,
-    WD_BoundLabel,
-    WD_BoundLink,
-    WD_BoundSubForm,
-    WD_BoundTextArea,
-    WD_BoundTextFieldBoolean,
-    WD_BoundTextFieldDate,
-    WD_BoundTextFieldNumber,
-    WD_BoundTextFieldPassword,
-    WD_BoundTextFieldString,
-    WD_BoundTimePicker,
-    WD_BoundTreeContainer,
-    WD_DailyActionToolbarButton,
-    WD_DailyActionToolbarComboBox,
-    WD_DailyActionToolbarDropDownButton,
-    WD_DailyActionToolbarLabel,
-    WD_DailyActionToolbarNavigationBar,
-    WD_DailyActionToolbarProgressBar,
-    WD_DailyActionToolbarSeparator,
-    WD_DailyActionToolbarTextBox,
-    WD_Section,
-    WDHidden
+    NBO_BoundButton,
+    NBO_BoundCheckBox,
+    NBO_BoundComboBox,
+    NBO_BoundDatePicker,
+    NBO_BoundImageUpload,
+    NBO_BoundLabel,
+    NBO_BoundLink,
+    NBO_BoundSubForm,
+    NBO_BoundTextArea,
+    NBO_BoundTextFieldBoolean,
+    NBO_BoundTextFieldDate,
+    NBO_BoundTextFieldNumber,
+    NBO_BoundTextFieldPassword,
+    NBO_BoundTextFieldString,
+    NBO_BoundTimePicker,
+    NBO_BoundTreeContainer,
+    NBO_ActionToolbarButton,
+    NBO_ActionToolbarComboBox,
+    NBO_ActionToolbarDropDownButton,
+    NBO_ActionToolbarLabel,
+    NBO_ActionToolbarNavigationBar,
+    NBO_ActionToolbarProgressBar,
+    NBO_ActionToolbarSeparator,
+    NBO_ActionToolbarTextBox,
+    NBO_Section,
+    NBOHidden
 } from "@tcpos/backoffice-components";
 
 /**
@@ -53,86 +53,86 @@ import {
  * These components include actions (triggered depending on the component type). The registration name is prepended
  * by "_all" to indicate that they are included by default in all the toolbars
  *
- * This function uses methods provided by the {@link DailyPublicRegistrationContainer} class.
+ * This function uses methods provided by the {@link NextBOPublicRegistrationContainer} class.
  */
 export function registerAppDefaultComponent(): void {
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdStringTextField, component: WD_BoundTextFieldString}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdPasswordTextField, component: WD_BoundTextFieldPassword}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdNumberTextField, component: WD_BoundTextFieldNumber}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdDateTextField, component: WD_BoundTextFieldDate}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdBooleanTextField, component: WD_BoundTextFieldBoolean}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdTextArea, component: WD_BoundTextArea}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdLabel, component: WD_BoundLabel}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdLink, component: WD_BoundLink}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdCheckbox, component: WD_BoundCheckBox}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdCombobox, component: WD_BoundComboBox}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdSection, component: WD_Section}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdDatePicker, component: WD_BoundDatePicker}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdHidden, component: WDHidden}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdTimePicker, component: WD_BoundTimePicker}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdButton, component: WD_BoundButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdSubForm, component: WD_BoundSubForm}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdImage, component: WD_BoundImageUpload}));
-    DailyPublicRegistrationContainer.registerEntry("uiComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdTree, component: WD_BoundTreeContainer}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboStringTextField, component: NBO_BoundTextFieldString}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboPasswordTextField, component: NBO_BoundTextFieldPassword}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboNumberTextField, component: NBO_BoundTextFieldNumber}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboDateTextField, component: NBO_BoundTextFieldDate}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboBooleanTextField, component: NBO_BoundTextFieldBoolean}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboTextArea, component: NBO_BoundTextArea}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboLabel, component: NBO_BoundLabel}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboLink, component: NBO_BoundLink}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboCheckbox, component: NBO_BoundCheckBox}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboCombobox, component: NBO_BoundComboBox}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboSection, component: NBO_Section}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboDatePicker, component: NBO_BoundDatePicker}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboHidden, component: NBOHidden}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboTimePicker, component: NBO_BoundTimePicker}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboButton, component: NBO_BoundButton}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboSubForm, component: NBO_BoundSubForm}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboImage, component: NBO_BoundImageUpload}));
+    NextBOPublicRegistrationContainer.registerEntry("uiComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboTree, component: NBO_BoundTreeContainer}));
 
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarButton, component: WD_DailyActionToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarComboBox, component: WD_DailyActionToolbarComboBox}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarDropDownButton, component: WD_DailyActionToolbarDropDownButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarLabel, component: WD_DailyActionToolbarLabel}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarNavigationBar, component: WD_DailyActionToolbarNavigationBar}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarProgressBar, component: WD_DailyActionToolbarProgressBar}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarSeparator, component: WD_DailyActionToolbarSeparator}));
-    DailyPublicRegistrationContainer.registerEntry("uiToolbarComponents",
-        createRegistrationEntry({_registrationName: DailyComponents.wdToolbarTextBox, component: WD_DailyActionToolbarTextBox}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarButton, component: NBO_ActionToolbarButton}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarComboBox, component: NBO_ActionToolbarComboBox}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarDropDownButton, component: NBO_ActionToolbarDropDownButton}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarLabel, component: NBO_ActionToolbarLabel}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarNavigationBar, component: NBO_ActionToolbarNavigationBar}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarProgressBar, component: NBO_ActionToolbarProgressBar}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarSeparator, component: NBO_ActionToolbarSeparator}));
+    NextBOPublicRegistrationContainer.registerEntry("uiToolbarComponents",
+        createRegistrationEntry({_registrationName: NextBOComponents.nboToolbarTextBox, component: NBO_ActionToolbarTextBox}));
     
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName: '_all__newObject', component: NewObjectToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__readWriteModeButton', component: ReadWriteModeToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__inLineEdit', component: InLineEditGridViewButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__gotoDetailView', component: GotoDetailGridViewButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__saveObject', component: SaveObjectToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__undoInLineEdit', component: UndoInLineEditGridViewButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__undo_redo', component: UndoRedoToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all_rwModeLabel', component: ReadWriteModeToolbarLabel}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__delete', component: DeleteObjectToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all_viewModeComboBox', component: ViewModeToolbarCombobox}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all_defaultViewMode', component: DefaultViewModeToolbarButton}));
-    DailyPublicRegistrationContainer.registerEntry("uiActionComponents",
+    NextBOPublicRegistrationContainer.registerEntry("uiActionComponents",
         createRegistrationEntry({_registrationName:'_all__gridView', component: GridViewModeToolbarButton}));
 
 }

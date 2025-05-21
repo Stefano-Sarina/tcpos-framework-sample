@@ -18,7 +18,7 @@
             "components": [
               {
                 "componentName": "FullName",
-                "componentType": "wdHidden",
+                "componentType": "nboHidden",
                 "fieldName": "FullName",
                 "label": "Full name",
                 "xs" : 12,
@@ -31,7 +31,7 @@
               },
               {
                 "componentName": "FirstName",
-                "componentType": "wdStringTextField",
+                "componentType": "nboStringTextField",
                 "fieldName": "FirstName",
                 "label": "First name",
                 "xs" : 12,
@@ -39,15 +39,52 @@
               },
               {
                 "componentName": "LastName",
-                "componentType": "wdStringTextField",
+                "componentType": "nboStringTextField",
                 "fieldName": "LastName",
                 "label": "LastName",
                 "xs" : 12,
                 "lg" : 12
+              },
+              {
+                "componentName": "Email",
+                "componentType": "nboStringTextField",
+                "fieldName": "Email",
+                "label": "Email",
+                "xs" : 12,
+                "lg" : 12,
+                "visibilityCondition": {
+                  "fieldName": "LastName",
+                  "value": ["a", "b"]
+                }
+              },
+              {
+                "componentName": "Phone",
+                "componentType": "nboStringTextField",
+                "label": "Phone",
+                "xs" : 12,
+                "lg" : 12
+              },
+              {
+                "componentName": "Phone2",
+                "componentType": "nboStringTextField",
+                "label": "Phone2",
+                "xs" : 12,
+                "lg" : 12,
+                "forceReadonlyMode": true
+              },
+              {
+                "customComponent": "customSectionTest1"
               }
             ]
           }
         ]
+      },
+      {
+        "groupName" : "MainDefinitions2",
+        "label" : "definitions2",
+        "customComponent": "customSectionTest",
+        "entityName": "Customer",
+        "sections": []
       }
     ]
   }

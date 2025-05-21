@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {TCIcon, WD_DailyActionToolbarDropDownButton} from "@tcpos/backoffice-components";
+import {TCIcon, NBO_ActionToolbarDropDownButton} from "@tcpos/backoffice-components";
 import type {PageLayoutType} from "./PageLayoutType";
 
 interface ViewModeSplitButtonProps {
@@ -27,7 +27,7 @@ export const ViewModeSplitButton = (props: ViewModeSplitButtonProps) => {
         props.onViewModeChange(selectedIndex === 0 ? 'Horizontal' : 'Vertical');
     }, [props, selectedIndex])
 
-    return <WD_DailyActionToolbarDropDownButton
+    return <NBO_ActionToolbarDropDownButton
             subItems={viewModeOptions.map((option, index) => {
                 return {
                     name: 'viewOption' + index,

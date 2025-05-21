@@ -3,13 +3,13 @@ import {ALocalizationService, createRegistrationEntry} from "@tcpos/common-core"
 import {
     ABaseApiController,
     ACacheLogic,
-    ADailyConfigService,
+    ANextBOConfigService,
     AUserLogic,
     CacheLogic,
     checkResolverNames,
-    DailyHooksAfter,
-    DailyHooksBefore,
-    DailyPublicRegistrationContainer,
+    NextBOHooksAfter,
+    NextBOHooksBefore,
+    NextBOPublicRegistrationContainer,
     getPluginSortedList,
     loadPlugins,
     LocalizationService,
@@ -54,55 +54,55 @@ import { PermissionsOperatorDataController } from "./dataControllers/Permissions
  * - Data controllers (that map database tables), extending {@link CommonDataController}
  * - Object controllers (one for each application page), extending {@link CommonObjectController}
  *
- * This function uses methods provided by the {@link DailyPublicRegistrationContainer} class.
+ * This function uses methods provided by the {@link NextBOPublicRegistrationContainer} class.
  */
 export function registerCoreServices() {
-    DailyPublicRegistrationContainer.register(ALocalizationService, LocalizationService);
+    NextBOPublicRegistrationContainer.register(ALocalizationService, LocalizationService);
 
-    DailyPublicRegistrationContainer.register(ACacheLogic, CacheLogic);
+    NextBOPublicRegistrationContainer.register(ACacheLogic, CacheLogic);
 
-    //DailyPublicRegistrationContainer.registerIHistory(history);
+    //NextBOPublicRegistrationContainer.registerIHistory(history);
 
-    DailyPublicRegistrationContainer.register(AUserLogic, UserLogic);
+    NextBOPublicRegistrationContainer.register(AUserLogic, UserLogic);
 
-    DailyPublicRegistrationContainer.register(ABaseApiController, CommonApiController);
+    NextBOPublicRegistrationContainer.register(ABaseApiController, CommonApiController);
 
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Customer", controller: CustomerDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Tax", controller: TaxDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Product", controller: ProductDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Order", controller: OrderDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "OrderDetail", controller: OrderDetailDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "User", controller: UserDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserGroup", controller: UserGroupDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Group", controller: GroupDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "Permission", controller: PermissionDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "PermissionsCtes", controller: PermissionsCtesDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "UserPermission", controller: UserPermissionDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "GroupPermission", controller: GroupPermissionDataController}));
-    DailyPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
+    NextBOPublicRegistrationContainer.registerEntry("dataControllers", createRegistrationEntry({
         _registrationName: "PermissionsOperator", controller: PermissionsOperatorDataController}));
     
-    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+    NextBOPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "tax", controller: TaxObjectController}));
-    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+    NextBOPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "customer", controller: CustomerObjectController}));
-    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+    NextBOPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "product", controller: ProductObjectController}));
-    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+    NextBOPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "group", controller: GroupObjectController}));
-    DailyPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
+    NextBOPublicRegistrationContainer.registerEntry("objectControllers", createRegistrationEntry(
         {_registrationName: "order", controller: OrderObjectController}));
 
     store.dispatch(setLoadingStateCompleted({step: 'registrations'}));
@@ -111,7 +111,7 @@ export function registerCoreServices() {
 
 export const activatePlugins = (): void  => {
     const fetchPlugins = async () => {
-        const pluginList = await DailyPublicRegistrationContainer.resolve(ADailyConfigService).getPluginList();
+        const pluginList = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService).getPluginList();
         pluginList.forEach(p => {
             if (basePluginListRegistration[p]) {
                 basePluginListRegistration[p]();
@@ -142,8 +142,8 @@ const weakSorting: any[] = [];
  */
 window.addEventListener("PluginLoaded", () => {
     // "Before" responders
-    for (const hookType of Object.keys(DailyHooksBefore)) {
-        const currentHookType: string = DailyHooksBefore[hookType as keyof typeof DailyHooksBefore];
+    for (const hookType of Object.keys(NextBOHooksBefore)) {
+        const currentHookType: string = NextBOHooksBefore[hookType as keyof typeof NextBOHooksBefore];
         // Extracts the list of the plugins associated to this responder
         const pluginResponderList = pluginInfoList.filter((el) =>
             el.responder === currentHookType);
@@ -182,8 +182,8 @@ window.addEventListener("PluginLoaded", () => {
     }
 
     // "After" responders
-    for (const hookType of Object.keys(DailyHooksAfter)) {
-        const currentHookType = DailyHooksAfter[hookType as keyof typeof DailyHooksAfter];
+    for (const hookType of Object.keys(NextBOHooksAfter)) {
+        const currentHookType = NextBOHooksAfter[hookType as keyof typeof NextBOHooksAfter];
         const pluginResponderList = pluginInfoList.filter((el) => el.responder === currentHookType);
         if (pluginResponderList.length > 0) {
             if (checkResolverNames(pluginResponderList, currentHookType)) {

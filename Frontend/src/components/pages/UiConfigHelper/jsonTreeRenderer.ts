@@ -2,7 +2,7 @@ import type {NodeModel} from "@minoru/react-dnd-treeview";
 import type {IJsonTreeData, IJsonTreeDataArrayElement, IOptionalProperties} from "./IJsonTreeData";
 import {NodeSubType, NodeType} from "./IJsonTreeData";
 import {JsonConverter} from "./jsonConverter";
-import type {DailyToolbarPaletteType} from "@tcpos/common-core";
+import type {NextBOToolbarPaletteType} from "@tcpos/common-core";
 import type {OverridableStringUnion} from "@mui/types";
 import type {Variant} from "@mui/material/styles/createTypography";
 import type {TypographyPropsVariantOverrides} from "@mui/material";
@@ -335,13 +335,13 @@ export class JsonTreeRenderer extends JsonConverter {
 
         switch (mainPropertyType) {
             case 'string':
-                return {componentType: 'wdStringTextField'};
+                return {componentType: 'nboStringTextField'};
             case 'integer':
-                return {componentType: 'wdNumberTextField'};
+                return {componentType: 'nboNumberTextField'};
             case 'boolean':
-                return {componentType: 'wdCheckbox'};
+                return {componentType: 'nboCheckbox'};
             case 'number':
-                return {componentType: 'wdNumberTextField',
+                return {componentType: 'nboNumberTextField',
                         params: property.multipleOf
                             ? {decimalplaces: this.getDecimalPlaces(Number(property.multipleOf))}
                             : undefined
@@ -525,7 +525,7 @@ export class JsonTreeRenderer extends JsonConverter {
      */
     addSubFormElement(treeData: NodeModel<IJsonTreeData>[], entity: string, id: number | string, addSubFields: boolean,
                       schema: IDataSchema): {treeData: NodeModel<IJsonTreeData>[], newNodeId: (number | string)[]} {
-        const result = this.addClassElement(treeData, id, 'components', {componentType: 'wdSubForm', entityName: entity});
+        const result = this.addClassElement(treeData, id, 'components', {componentType: 'nboSubForm', entityName: entity});
         if (addSubFields) {
             const subFieldsNode = result.treeData.find(el =>
                 el.data && 'key' in el.data && el.data.key === 'subFields' && result.newNodeId.includes(el.id));
@@ -806,7 +806,7 @@ export class JsonTreeRenderer extends JsonConverter {
      * @param tooltip Button tooltip (not used)
      * @param params Params passed to the function
      */
-    defineStandardAction = (icon: string, color: DailyToolbarPaletteType, label: string,
+    defineStandardAction = (icon: string, color: NextBOToolbarPaletteType, label: string,
                             action:  (nodeId: (number | string), params?: any) => void,
                             position?: 'start' | 'end', tooltip?: string, params?: any): ITreeAction => {
         return {
@@ -941,7 +941,7 @@ export class JsonTreeRenderer extends JsonConverter {
                 const actionForArray: {
                     actionType: JsonTreeActionType, 
                     icon: string,
-                    color: DailyToolbarPaletteType, 
+                    color: NextBOToolbarPaletteType,
                     additionalParams?: Record<string, unknown>
                 }[] = [];
                 switch(nodeKey) {
@@ -1043,10 +1043,10 @@ export class JsonTreeRenderer extends JsonConverter {
                         data: {
                             ...node.data,
                             allowedValues: [
-                                "wdStringTextField", "wdPasswordTextField", "wdNumberTextField", "wdDateTextField",
-                                "wdBooleanTextField", "wdTextArea", "wdHidden", "wdCheckbox", "wdCombobox",
-                                "wdButton", "wdHidden", "wdDatePicker", "wdTimePicker", "wdLabel", "wdLink",
-                                "wdImage", "wdTree"
+                                "nboStringTextField", "nboPasswordTextField", "nboNumberTextField", "nboDateTextField",
+                                "nboBooleanTextField", "nboTextArea", "nboHidden", "nboCheckbox", "nboCombobox",
+                                "nboButton", "nboHidden", "nboDatePicker", "nboTimePicker", "nboLabel", "nboLink",
+                                "nboImage", "nboTree"
                             ]
                         }
                     }

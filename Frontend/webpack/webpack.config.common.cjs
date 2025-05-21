@@ -108,7 +108,7 @@ module.exports = (env, args) => {
     plugins: [
 
       new HtmlWebpackPlugin({
-        title: 'TCPOS@Next WebDaily test page',
+        title: 'TCPOS@Next test page',
         minify: false,
         scriptLoading: 'blocking',
         inject: 'head',

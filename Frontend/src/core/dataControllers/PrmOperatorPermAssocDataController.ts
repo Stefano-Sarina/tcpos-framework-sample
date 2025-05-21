@@ -1,13 +1,13 @@
 import type {LogicResult} from "@tcpos/common-core";
 import {iocInjectable} from "@tcpos/common-core";
-import {DailyPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
+import {NextBOPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
 import type {IPrmOperatorPermAssocPayload, PrmOperatorPermAssocEntityType} from "../apiModels";
 
 @iocInjectable()
 export class PrmOperatorPermAssocDataController extends CommonDataController<PrmOperatorPermAssocEntityType> {
 
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
     ) {
         super(apiController);
     }

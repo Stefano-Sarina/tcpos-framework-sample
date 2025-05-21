@@ -2,8 +2,8 @@ import type {ReactElement} from "react";
 import React, {useEffect, useState} from "react";
 import type {IViewConfigModel,} from "@tcpos/backoffice-core";
 import {
-    ADailyConfigService,
-    DailyPublicRegistrationContainer,
+    ANextBOConfigService,
+    NextBOPublicRegistrationContainer,
     loadBaseConfiguration,
     setDirtyData,
     setLoadingStateCompleted,
@@ -27,8 +27,8 @@ import {
     //MenuGenerate,
     RTLLayout,
     StoreProvider, useAppDispatch, useAppSelector,
-    WD_ErrorBoundary,
-    WD_Snackbar
+    NBO_ErrorBoundary,
+    NBO_Snackbar
 } from "@tcpos/backoffice-components";
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import type {I18n} from "../core/services/intl";
@@ -89,9 +89,9 @@ export const App = ({children}:{children:ReactElement}): JSX.Element => {
  * Inner wrapper component of the application. It provides:
  * - {@link ThemeCustomization} wrapper: it defines the theme configuration
  * - {@link RTLLayout} wrapper: it manages the theme mode ('LTR' or 'RTL')
- * - {@link DailyThemeOverrides} wrapper: specific UI customization
- * - {@link WD_Snackbar}: component which provides a snackbar for the whole application
- * - {@link WD_ErrorBoundary}: application errors management
+ * - {@link ThemeOverrides} wrapper: specific UI customization
+ * - {@link NBO_Snackbar}: component which provides a snackbar for the whole application
+ * - {@link NBO_ErrorBoundary}: application errors management
  * - {@link Locales}: provides localization
  * - {@link ScrollTop} component
  * A Backdrop component provides a waiting state with a CircularProgress icon; then, the {@link MenuGenerate} component
@@ -151,7 +151,7 @@ export const AppInner = () => {
      */
     useEffect(() => {
         const fetchBaseInterfaceConfig = async () => {
-            const myConfig: IViewConfigModel<I18n> = await DailyPublicRegistrationContainer.resolve(ADailyConfigService)
+            const myConfig: IViewConfigModel<I18n> = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService)
                 .getInterfaceConfig("/config/", "configViewMenuGroups.json");
             setBaseInterfaceConfigLoaded(true);
             setInterfaceConfig(myConfig);
@@ -176,8 +176,8 @@ export const AppInner = () => {
         <ThemeCustomization>
             <RTLLayout themeDirection={themeDirection}>
                 <AppThemeOverrides>
-                    <WD_Snackbar>
-                        <WD_ErrorBoundary>
+                    <NBO_Snackbar>
+                        <NBO_ErrorBoundary>
                             <Locales i18n={i18n} themeDirection={themeDirection}
                                         langList={Object.keys(LanguageDictionary).map((el) => {return LanguageDictionary[el as I18n].code;})}
                                 >
@@ -202,8 +202,8 @@ export const AppInner = () => {
                                     </>
                                 </ScrollTop>
                             </Locales>
-                        </WD_ErrorBoundary>
-                    </WD_Snackbar>
+                        </NBO_ErrorBoundary>
+                    </NBO_Snackbar>
                 </AppThemeOverrides>
 
             </RTLLayout>

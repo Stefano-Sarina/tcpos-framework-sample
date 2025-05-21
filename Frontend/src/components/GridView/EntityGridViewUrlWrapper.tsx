@@ -4,7 +4,7 @@ import type {
     AERObjectController, IDynamicDataList, ISingleExternalDataList,
 } from "@tcpos/backoffice-core";
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     setUiStateSearchParameters,
 } from "@tcpos/backoffice-core";
 import { useParams } from "react-router";
@@ -148,11 +148,11 @@ export const EntityGridViewUrlWrapper = () => {
                                 width: component.gridView.width,
                                 minWidth: component.gridView.minWidth ?? 150,
                                 indexPosition: component.gridView.position,
-                                type: component.componentType === 'wdNumberTextField' ? 'number' : (
-                                        component.componentType === 'wdCheckBox' ? 'boolean' : (
-                                                component.componentType === 'wdDateTextField' || component.componentType === 'wdDatePicker'
+                                type: component.componentType === 'nboNumberTextField' ? 'number' : (
+                                        component.componentType === 'nboCheckBox' ? 'boolean' : (
+                                                component.componentType === 'nboDateTextField' || component.componentType === 'nboDatePicker'
                                                         ? 'date'
-                                                        : (component.componentType === 'wdCombobox' ? 'enum' : 'string')
+                                                        : (component.componentType === 'nboCombobox' ? 'enum' : 'string')
                                         )
                                 ),
                                 componentType: component.componentType,
@@ -212,11 +212,11 @@ export const EntityGridViewUrlWrapper = () => {
                     lastPage: currentPage,
                     lastRowsPerPage: rowsPerPage
                 }));
-                const objectControllerRegistration = DailyPublicRegistrationContainer.isBound("objectControllers", entityName)
-                        ? DailyPublicRegistrationContainer.resolveEntry("objectControllers", entityName).controller
+                const objectControllerRegistration = NextBOPublicRegistrationContainer.isBound("objectControllers", entityName)
+                        ? NextBOPublicRegistrationContainer.resolveEntry("objectControllers", entityName).controller
                         : undefined;
                 const objectController = objectControllerRegistration
-                    ? DailyPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[]>
+                    ? NextBOPublicRegistrationContainer.resolveConstructor(objectControllerRegistration) as AERObjectController<EntityType[], EntityType[]>
                     : undefined;
                 setGridViewParams({
                     entityName: entityName,

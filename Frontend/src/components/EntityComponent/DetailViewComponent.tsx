@@ -3,22 +3,22 @@ import {Box, Card, CardHeader, Grid, Tabs, Tooltip, useMediaQuery} from "@mui/ma
 import {
     EntityComponentChildren,
     TCIcon,
-    WD_Section
+    NBO_Section
 } from "@tcpos/backoffice-components";
-import type {IInitializeDynamicList, IWDBoundComponentCommonProperties} from "@tcpos/backoffice-components";
+import type {IInitializeDynamicList, INBOBoundComponentCommonProperties} from "@tcpos/backoffice-components";
 import type {IErrorListItem} from "@tcpos/backoffice-components";
 import { rwModes} from "@tcpos/common-core";
-import type {IComponentVisibilityRule} from "@tcpos/common-core";
+import type {IComponentVisibilityRule, IComponentForcedRWModeRule} from "@tcpos/common-core";
 import type {IEntityDataObject} from "@tcpos/common-core";
 import type {IInterfaceBuilderDetailViewModel} from "@tcpos/common-core";
 import {useIntl} from "react-intl";
-import type {IUiPermissions} from "./IUIPermissions";
 import {DetailViewStyledTab} from "./DetailViewStyledTab";
 import _ from "underscore";
-import {DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 import useConfig from "../themeComponents/useConfig";
 import {useTheme} from "@mui/material/styles";
 import type {SxProps} from "@mui/system";
+import type { IUiPermissions } from "./IUiPermissions";
 
 interface IDetailViewComponentProps {
     /**
@@ -95,6 +95,11 @@ interface IDetailViewComponentProps {
     visibilityRules?: IComponentVisibilityRule<IEntityDataObject<object, string>[]>[]
 
     /**
+     * Visibility rule list
+     */
+    forcedRWModeRules?: IComponentForcedRWModeRule<IEntityDataObject<object, string>[]>[]
+    
+    /**
      * True if in multiediting mode
      */
     multiEditing?: boolean
@@ -117,6 +122,7 @@ interface IDetailViewComponentProps {
     classes?: {
         gridContainer?: string
     }
+
 }
 
 // TabPanel
@@ -167,7 +173,7 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
                     el.componentName === props.entityName + '.' + group.groupName &&
                     el.access !== "NoAccess"))
                     .map((group, index) => {
-                        let tabPanel: React.ReactElement<IWDBoundComponentCommonProperties>;
+                        let tabPanel: React.ReactElement<INBOBoundComponentCommonProperties>;
                         if (!group.customComponent) {
                             tabPanel = (
                                     <Grid container spacing={3}>
@@ -189,9 +195,9 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
                                                 }
                                             }
                                             return (assignedPermission !== "NoAccess" &&
-                                                    <WD_Section
+                                                    <NBO_Section
                                                             fieldName={""}
-                                                            componentType={"wdSection"}
+                                                            componentType={"nboSection"}
                                                             objectName={props.entityName}
                                                             objectId={props.entityId}
                                                             entityName={
@@ -212,6 +218,12 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
                                                                             el.groupName === group.groupName &&
                                                                             el.sectionName === section.sectionName &&
                                                                             !el.componentName
+                                                            )}
+                                                            forcedRWModeRules={_(props.forcedRWModeRules ?? []).filter(
+                                                                    (el) =>
+                                                                            el.groupName === group.groupName &&
+                                                                            el.sectionName === section.sectionName &&
+                                                                            !!el.componentName
                                                             )}
                                                             groupName={group.groupName}
                                                     >
@@ -243,6 +255,11 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
                                                                                 el.sectionName === section.sectionName &&
                                                                                 !!el.componentName
                                                                 )}
+                                                                forcedRWModeRules={(props.forcedRWModeRules ?? []).filter(
+                                                                        (el) =>
+                                                                                el.groupName === group.groupName &&
+                                                                                el.sectionName === section.sectionName
+                                                                )}
                                                                 groupName={group.groupName}
                                                                 multiEditing={props.multiEditing}
                                                                 initializeList={props.initializeList}
@@ -250,17 +267,17 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
                                                                         comp.customComponent && comp.customComponent !== "")
                                                                         .map(comp => {return  {
                                                                             customComponentName: comp.customComponent ?? "",
-                                                                            renderer: DailyPublicRegistrationContainer.resolveEntry("uiCustomComponents", comp.customComponent).component
+                                                                            renderer: NextBOPublicRegistrationContainer.resolveEntry("uiCustomComponents", comp.customComponent).component
                                                                         };}) }
                                                                 themeMode={themeConfig.mode}
                                                                 getExternalList={props.getExternalList}
                                                         />
-                                                    </WD_Section>
+                                                    </NBO_Section>
                                             );})}
                                     </Grid>
                             );
                         } else {
-                            const Comp = DailyPublicRegistrationContainer.resolveEntry("uiComponents", group.customComponent).component;
+                            const Comp = NextBOPublicRegistrationContainer.resolveEntry("uiComponents", group.customComponent).component;
                             if (Comp) {
                                 tabPanel = (
                                         <Comp
@@ -286,17 +303,17 @@ export const DetailViewComponent = (props: IDetailViewComponentProps) => {
         }
     }, [
         props.currentGroupsList.layoutGroups,
-        props.currentGroupsList.layoutGroups,
         props.entityName,
         props.entityId,
         props.rwMode,
         props.visibleRowIndex,
+        props.forcedRWModeRules,
         props.tabsValue,
         intl.locale,
         props.visibilityRules,
         props.multiEditing,
         props.uiPermissions,
-            currentWidth
+        currentWidth
     ]);
 
     return <Grid

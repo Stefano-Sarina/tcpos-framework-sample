@@ -150,7 +150,7 @@
         },
         {
           "name": "Separator1",
-          "actionComponent": "wdToolbarSeparator",
+          "actionComponent": "nboToolbarSeparator",
           "visibleSettings": {
             "gridView": false,
             "editableGridView": true,
@@ -208,7 +208,7 @@
         },
         {
           "name": "Separator2",
-          "actionComponent": "wdToolbarSeparator",
+          "actionComponent": "nboToolbarSeparator",
           "visibleSettings": {
             "gridView": false,
             "editableGridView": false,
@@ -257,7 +257,7 @@
         },
         {
           "name": "Separator3",
-          "actionComponent": "wdToolbarSeparator",
+          "actionComponent": "nboToolbarSeparator",
           "visibleSettings": {
             "gridView": false,
             "editableGridView": false,

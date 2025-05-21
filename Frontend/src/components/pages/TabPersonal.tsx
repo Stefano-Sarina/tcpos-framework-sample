@@ -30,9 +30,9 @@ import {Formik} from 'formik';
 
 // project import
 // import { useInputRef } from './index';
-import {countries, ABaseApiController, DailyPublicRegistrationContainer} from '@tcpos/backoffice-core';
+import {countries, ABaseApiController, NextBOPublicRegistrationContainer} from '@tcpos/backoffice-core';
 import MainCard from '../themeComponents/MainCard';
-import {SnackBarCloseAction, WD_TextField, useAppSelector} from "@tcpos/backoffice-components";
+import {SnackBarCloseAction, NBO_TextField, useAppSelector} from "@tcpos/backoffice-components";
 import {rwModes} from "@tcpos/common-core";
 import {useIntl} from "react-intl";
 import {useSnackbar} from "notistack";
@@ -80,7 +80,7 @@ const TabPersonal = () => {
     useEffect(() => {
         if (user && user.name) {
             const getPersonalData = async () => {
-                const response = await DailyPublicRegistrationContainer.resolve(ABaseApiController)
+                const response = await NextBOPublicRegistrationContainer.resolve(ABaseApiController)
                     .apiGet(`${apiUrl}/Operators`, [], {filter: `Code eq '${user.name}'`}, true) as Record<string, unknown>[];
                 if (response && response.length) {
                     setUserData({lastName: String(response[0].Description ?? ""), firstName: String(response[0].FirstName ?? "")});
@@ -93,12 +93,12 @@ const TabPersonal = () => {
     return (
         <MainCard content={false} title="Personal Information" sx={{ '& .MuiInputLabel-root': { fontSize: '0.875rem' } }}>
             <Box sx={{ p: 2.5 }}>
-                <WD_TextField value={userData.lastName} onChange={() => {return;}} error={false} type={""}
+                <NBO_TextField value={userData.lastName} onChange={() => {return;}} error={false} type={""}
                               componentName={"personalData-LastName"} componentId={"personalData-LastName"}
                               label={intl.formatMessage({id: 'Last name'})} rwMode={rwModes.R}
                               bindingGuid={'personalData_LastName'} groupName={""}
                 />
-                <WD_TextField value={userData.firstName} onChange={() => {return;}} error={false} type={""}
+                <NBO_TextField value={userData.firstName} onChange={() => {return;}} error={false} type={""}
                               componentName={"personalData-FirstName"} componentId={"personalData-FirstName"}
                               label={intl.formatMessage({id: 'First name'})} rwMode={rwModes.R}
                               bindingGuid={'personalData_LastName'} groupName={""}

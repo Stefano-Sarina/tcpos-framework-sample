@@ -29,7 +29,7 @@ The package.json contains scripts to build the application in dev and prod envir
 
 ## Application entry point
 
-The starting point of the BackOffice application is the App component (in the _components_ folder); it is called by the application _bootstrap_ file and it is wrapped by a _WebDailyFullApp_ component, which is currently an empty wrapper. The App component provides all the needed wrapper components for the application:
+The starting point of the BackOffice application is the App component (in the _components_ folder); it is called by the application _bootstrap_ file and it is wrapped by a _WebFullApp_ component, which is currently an empty wrapper. The App component provides all the needed wrapper components for the application:
 - _StoreProvider_: this component provides a context for a global store imported from the _backoffice-core_ library; this store is used to make available application status info, interface info, local data for binding, etc. It is possible to add other independent stores to the application.
 - A _ConfigProvider_ for theme configuration context.
 - A _RouterProvider_: it uses a _router_ component created by the __createBrowserRouter__ function; the
@@ -38,9 +38,9 @@ BrowserRouter, from _react-router_ version 6, allows to manage navigation and na
 The next wrapper components are embedded as _children_ of _BrowserRouter_ and are included in the _AppInner_ component:
 - _ThemeCustomization_: it defines the theme configuration
 - _RTLLayout_: it manages the theme mode ('LTR' or 'RTL')
-- _DailyThemeOverrides_: UI customization
-- _WD_Snackbar_: component which provides a snackbar for the whole application
-- _WD_ErrorBoundary_: application errors management
+- _NextBOThemeOverrides_: UI customization
+- _NBO_Snackbar_: component which provides a snackbar for the whole application
+- _NBO_ErrorBoundary_: application errors management
 - _Locales_: it provides localization
 - _ScrollTop_ component
 

@@ -1,4 +1,4 @@
-import {DailyPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
+import {NextBOPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
 import {iocInjectable} from "@tcpos/common-core";
 import type { LogicResult} from "@tcpos/common-core";
 import type { IOrderDetailPayload, OrderDetailEntityType } from "../apiModels/IOrderDetailPayload";
@@ -6,7 +6,7 @@ import type { IOrderDetailPayload, OrderDetailEntityType } from "../apiModels/IO
 @iocInjectable()
 export class OrderDetailDataController extends CommonDataController<OrderDetailEntityType> {
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
     ) {
         super(apiController);
     }

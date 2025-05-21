@@ -1,11 +1,11 @@
 import React, {useEffect} from "react";
 import {
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     setLogged,
     setUIGenericState,
     setVisibilities,
     store,
-    ADailyApiClient
+    ANextBOApiClient
 } from "@tcpos/backoffice-core";
 import {useAppSelector} from "@tcpos/backoffice-components";
 import {useNavigate} from "react-router-dom";
@@ -20,7 +20,7 @@ enum uiStateEnum {
 }
 
 const AfterLoginVerification = () => {
-    const apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
+    const apiClient = NextBOPublicRegistrationContainer.resolve(ANextBOApiClient);
     const navigate = useNavigate();
     //const loading = useAppSelector((state) => state.operator.loading);
     const initialized = useAppSelector((state) => state.user.initialized);

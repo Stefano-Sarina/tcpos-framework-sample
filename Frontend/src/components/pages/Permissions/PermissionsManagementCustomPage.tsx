@@ -22,12 +22,12 @@ import type {IDataFilter, IDataFilterGroup,
     IViewConfigModel} from "@tcpos/backoffice-core";
 import {
     ABaseApiController,
-    ADailyConfigService,
-    DailyPublicRegistrationContainer,
+    ANextBOConfigService,
+    NextBOPublicRegistrationContainer,
 } from "@tcpos/backoffice-core";
 import {TCIcon, useAbortableEffect} from "@tcpos/common-components";
 import {useSnackbar} from "notistack";
-import {SnackBarCloseAction, useAppSelector, WD_Combobox, WD_StaticCombobox} from "@tcpos/backoffice-components";
+import {SnackBarCloseAction, useAppSelector, NBO_Combobox, NBO_StaticCombobox} from "@tcpos/backoffice-components";
 import {useTheme} from "@mui/material/styles";
 import type {NodeModel} from "@minoru/react-dnd-treeview";
 import type {ITreeData, ComboValues} from "@tcpos/backoffice-components";
@@ -216,23 +216,23 @@ export const PermissionsManagementCustomPage = () => {
         permissionWarnings: ""
     });
 
-    const userDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "User").controller;
-    const userDataController = DailyPublicRegistrationContainer.resolveConstructor(userDataControllerRegistration);// as ADataController<OperatorEntityType>;
+    const userDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "User").controller;
+    const userDataController = NextBOPublicRegistrationContainer.resolveConstructor(userDataControllerRegistration);// as ADataController<OperatorEntityType>;
     userDataController.init();
-    const userGroupDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "UserGroup").controller;
-    const userGroupDataController = DailyPublicRegistrationContainer.resolveConstructor(userGroupDataControllerRegistration);
+    const userGroupDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "UserGroup").controller;
+    const userGroupDataController = NextBOPublicRegistrationContainer.resolveConstructor(userGroupDataControllerRegistration);
     userGroupDataController.init();
-    const permissionDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "Permission").controller;
-    const permissionDataController = DailyPublicRegistrationContainer.resolveConstructor(permissionDataControllerRegistration);
+    const permissionDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "Permission").controller;
+    const permissionDataController = NextBOPublicRegistrationContainer.resolveConstructor(permissionDataControllerRegistration);
     permissionDataController.init();
-    const PermissionsCtesDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "PermissionsCtes").controller;
-    const PermissionsCtesDataController = DailyPublicRegistrationContainer.resolveConstructor(PermissionsCtesDataControllerRegistration);
+    const PermissionsCtesDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "PermissionsCtes").controller;
+    const PermissionsCtesDataController = NextBOPublicRegistrationContainer.resolveConstructor(PermissionsCtesDataControllerRegistration);
     PermissionsCtesDataController.init();
-    const userPermissionDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "UserPermission").controller;
-    const userPermissionDataController = DailyPublicRegistrationContainer.resolveConstructor(userPermissionDataControllerRegistration);
+    const userPermissionDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "UserPermission").controller;
+    const userPermissionDataController = NextBOPublicRegistrationContainer.resolveConstructor(userPermissionDataControllerRegistration);
     userPermissionDataController.init();
-    const groupPermissionDataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers", "GroupPermission").controller;
-    const groupPermissionDataController = DailyPublicRegistrationContainer.resolveConstructor(groupPermissionDataControllerRegistration);
+    const groupPermissionDataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers", "GroupPermission").controller;
+    const groupPermissionDataController = NextBOPublicRegistrationContainer.resolveConstructor(groupPermissionDataControllerRegistration);
     groupPermissionDataController.init();
 
     const [menuEntityList, setMenuEntityList] = useState<string[] | undefined>(undefined);
@@ -246,7 +246,7 @@ export const PermissionsManagementCustomPage = () => {
         // Initialization
         setOpenedNodes(permissionTypes.map(el => ({type: String(el.value), opened: [], trigger: false})));
         (async () => {
-            const interfaceConfig: IViewConfigModel<string> = await DailyPublicRegistrationContainer.resolve(ADailyConfigService)
+            const interfaceConfig: IViewConfigModel<string> = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService)
             .getInterfaceConfig();
             const newMenuEntityList: string[] = [];
             const localInterfaceConfig = {...interfaceConfig};
@@ -292,7 +292,7 @@ export const PermissionsManagementCustomPage = () => {
 /*         const allEntities = await PermissionsCtesDataController.dataListLoad<IPermissionsCtesPayload>(
             [], [], [], undefined, undefined, undefined, abortSignal, true);
  */        
-        const allEntities = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+        const allEntities = await NextBOPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
             "PermissionsCtes"
         ).apiCall({queryParams: {}, noCache: false, filter: []});
         if (Array.isArray(allEntities)) {
@@ -939,7 +939,7 @@ export const PermissionsManagementCustomPage = () => {
             ]);
             results = [];
             while (splitCnt < idList.length) {
-                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+                const res = await NextBOPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
                     "PermissionsCtes"
                 ).apiCall({queryParams: {}, noCache: false, filter: [
                     {id: 1, field: "ParentPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
@@ -999,7 +999,7 @@ export const PermissionsManagementCustomPage = () => {
                     ],
                     [], ['ParentType', 'ParentDescription'], undefined, undefined, undefined, abortSignal, true);
  */                
-                const res = await DailyPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
+                const res = await NextBOPublicRegistrationContainer.resolve(ABaseApiController).getData<IPermissionsCtesPayload[]>(
                     "PermissionsCtes"
                 ).apiCall({queryParams: {}, noCache: false, filter: [
                     {id: 1, field: "ChildPermissionId", type: 'filter', operator: "oneOf", values: idList.slice(splitCnt, splitCnt + callSize), parentId: 0}
@@ -1220,7 +1220,7 @@ export const PermissionsManagementCustomPage = () => {
                 let splitCommand = 0;
                 const splitSizeCommand = 20;
                 while (splitCommand < commands.length) {
-                    const res = await  DailyPublicRegistrationContainer.resolve(ABaseApiController)
+                    const res = await  NextBOPublicRegistrationContainer.resolve(ABaseApiController)
                             .saveData(commands.slice(splitCommand, splitCommand + splitSizeCommand), 1);
                     if (!res) {
                         enqueueSnackbar(intl.formatMessage({id: "Error when saving permission data"}), {
@@ -1403,7 +1403,7 @@ export const PermissionsManagementCustomPage = () => {
                                 <Grid item xs={12} md={6}>
                                     <Grid item xs={12} md={12}>
                                         <Box>
-                                            <WD_StaticCombobox
+                                            <NBO_StaticCombobox
                                                 valueList={[...userList.map(el => ({...el, value: 'U' + el.value})),
                                                     ...userGroupList.map(el => ({...el, value: 'G' + el.value}))]}
                                                 componentName={'UserList'}
@@ -1447,7 +1447,7 @@ export const PermissionsManagementCustomPage = () => {
                                         return (
                                             <TabPanel key={"TabPanel" + index} index={index} value={tabsValue}>
                                                 <Box>
-                                                    <WD_StaticCombobox
+                                                    <NBO_StaticCombobox
                                                         valueList={permissionEntityList.find(el =>
                                                             el.type === permissionTypes[index]?.value)?.entities ?? []}
                                                         componentName={'PermissionEntityList' + index}

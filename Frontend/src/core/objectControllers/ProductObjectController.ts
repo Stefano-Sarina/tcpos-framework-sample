@@ -1,7 +1,7 @@
 import { ALocalizationService, PublicInjectable, type IInterfaceBuilderModel } from "@tcpos/common-core";
 import {
-    DailyPublicRegistrationContainer, ABaseApiController,
-    CommonObjectController, ADailyConfigService
+    NextBOPublicRegistrationContainer, ABaseApiController,
+    CommonObjectController, ANextBOConfigService
 } from "@tcpos/backoffice-core";
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 import type { IBatchCommand, IUiComponentPermissionAccess, IUserPermission } from "@tcpos/backoffice-core";
@@ -15,9 +15,9 @@ export class ProductObjectController extends
         CommonObjectController<ProductObjectDataType, ProductObjectDataType, I18n> {
 
     constructor(
-                @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
-                @DailyPublicRegistrationContainer.inject(ADailyConfigService) protected configService: ADailyConfigService<I18n>,
-                @DailyPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
+                @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
+                @NextBOPublicRegistrationContainer.inject(ANextBOConfigService) protected configService: ANextBOConfigService<I18n>,
+                @NextBOPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
     ) {
         super(apiController, configService, localeService);
 

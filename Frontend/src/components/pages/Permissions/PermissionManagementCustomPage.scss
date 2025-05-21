@@ -19,7 +19,7 @@
   .MuiAutocomplete-root {
     margin-bottom: 1rem;
   }
-  .wdtree-app {
+  .nbotree-app {
     > ul {
       // overflow: visible;
     }
@@ -39,14 +39,14 @@
           position: relative;
           min-height: 56px;
 
-          .wd-treenode-nodeTitleCont {
+          .nbo-treenode-nodeTitleCont {
             grid-template-columns: 1fr auto auto;
             padding-left: 1rem;
             padding-right: 0;
           }
 
 
-          .wd-treenode-selection, .wd-treenode-expandIconWrapper, .permission-status-comp {
+          .nbo-treenode-selection, .nbo-treenode-expandIconWrapper, .permission-status-comp {
             display: none;
           }
 

@@ -1,6 +1,6 @@
 import type {LogicResult} from "@tcpos/common-core";
 import {PublicInjectable} from "@tcpos/common-core";
-import {DailyPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
+import {NextBOPublicRegistrationContainer, ABaseApiController, CommonDataController} from "@tcpos/backoffice-core";
 import type {
     IUserPermissionPayload,
     UserPermissionEntityType
@@ -10,7 +10,7 @@ import type {
 export class UserPermissionDataController extends CommonDataController<UserPermissionEntityType> {
 
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController
     ) {
         super(apiController);
     }

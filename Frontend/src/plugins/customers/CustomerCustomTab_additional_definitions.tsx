@@ -1,6 +1,6 @@
 import React from "react";
 import {Box, Grid, Typography} from '@mui/material';
-import {WD_BoundComboBox, WD_BoundTextField, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
+import {NBO_BoundComboBox, NBO_BoundTextField, useAppDispatch, useAppSelector} from "@tcpos/backoffice-components";
 import {rwModes} from "@tcpos/common-core";
 import type {IRawCRUDWrapperDataUpdate} from "@tcpos/backoffice-components";
 import {setObjectData} from "@tcpos/backoffice-core";
@@ -46,7 +46,7 @@ export const CustomerCustomTab_additional_definitions = () => {
                         <Grid container columnSpacing={5}>
                             <Grid item xs={12} lg={6}>
                                 <Box>
-                                    <WD_BoundComboBox
+                                    <NBO_BoundComboBox
                                         objectName={entityName}
                                         objectId={""}
                                         componentName={"CostCenterId"}
@@ -78,7 +78,7 @@ export const CustomerCustomTab_additional_definitions = () => {
                             </Grid>
                             <Grid item xs={12} lg={6}>
                                 <Box>
-                                    <WD_BoundComboBox
+                                    <NBO_BoundComboBox
                                         objectName={entityName}
                                         objectId={""}
                                         componentName={"CompanyId"}
@@ -110,7 +110,7 @@ export const CustomerCustomTab_additional_definitions = () => {
                             </Grid>
                             <Grid item xs={12} lg={12}>
                                 <Box>
-                                    <WD_BoundTextField
+                                    <NBO_BoundTextField
                                         objectName={entityName}
                                         objectId={""}
                                         componentName={"MacroId"}

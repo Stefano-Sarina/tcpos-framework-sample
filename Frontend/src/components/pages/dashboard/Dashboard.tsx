@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {FormattedMessage, FormattedNumber, useIntl} from 'react-intl';
-import {setLogged, store, DailyPublicRegistrationContainer} from "@tcpos/backoffice-core";
+import {setLogged, store, NextBOPublicRegistrationContainer} from "@tcpos/backoffice-core";
 import logoIcon from '../../../assets/images/logo-tcposDaily.png';
 import logoIconDark from '../../../assets/images/logo-tcposDaily_dark1.png';
 
@@ -37,9 +37,9 @@ import avatar3 from '../../../assets/images/users/avatar-3.png';
 import avatar4 from '../../../assets/images/users/avatar-4.png';
 
 import {useTheme} from "@mui/material/styles";
-import {ADailyApiClient} from "@tcpos/backoffice-core";
+import {ANextBOApiClient} from "@tcpos/backoffice-core";
 /*
-import {WD_TreeContainer} from "../../components/WD_TreeContainer/WD_TreeContainer";
+import {NBO_TreeContainer} from "../../components/NBO_TreeContainer/NBO_TreeContainer";
 import {rwModes} from "@tcpos/common-core";
 */
 
@@ -83,7 +83,7 @@ const DashboardDefault = () => {
   const intl = useIntl();
   const [value, setValue] = useState('today');
   const [slot, setSlot] = useState('week');
-  const apiClient = DailyPublicRegistrationContainer.resolve(ADailyApiClient);
+  const apiClient = NextBOPublicRegistrationContainer.resolve(ANextBOApiClient);
   const dispatch = store.dispatch;
   let response: any;
 

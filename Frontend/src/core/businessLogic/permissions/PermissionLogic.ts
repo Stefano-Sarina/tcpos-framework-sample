@@ -1,7 +1,7 @@
 import _ from "underscore";
 import {
-    ABaseApiController, ADailyConfigService,
-    DailyPublicRegistrationContainer, Graph, store
+    ABaseApiController, ANextBOConfigService,
+    NextBOPublicRegistrationContainer, Graph, store
 } from "@tcpos/backoffice-core";
 import type {AERObjectController, IApiError, IViewConfigModel, IBatchOperationType, IUserPermission, IUiComponentPermissionAccess,
 } from "@tcpos/backoffice-core";
@@ -63,7 +63,7 @@ export class PermissionLogic {
     public static getDBUIPermissionVersion = async (): Promise<IRemoteVersion[] | undefined> => {
         const apiUrl = store.getState().interfaceConfig.apiUrl;
         try {
-            const res = await  DailyPublicRegistrationContainer.resolve(ABaseApiController)
+            const res = await  NextBOPublicRegistrationContainer.resolve(ABaseApiController)
                 .dataListLoad(`adWebEntityVersion`, [], [], undefined, undefined, undefined, undefined, true);
             if (!(res as IApiError).message) {
                 return res as unknown as IRemoteVersion[];
@@ -178,19 +178,19 @@ export class PermissionLogic {
     };
 
     public static getUIPermissionTree = async  (objectInterfaceConfig: IInterfaceBuilderModel[]) => {
-        const interfaceConfig: IViewConfigModel<string> = await DailyPublicRegistrationContainer.resolve(ADailyConfigService)
+        const interfaceConfig: IViewConfigModel<string> = await NextBOPublicRegistrationContainer.resolve(ANextBOConfigService)
             .getInterfaceConfig();
         const menuGroups = interfaceConfig.menuGroups; // store.getState().interfaceConfig.menuGroups;
         const controllerList: IControllerInstance[] = [];
         const reportList: string[] = [];
         menuGroups.forEach(group => {
             group.entities.forEach(obj => {
-                if (DailyPublicRegistrationContainer.isBound("objectControllers", obj.entityId)) {
-                    const controllerRegistration = DailyPublicRegistrationContainer
+                if (NextBOPublicRegistrationContainer.isBound("objectControllers", obj.entityId)) {
+                    const controllerRegistration = NextBOPublicRegistrationContainer
                         .resolveEntry("objectControllers", obj.entityId).controller;
                     const currentObjectConfig = objectInterfaceConfig.find(el => el.objectName === obj.entityId);
                     if (controllerRegistration && currentObjectConfig) {
-                        const controller = DailyPublicRegistrationContainer.resolveConstructor(controllerRegistration);
+                        const controller = NextBOPublicRegistrationContainer.resolveConstructor(controllerRegistration);
                         controller.init("-1", obj.entityId, currentObjectConfig);
                         controllerList.push({registrationKey: obj.entityId, controller: controller as AERObjectController<any, any>});
                     }
@@ -228,9 +228,9 @@ export class PermissionLogic {
     public static async getPermissions(applicationName: string, objectController: AERObjectController<any, any>, permissionData?: IUserPermission[]): Promise<IUiComponentPermissionAccess[]> {
         const objectName = objectController.objectName;
         //if (!permissionData) {
-            const dataControllerRegistration = DailyPublicRegistrationContainer.resolveEntry("dataControllers",
+            const dataControllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("dataControllers",
                 'PermissionsOperator').controller;
-            const currentDataController = DailyPublicRegistrationContainer.resolveConstructor(dataControllerRegistration);
+            const currentDataController = NextBOPublicRegistrationContainer.resolveConstructor(dataControllerRegistration);
             currentDataController.init('PermissionsOperator');
             let skip = 0;
             const size = 100;
@@ -270,10 +270,10 @@ export class PermissionLogic {
         //}
         if (permissionData) {
             const componentPermissions: IUiComponentPermissionAccess[] = [];
-            const controllerRegistration = DailyPublicRegistrationContainer.resolveEntry("objectControllers", objectName)
+            const controllerRegistration = NextBOPublicRegistrationContainer.resolveEntry("objectControllers", objectName)
                 .controller;
             if (controllerRegistration) {
-                const controller = DailyPublicRegistrationContainer.resolveConstructor(controllerRegistration);
+                const controller = NextBOPublicRegistrationContainer.resolveConstructor(controllerRegistration);
                 //controller.init("-1", objectName);
                 const controllerInstance: IControllerInstance = {registrationKey: objectName, controller: controller as AERObjectController<any, any>};
                 const uiTree = await this.getDependencyTree(controllerInstance, applicationName);
@@ -345,7 +345,7 @@ export class PermissionLogic {
 
         const appendPermission = (type: 'Read' | 'Write'): ISinglePermission[] => {
             return [
-                ...DailyPublicRegistrationContainer.resolve(ABaseApiController).basePermissions.find(el => el.Name === type)?.PermissionItems ?? [],
+                ...NextBOPublicRegistrationContainer.resolve(ABaseApiController).basePermissions.find(el => el.Name === type)?.PermissionItems ?? [],
                 ...(type === 'Read' ? readPermissions.PermissionItems : writePermissions.PermissionItems),
                 ..._.flatten(uiTree.filter(comp => comp.api).map(comp =>
                     this.setAPIPermissionGroups(
@@ -545,15 +545,15 @@ export class PermissionLogic {
     }
 
     private static async getDependencyTree(controller: IControllerInstance, applicationName: string) {
-        const viewConfig = await DailyPublicRegistrationContainer
-            .resolve(ADailyConfigService).getDataViewConfig(controller.registrationKey);
+        const viewConfig = await NextBOPublicRegistrationContainer
+            .resolve(ANextBOConfigService).getDataViewConfig(controller.registrationKey);
 
         let uiTree: IUiTree[] = [];
         let groupId: number, sectionId: number, componentId: number, subComponentId: number;
         let cnt = 1;
         if (viewConfig?.objectName) {
-            const resolveTabsCustomization = DailyPublicRegistrationContainer.isRegisteredTabsCustomization(viewConfig.objectName)
-                ? DailyPublicRegistrationContainer.resolveTabsCustomization(viewConfig.objectName)
+            const resolveTabsCustomization = NextBOPublicRegistrationContainer.isRegisteredTabsCustomization(viewConfig.objectName)
+                ? NextBOPublicRegistrationContainer.resolveTabsCustomization(viewConfig.objectName)
                 : undefined;
             if (resolveTabsCustomization) {
                 viewConfig.detailView.layoutGroups =
@@ -593,7 +593,7 @@ export class PermissionLogic {
                             description: `Section: ${section.label && section.label !== "" ? section.label : section.sectionName}`,
                             api: section.customApiDependencies ?? undefined,
                         });
-                        section.components.filter(c => c.componentType === 'wdCombobox')
+                        section.components.filter(c => c.componentType === 'nboCombobox')
                             .forEach(component => {
                                 const apiDataList = this.getBoundComponentDataList(component, controller);
                                 if (apiDataList) {
@@ -610,7 +610,7 @@ export class PermissionLogic {
                                     });
                                 }
                             });
-                        section.components.filter(c => c.componentType === 'wdSubForm').forEach(component => {
+                        section.components.filter(c => c.componentType === 'nboSubForm').forEach(component => {
                             const subForm = (component as IInterfaceBuilderSubForm);
                             cnt++;
                             componentId = cnt;
@@ -623,7 +623,7 @@ export class PermissionLogic {
                                 api: subForm.entityName ? [{entity: subForm.entityName}] : undefined,
                                 description: `Subform: ${component.label && component.label !== "" ? component.label : component.componentName}`
                             });
-                            subForm.subFields.filter(el => el.cellRenderer.componentType === 'wdCombobox')
+                            subForm.subFields.filter(el => el.cellRenderer.componentType === 'nboCombobox')
                                 .forEach(subField => {
                                     const apiDataList = this.getBoundComponentDataList(subField.cellRenderer, controller);
                                     if (apiDataList) {
@@ -653,7 +653,7 @@ export class PermissionLogic {
     };
 
     private static setAPIPermissionGroups(entities: { entity: string, url?: string, verb?: 'Read' | 'Write' | 'All' }[], mode: 'Read' | 'Write'): {code: string, permission: ISinglePermission}[] {
-        const apiController = DailyPublicRegistrationContainer.resolve(ABaseApiController);
+        const apiController = NextBOPublicRegistrationContainer.resolve(ABaseApiController);
         const permList: ISinglePermission[] = mode === 'Read'
             ? _.flatten(entities.map(ent => ([
                 {

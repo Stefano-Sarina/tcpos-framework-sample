@@ -34,7 +34,7 @@ export const AppThemeOverrides = ({children}: { children: ReactNode }) => {
     useEffect(() => {
         window.document.querySelector("html")?.classList.toggle("dark", mantisTheme.palette.mode == "dark");
     }, [mantisTheme.palette.mode]);
-    const DailyTheme: ThemeOptions = {
+    const Theme: ThemeOptions = {
 
         components: {
             MuiButton: {
@@ -128,7 +128,7 @@ export const AppThemeOverrides = ({children}: { children: ReactNode }) => {
     };
 
     const newTheme = useMemo(() => {
-        const merged = deepMerge(mantisTheme, DailyTheme);
+        const merged = deepMerge(mantisTheme, Theme);
         return createTheme(merged);
     }, [mantisTheme]);
 

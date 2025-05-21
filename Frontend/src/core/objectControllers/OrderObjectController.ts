@@ -2,9 +2,9 @@ import type { IOrderObjectModel, OrderObjectDataType} from "./objectControllerMo
 import type { I18n } from "../services/intl";
 import {
     ABaseApiController,
-    ADailyConfigService,
+    ANextBOConfigService,
     CommonObjectController,
-    DailyPublicRegistrationContainer,
+    NextBOPublicRegistrationContainer,
     PublicInjectable,
     type IBatchCommand,
     type IBatchSavedReturnValue,
@@ -19,9 +19,9 @@ import type { OrderDetailEntityType } from "../../core/apiModels/IOrderDetailPay
 @PublicInjectable()
 export class OrderObjectController extends CommonObjectController<OrderObjectDataType, OrderObjectDataType, I18n> {
     constructor(
-        @DailyPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
-        @DailyPublicRegistrationContainer.inject(ADailyConfigService) protected configService: ADailyConfigService<I18n>,
-        @DailyPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
+        @NextBOPublicRegistrationContainer.inject(ABaseApiController) apiController: ABaseApiController,
+        @NextBOPublicRegistrationContainer.inject(ANextBOConfigService) protected configService: ANextBOConfigService<I18n>,
+        @NextBOPublicRegistrationContainer.inject(ALocalizationService) protected localeService: ALocalizationService,
     ) {
         super(apiController, configService, localeService);
     }
