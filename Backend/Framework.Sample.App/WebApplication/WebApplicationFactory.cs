@@ -2,6 +2,7 @@
 using Framework.Sample.App.Authorization.DataPullOuts;
 using Framework.Sample.App.Authorization.Extensions;
 using Framework.Sample.App.Authorization.Requirements;
+using Framework.Sample.App.Authorization.SimpleAuthorization;
 using Framework.Sample.App.Configuration;
 using Framework.Sample.App.Data.Bind;
 using Framework.Sample.App.DB;
@@ -220,6 +221,11 @@ public static class WebApplicationFactory
 
         webApplication.MapPost("/api/{version}/formsendpoints", FormsEndpointsDelegates.SaveFormEndpoints)
                       .RequireTcposAuthorization<AuthorizationRequirementFormsEndpoints>();
+
+
+        webApplication.MapGet("api/simple", async () => DateTime.Now)
+            .WithMetadata(new SimpleRequirementAttribute("simpleAuthorization"))
+            .RequireTcposAuthorization<AuthorizationRequirementSimple>();
 
         webApplication.UseAuthorization();
     }

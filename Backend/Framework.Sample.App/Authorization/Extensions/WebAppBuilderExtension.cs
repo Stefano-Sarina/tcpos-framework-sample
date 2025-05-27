@@ -3,6 +3,7 @@ using Framework.Sample.App.Authorization.AuthorizationStores;
 using Framework.Sample.App.Authorization.AuthorizationStores.Models;
 using Framework.Sample.App.Authorization.FeedDbBuilders;
 using Framework.Sample.App.Authorization.Implementations;
+using Framework.Sample.App.Authorization.SimpleAuthorization;
 using Framework.Sample.App.WebApplication;
 using Microsoft.AspNetCore.Authorization;
 using TCPOS.Lib.Authorization.Abstracts;
@@ -41,6 +42,7 @@ public static class WebAppBuilderExtension
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerErpReplace>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerErpUpdate>();
         serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerFormsEndpoints>();
+        serviceCollection.AddScoped<ITcposAuthorizationManager, AuthorizationManagerSimple>();
 
         serviceCollection.AddScoped<ITcposPermissionClaimsTransformationBuilder, PermissionClaimsTransformationBuilder>();
 
@@ -68,6 +70,7 @@ public static class WebAppBuilderExtension
         serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpReplace>();
         serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderErpUpdate>();
         serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderFormsEndpoints>();
+        serviceCollection.AddSingleton<IFeedDatabaseManager<FeedDatabaseItem>, FeedDbBuilderSimple>();
         serviceCollection.AddSingleton<IFeedDatabasePersister<FeedDatabaseItem>, FeedDatabasePersister>();
         serviceCollection.AddSingleton<IFeedDatabaseEngine, FeedDatabaseEngine<FeedDatabaseItem>>();
 
