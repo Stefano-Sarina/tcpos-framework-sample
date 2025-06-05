@@ -1,10 +1,11 @@
-﻿using FluentAssertions;
-using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using TCPOS.Lib.Common.Extensions;
 using TCPOS.Lib.Common.Text.Json.Extensions;
 
@@ -12,7 +13,7 @@ namespace Framework.Sample.AppTests.Helpers;
 
 internal static class HttpClientExtensions
 {
-    private static JsonSerializerOptions serializerOptions = new JsonSerializerOptions()
+    private static readonly JsonSerializerOptions serializerOptions = new()
     {
         WriteIndented = true,
         ReferenceHandler = ReferenceHandler.IgnoreCycles
@@ -42,8 +43,9 @@ internal static class HttpClientExtensions
     internal static async Task<T?> HttpGetAsync<T>(this HttpClient httpClient, string endPoint, QueryString query, HttpStatusCode expectedStatusCode)
     {
         using var response = await httpClient.GetAsync($"{endPoint.TrimStringEnd("/")}{query.ToString()}");
+        var strResponse = await response.TryReadAsStringAsync();
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [GET:{endPoint}]");
-        return (await response.Content.ReadAsStringAsync()).DeSerialize<T>();
+        return strResponse.DeSerialize<T>();
     }
 
     internal static async Task HttpDeleteAsync(this HttpClient httpClient, string endPoint, HttpStatusCode expectedStatusCode)
@@ -56,9 +58,23 @@ internal static class HttpClientExtensions
     {
         using var postContent = payload.ToStringContent();
         using var response = await httpClient.PostAsync(endPoint, postContent);
+        var strResponse = await response.TryReadAsStringAsync();
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [POST:{endPoint}]");
-        var readAsStringAsync = await response.Content.ReadAsStringAsync();
-        return readAsStringAsync.DeSerialize<To>();
+        return strResponse.DeSerialize<To>();
+    }
+
+    private static async Task<string> TryReadAsStringAsync(this HttpResponseMessage response)
+    {
+        try
+        {
+            var readAsStringAsync = await response.Content.ReadAsStringAsync();
+            Debug.WriteLine($"********** Response body:\r\n\r\n{readAsStringAsync}\r\n\r\n**************************************************");
+            return readAsStringAsync;
+        }
+        catch
+        {
+            return "";
+        }
     }
 
     internal static async Task HttpPostAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
@@ -79,15 +95,15 @@ internal static class HttpClientExtensions
     {
         using var postContent = payload.ToStringContent();
         using var response = await httpClient.PutAsync(endPoint, postContent);
+        var strResponse = await response.TryReadAsStringAsync();
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [PUT:{endPoint}]");
-        var str = await response.Content.ReadAsStringAsync();
 
         if (typeof(To) == typeof(string))
         {
-            return (To)(object)str;
+            return (To)(object)strResponse;
         }
 
-        return str.DeSerialize<To>();
+        return strResponse.DeSerialize<To>();
     }
 
     internal static async Task HttpPutAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
@@ -101,8 +117,9 @@ internal static class HttpClientExtensions
     {
         using var postContent = payload.ToStringContent();
         using var response = await httpClient.PatchAsync(endPoint, postContent);
+        var strResponse = await response.TryReadAsStringAsync();
         response.StatusCode.Should().Be(expectedStatusCode, $"is requested by the route [PATCH:{endPoint}]");
-        return (await response.Content.ReadAsStringAsync()).DeSerialize<To>();
+        return strResponse.DeSerialize<To>();
     }
 
     internal static async Task HttpPatchAsync<Ti>(this HttpClient httpClient, string endPoint, Ti payload, HttpStatusCode expectedStatusCode)
@@ -114,7 +131,7 @@ internal static class HttpClientExtensions
 
     public static StringContent ToStringContent(this object o)
     {
-       return new StringContent(o.ToJson(), Encoding.UTF8, "application/json");
+        return new StringContent(o.ToJson(), Encoding.UTF8, "application/json");
     }
 
     public static string ToJson(this object o)
