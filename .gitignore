@@ -228,3 +228,4 @@ AppPackages/
 **/appsettings.json
 **.zip
 **/.config/
+**/.vshistory/
